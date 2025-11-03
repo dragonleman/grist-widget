@@ -3,37 +3,51 @@
 <head>
   <meta charset="utf-8">
   <title>Activities Declaration</title>
-	<link rel="stylesheet" href="//web2018.epfl.ch/8.2.0/css/elements.min.css">
+  <link rel="stylesheet" href="//web2018.epfl.ch/8.2.0/css/elements.min.css">
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    header { margin-bottom: 20px; }
+    .card { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  </style>
 </head>
 <body>
-	<header role="banner" class="header">
-		<a class="logo" href="#">
-		  <img src="img/epfl_small.png" alt="Logo EPFL, École polytechnique fédérale de Lausanne" class="img-fluid">
-		</a>
-	</header>
+  <header role="banner" class="header">
+    <a class="logo" href="#">
+      <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
+    </a>
+  </header>
 
-  <div class="card">
-    <h3 id="title">Chargement des données...</h3>
-    <p id="info"></p>
-  </div>
+  <div id="records"></div>
 
-	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
-
+  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
   <script>
-    // Démarre la connexion avec Grist
     window.grist.ready();
 
-    // Récupère la ligne sélectionnée dans la table liée
-    window.grist.onRecord((record) => {
-      if (!record) {
-        document.getElementById('title').innerText = "Aucune ligne sélectionnée";
+    // Fonction appelée dès que Grist envoie les données
+    window.grist.onRecords((records) => {
+      const container = document.getElementById('records');
+      container.innerHTML = ''; // vide le contenu existant
+
+      if (!records || records.length === 0) {
+        container.innerHTML = '<p>Aucune donnée trouvée.</p>';
         return;
       }
-      document.getElementById('title').innerText = record.Name || "Sans nom";
-      document.getElementById('info').innerText =
-        `Activité: ${record.Activity || "–"} | Taux: ${record.Rate || "–"}`;
+
+      // Boucle sur toutes les lignes
+      for (const rec of records) {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <h3>${rec.Name || 'Sans nom'}</h3>
+          <p>Utilisateur : ${rec.User || '–'}</p>
+          <p>Activité : ${rec.Activity || '–'}</p>
+          <p>Taux : ${rec.Rate || '–'}</p>
+        `;
+        container.appendChild(div);
+      }
     });
   </script>
 </body>
 </html>
+
 
