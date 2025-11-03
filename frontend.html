@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Custom Frontend – MyCompany</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f7fb;
+      color: #333;
+      padding: 20px;
+    }
+    header {
+      background: #00457C;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://ton-domaine.com/logo.png" height="40">
+    <h2>Portail d’activités – MyCompany</h2>
+  </header>
+
+  <div class="card">
+    <h3 id="title">Chargement des données...</h3>
+    <p id="info"></p>
+  </div>
+
+  <script>
+    // Démarre la connexion avec Grist
+    window.grist.ready();
+
+    // Récupère la ligne sélectionnée dans la table liée
+    window.grist.onRecord((record) => {
+      if (!record) {
+        document.getElementById('title').innerText = "Aucune ligne sélectionnée";
+        return;
+      }
+      document.getElementById('title').innerText = record.Name || "Sans nom";
+      document.getElementById('info').innerText =
+        `Activité: ${record.Activity || "–"} | Taux: ${record.Rate || "–"}`;
+    });
+  </script>
+</body>
+</html>
+
