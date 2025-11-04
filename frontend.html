@@ -23,16 +23,36 @@
     window.grist.ready();
     
     async function getCurrentUser() {
-      try {
-        const res = await fetch("/api/profile", { credentials: 'include' });
-        const user = await res.json();
-        const infoDiv = document.getElementById('user-info');
-        infoDiv.innerText = user.name || user.email || "Utilisateur inconnu";
-        return user;
-      } catch (e) {
-        console.error("Impossible de récupérer l’utilisateur :", e);
-      }
-    }
+		  try {
+		    const res = await fetch("/api/scim/v2/Me", {
+		      headers: {
+		        "Authorization": `Bearer ${window.grist?.user?.apiKey || ""}`,
+		      },
+		      credentials: 'include'
+		    });
+
+		    if (!res.ok) {
+		      throw new Error(`Erreur API: ${res.status}`);
+		    }
+
+		    const user = await res.json();
+		    const infoDiv = document.getElementById('user-info');
+
+		    // Priorité d'affichage : displayName > userName > email
+		    const display =
+		      user.displayName ||
+		      user.userName ||
+		      (user.emails && user.emails[0]?.value) ||
+		      "Utilisateur inconnu";
+
+		    infoDiv.innerText = `Connecté : ${display}`;
+		    return user;
+		  } catch (e) {
+		    console.error("Impossible de récupérer l’utilisateur :", e);
+		    const infoDiv = document.getElementById('user-info');
+		    infoDiv.innerText = "Utilisateur inconnu";
+		  }
+		}
 
 		window.grist.onRecords((records) => {
 			const container = document.getElementById('records');
