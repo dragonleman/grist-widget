@@ -10,6 +10,10 @@
     <a class="logo" href="#">
       <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
     </a>
+    
+    <nav class="ml-auto">
+      <div id="user-info"></div>
+    </nav>
   </header>
 
   <div id="records"></div>
@@ -17,6 +21,15 @@
   <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
   <script>
     window.grist.ready();
+    
+    window.grist.getUser().then(user => {
+      const infoDiv = document.getElementById('user-info');
+      if (user && user.email) {
+        infoDiv.innerText = `${user.name || user.email}`;
+      } else {
+        infoDiv.innerText = 'Utilisateur non connecté';
+      }
+    });
 
 		window.grist.onRecords((records) => {
 			const container = document.getElementById('records');
