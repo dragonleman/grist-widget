@@ -24,7 +24,7 @@
     
     async function getCurrentUser() {
 		  try {
-		    const res = await fetch("/api/scim/v2/Me", {
+		    const res = await fetch("https://grist.fsd.epfl.ch/api/scim/v2/Me", {
 		      headers: {
 		        "Authorization": `Bearer ${window.grist?.user?.apiKey || ""}`,
 		      },
