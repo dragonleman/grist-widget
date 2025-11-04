@@ -4,11 +4,6 @@
   <meta charset="utf-8">
   <title>Activities Declaration</title>
   <link rel="stylesheet" href="//web2018.epfl.ch/8.2.0/css/elements.min.css">
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    header { margin-bottom: 20px; }
-    .card { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  </style>
 </head>
 <body>
   <header role="banner" class="header">
@@ -23,29 +18,41 @@
   <script>
     window.grist.ready();
 
-    // Fonction appelée dès que Grist envoie les données
-    window.grist.onRecords((records) => {
-      const container = document.getElementById('records');
-      container.innerHTML = ''; // vide le contenu existant
+		window.grist.onRecords((records) => {
+			const container = document.getElementById('records');
+			container.innerHTML = '';
 
-      if (!records || records.length === 0) {
-        container.innerHTML = '<p>Aucune donnée trouvée.</p>';
-        return;
-      }
+			if (!records || records.length === 0) {
+				container.innerHTML = '<p>Aucune donnée trouvée.</p>';
+				return;
+			}
 
-      // Boucle sur toutes les lignes
-      for (const rec of records) {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-          <h3>${rec.Name || 'Sans nom'}</h3>
-          <p>Utilisateur : ${rec.User || '–'}</p>
-          <p>Activité : ${rec.Activity || '–'}</p>
-          <p>Taux : ${rec.Rate_ || '–'}</p>
-        `;
-        container.appendChild(div);
-      }
-    });
+			for (const rec of records) {
+				const div = document.createElement('div');
+				div.className = 'card';
+
+				const nameInput = document.createElement('input');
+				nameInput.value = rec.Name || '';
+				nameInput.addEventListener('change', async () => {
+				  await window.grist.docApi.updateRecords('Activities', [
+				    { id: rec.id, fields: { Name: nameInput.value } }
+				  ]);
+				});
+
+				const rateInput = document.createElement('input');
+				rateInput.type = 'number';
+				rateInput.value = rec.Rate_ || 0;
+				rateInput.addEventListener('change', async () => {
+				  await window.grist.docApi.updateRecords('Activities', [
+				    { id: rec.id, fields: { Rate_: parseFloat(rateInput.value) } }
+				  ]);
+				});
+
+				div.appendChild(nameInput);
+				div.appendChild(rateInput);
+				container.appendChild(div);
+			}
+		});
   </script>
 </body>
 </html>
