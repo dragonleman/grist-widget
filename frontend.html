@@ -24,8 +24,10 @@
     
     async function getCurrentUser() {
 		  try {
-		    const res = await window.grist.docApi.fetch('/api/scim/v2/Me');
-    		const user = await res.json();
+		    const user = await window.grist.rpc.fetch('/api/scim/v2/Me', {
+				  method: 'GET',
+				  credentials: 'include'
+				}).then(res => res.json());
 
 		    // Priorité d'affichage : displayName > userName > email
 		    const display =
