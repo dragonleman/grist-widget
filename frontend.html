@@ -24,12 +24,7 @@
     
     async function getCurrentUser() {
 		  try {
-		    const res = await fetch("https://grist.fsd.epfl.ch/api/scim/v2/Me", {
-		      headers: {
-		        "Authorization": `Bearer ${window.grist?.user?.apiKey || ""}`,
-		      },
-		      credentials: 'include'
-		    });
+		    const res = await fetch("/api/scim/v2/Me", { credentials: "include" });
 
 		    if (!res.ok) {
 		      throw new Error(`Erreur API: ${res.status}`);
