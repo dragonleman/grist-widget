@@ -24,14 +24,8 @@
     
     async function getCurrentUser() {
 		  try {
-		    const res = await fetch("/api/scim/v2/Me", { credentials: "include" });
-
-		    if (!res.ok) {
-		      throw new Error(`Erreur API: ${res.status}`);
-		    }
-
-		    const user = await res.json();
-		    const infoDiv = document.getElementById('user-info');
+		    const res = await window.grist.docApi.fetch('/api/scim/v2/Me');
+    		const user = await res.json();
 
 		    // Priorité d'affichage : displayName > userName > email
 		    const display =
@@ -40,12 +34,11 @@
 		      (user.emails && user.emails[0]?.value) ||
 		      "Utilisateur inconnu";
 
-		    infoDiv.innerText = `Connecté : ${display}`;
-		    return user;
+		    document.getElementById('user-info').innerText = `Connecté : ${display}`;
+    		return user;
 		  } catch (e) {
 		    console.error("Impossible de récupérer l’utilisateur :", e);
-		    const infoDiv = document.getElementById('user-info');
-		    infoDiv.innerText = "Utilisateur inconnu";
+    		document.getElementById('user-info').innerText = "Utilisateur inconnu";
 		  }
 		}
 
