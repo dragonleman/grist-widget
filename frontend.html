@@ -21,12 +21,11 @@
   <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
   <script>
     window.grist.ready();
-    
-    async function getCurrentUser() {
+
+		async function getCurrentUser() {
 			try {
-				// Appel authentifié depuis le contexte Grist
-				const res = await window.grist.apiCall('GET', 'https://grist.fsd.epfl.ch/api/scim/v2/Me');
-				const user = res.data;
+				const response = await window.grist.rpc.call("GET", "https://grist.fsd.epfl.ch/api/scim/v2/Me");
+				const user = response.data;
 
 				const display =
 				  user.displayName ||
@@ -34,11 +33,11 @@
 				  (user.emails && user.emails[0]?.value) ||
 				  "Utilisateur inconnu";
 
-				document.getElementById('user-info').innerText = `Connecté : ${display}`;
+				document.getElementById("user-info").innerText = `Connecté : ${display}`;
 				return user;
 			} catch (e) {
 				console.error("Impossible de récupérer l’utilisateur :", e);
-				document.getElementById('user-info').innerText = "Utilisateur inconnu";
+				document.getElementById("user-info").innerText = "Utilisateur inconnu";
 			}
 		}
 
