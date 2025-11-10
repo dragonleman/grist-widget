@@ -23,25 +23,23 @@
     window.grist.ready();
     
     async function getCurrentUser() {
-		  try {
-		    const user = await window.grist.rpc.fetch('https://grist.fsd.epfl.ch/api/scim/v2/Me', {
-				  method: 'GET',
-				  credentials: 'include'
-				}).then(res => res.json());
+			try {
+				// Appel authentifié depuis le contexte Grist
+				const res = await window.grist.apiCall('GET', 'https://grist.fsd.epfl.ch/api/scim/v2/Me');
+				const user = res.data;
 
-		    // Priorité d'affichage : displayName > userName > email
-		    const display =
-		      user.displayName ||
-		      user.userName ||
-		      (user.emails && user.emails[0]?.value) ||
-		      "Utilisateur inconnu";
+				const display =
+				  user.displayName ||
+				  user.userName ||
+				  (user.emails && user.emails[0]?.value) ||
+				  "Utilisateur inconnu";
 
-		    document.getElementById('user-info').innerText = `Connecté : ${display}`;
-    		return user;
-		  } catch (e) {
-		    console.error("Impossible de récupérer l’utilisateur :", e);
-    		document.getElementById('user-info').innerText = "Utilisateur inconnu";
-		  }
+				document.getElementById('user-info').innerText = `Connecté : ${display}`;
+				return user;
+			} catch (e) {
+				console.error("Impossible de récupérer l’utilisateur :", e);
+				document.getElementById('user-info').innerText = "Utilisateur inconnu";
+			}
 		}
 
 		window.grist.onRecords((records) => {
