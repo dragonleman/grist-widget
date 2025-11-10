@@ -24,7 +24,7 @@
     
     async function getCurrentUser() {
 		  try {
-		    const user = await window.grist.rpc.fetch('/api/scim/v2/Me', {
+		    const user = await window.grist.rpc.fetch('https://grist.fsd.epfl.ch/api/scim/v2/Me', {
 				  method: 'GET',
 				  credentials: 'include'
 				}).then(res => res.json());
