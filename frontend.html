@@ -80,6 +80,7 @@
 		          fields: { Start_date: startInput.value }
 		        });
 		      }
+		      validateDates();
 		    });
 		    startCell.appendChild(startInput);
 
@@ -95,8 +96,20 @@
 		          fields: { End_date: endInput.value }
 		        });
 		      }
+		      validateDates();
 		    });
 		    endCell.appendChild(endInput);
+
+				// Fonction de validation
+				function validateDates() {
+					if (startInput.value && endInput.value && endInput.value < startInput.value) {
+						endInput.style.border = '2px solid red';
+						endInput.title = "La date de fin ne peut pas être antérieure à la date de début";
+					} else {
+						endInput.style.border = '';
+						endInput.title = '';
+					}
+				}
 
 		    // Rate (%)
 		    const rateCell = row.insertCell();
