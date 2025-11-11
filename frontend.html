@@ -132,12 +132,14 @@
 		    dupBtn.textContent = '🔁';
 		    dupBtn.title = "Dupliquer";
 		    dupBtn.onclick = async () => {
+		      const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		      await window.grist.selectedTable.create({
 		        fields: {
 		          Activity: rec.Activity,
-		          Start_date: rec.Start_date,
-		          End_date: rec.End_date,
+		          Start_date: today,
+		          End_date: today,
 		          Rate_: rec.Rate_,
+		          Access: "🟢",
 		        },
 		      });
 		    };
