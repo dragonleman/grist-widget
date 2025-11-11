@@ -24,22 +24,7 @@
 	      <th>End date</th>
 	      <th>Rate (%)</th>
 	      <th>Access</th>
-	      <th>Duplicate</th>
-	    </tr>
-	    <tr>
-	      <td>Priya</td>
-	      <td>Sharma</td>
-	      <td>24</td>
-	    </tr>
-	    <tr>
-	      <td>Arun</td>
-	      <td>Singh</td>
-	      <td>32</td>
-	    </tr>
-	    <tr>
-	      <td>Sam</td>
-	      <td>Watson</td>
-	      <td>41</td>
+	      <th>Actions</th>
 	    </tr>
 		</table>
 	</div>
@@ -139,10 +124,13 @@
 				icon.textContent = (rec.exception || !rec.readonly) ? "🟢" : "🛑";
 				accessCell.appendChild(icon);
 
+				// Actions (Duplicate + Delete)
+		    const tdActions = row.insertCell();
+
 		    // Duplicate
-		    const dupCell = row.insertCell();
 		    const dupBtn = document.createElement('button');
-		    dupBtn.textContent = 'Dupliquer';
+		    dupBtn.textContent = '🔁';
+		    dupBtn.title = "Dupliquer";
 		    dupBtn.onclick = async () => {
 		      await window.grist.selectedTable.create({
 		        fields: {
@@ -153,25 +141,21 @@
 		        },
 		      });
 		    };
-		    dupCell.appendChild(dupBtn);
-		    
+		    tdActions.appendChild(dupBtn);
+
 		    // Delete
-				const delCell = row.insertCell();
-				const delBtn = document.createElement('button');
-				delBtn.textContent = '🗑️ Supprimer';
-				delBtn.style.color = 'red';
-				delBtn.onclick = async () => {
-					const confirmDelete = confirm(`Supprimer définitivement l’activité "${rec.Activity}" ?`);
-					if (!confirmDelete) return;
-					try {
-						await window.grist.selectedTable.destroy([rec.id]);
-						row.remove();
-					} catch (err) {
-						console.error("Erreur lors de la suppression :", err);
-						alert("❌ Impossible de supprimer la ligne.");
-					}
-				};
-				delCell.appendChild(delBtn);
+		    const delBtn = document.createElement('button');
+		    delBtn.textContent = '🗑️';
+		    delBtn.title = "Supprimer";
+		    delBtn.style.marginLeft = '5px';
+		    delBtn.style.color = 'red';
+		    delBtn.onclick = async () => {
+		      const confirmDelete = confirm(`Supprimer "${rec.Activity}" ?`);
+		      if (!confirmDelete) return;
+		      await window.grist.selectedTable.destroy([rec.id]);
+		      row.remove();
+		    };
+		    tdActions.appendChild(delBtn);
 		  }
 		});
 	</script>
