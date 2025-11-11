@@ -46,23 +46,21 @@
 
   <div id="records"></div>
 
-  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
-  <script>
+	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+	<script>
 		window.grist.ready({ requiredAccess: 'full' });
 
 		window.grist.onRecords((records) => {
 		  const table = document.getElementById('table');
 
-		  // Efface toutes les lignes sauf l'en-tête
-		  while (table.rows.length > 1) {
-		    table.deleteRow(1);
-		  }
+		  // Efface tout sauf l'entête
+		  while (table.rows.length > 1) table.deleteRow(1);
 
 		  if (!records || records.length === 0) {
 		    const row = table.insertRow();
 		    const cell = row.insertCell();
 		    cell.colSpan = 6;
-		    cell.innerText = 'Aucune donnée trouvée.';
+		    cell.textContent = 'Aucune donnée trouvée.';
 		    cell.style.textAlign = 'center';
 		    return;
 		  }
@@ -70,77 +68,89 @@
 		  for (const rec of records) {
 		    const row = table.insertRow();
 
-		    // -------- Activity (editable)
+		    // Activity
 		    const activityCell = row.insertCell();
 		    const activityInput = document.createElement('input');
 		    activityInput.value = rec.Activity || '';
-		    activityInput.addEventListener('change', async () => {
-		      await window.grist.docApi.updateRecords('Activities', [
-		        { id: rec.id, fields: { Activity: activityInput.value } }
-		      ]);
+		    // 🔸 mise à jour seulement au blur
+		    activityInput.addEventListener('blur', async () => {
+		      if (activityInput.value !== rec.Activity) {
+		        await window.grist.selectedTable.update({
+		          id: rec.id,
+		          fields: { Activity: activityInput.value }
+		        });
+		      }
 		    });
 		    activityCell.appendChild(activityInput);
 
-		    // -------- Start date (editable)
+		    // Start date
 		    const startCell = row.insertCell();
 		    const startInput = document.createElement('input');
 		    startInput.type = 'date';
 		    startInput.value = rec.Start_date || '';
-		    startInput.addEventListener('change', async () => {
-		      await window.grist.docApi.updateRecords('Activities', [
-		        { id: rec.id, fields: { Start_date: startInput.value } }
-		      ]);
+		    startInput.addEventListener('blur', async () => {
+		      if (startInput.value !== rec.Start_date) {
+		        await window.grist.selectedTable.update({
+		          id: rec.id,
+		          fields: { Start_date: startInput.value }
+		        });
+		      }
 		    });
 		    startCell.appendChild(startInput);
 
-		    // -------- End date (editable)
+		    // End date
 		    const endCell = row.insertCell();
 		    const endInput = document.createElement('input');
 		    endInput.type = 'date';
 		    endInput.value = rec.End_date || '';
-		    endInput.addEventListener('change', async () => {
-		      await window.grist.docApi.updateRecords('Activities', [
-		        { id: rec.id, fields: { End_date: endInput.value } }
-		      ]);
+		    endInput.addEventListener('blur', async () => {
+		      if (endInput.value !== rec.End_date) {
+		        await window.grist.selectedTable.update({
+		          id: rec.id,
+		          fields: { End_date: endInput.value }
+		        });
+		      }
 		    });
 		    endCell.appendChild(endInput);
 
-		    // -------- Rate (%) (editable)
+		    // Rate (%)
 		    const rateCell = row.insertCell();
 		    const rateInput = document.createElement('input');
 		    rateInput.type = 'number';
 		    rateInput.min = 0;
 		    rateInput.max = 100;
 		    rateInput.value = rec.Rate_ || 0;
-		    rateInput.addEventListener('change', async () => {
-		      await window.grist.docApi.updateRecords('Activities', [
-		        { id: rec.id, fields: { Rate_: parseFloat(rateInput.value) } }
-		      ]);
+		    rateInput.addEventListener('blur', async () => {
+		      const newValue = parseFloat(rateInput.value);
+		      if (newValue !== rec.Rate_) {
+		        await window.grist.selectedTable.update({
+		          id: rec.id,
+		          fields: { Rate_: newValue }
+		        });
+		      }
 		    });
 		    rateCell.appendChild(rateInput);
 
-		    // -------- Access (read-only example)
+		    // Access
 		    const accessCell = row.insertCell();
 		    const accessBtn = document.createElement('button');
-		    accessBtn.innerText = 'Voir';
-		    accessBtn.onclick = () => alert(`Accès à : ${rec.Activity}`);
+		    accessBtn.textContent = 'Voir';
+		    accessBtn.onclick = () => alert(`Accès à ${rec.Activity}`);
 		    accessCell.appendChild(accessBtn);
 
-		    // -------- Duplicate
+		    // Duplicate
 		    const dupCell = row.insertCell();
 		    const dupBtn = document.createElement('button');
-		    dupBtn.innerText = 'Dupliquer';
+		    dupBtn.textContent = 'Dupliquer';
 		    dupBtn.onclick = async () => {
-		      await window.grist.docApi.addRecords('Activities', [
-		        {
-		          fields: {
-		            Activity: rec.Activity,
-		            Start_date: rec.Start_date,
-		            End_date: rec.End_date,
-		            Rate_: rec.Rate_,
-		          },
+		      await window.grist.selectedTable.add({
+		        fields: {
+		          Activity: rec.Activity,
+		          Start_date: rec.Start_date,
+		          End_date: rec.End_date,
+		          Rate_: rec.Rate_,
 		        },
-		      ]);
+		      });
 		    };
 		    dupCell.appendChild(dupBtn);
 		  }
