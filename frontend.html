@@ -48,17 +48,16 @@
 
   <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
   <script>
-    window.grist.ready();
+		window.grist.ready();
 
 		window.grist.onRecords((records) => {
 		  const table = document.getElementById('table');
 
-		  // Supprime les anciennes lignes (sauf l'en-tête)
+		  // Efface toutes les lignes sauf l'en-tête
 		  while (table.rows.length > 1) {
 		    table.deleteRow(1);
 		  }
 
-		  // Si aucune donnée
 		  if (!records || records.length === 0) {
 		    const row = table.insertRow();
 		    const cell = row.insertCell();
@@ -68,36 +67,66 @@
 		    return;
 		  }
 
-		  // Remplit le tableau avec les données
 		  for (const rec of records) {
 		    const row = table.insertRow();
 
-		    // Colonne Activity
+		    // -------- Activity (editable)
 		    const activityCell = row.insertCell();
-		    activityCell.innerText = rec.Activity || '';
+		    const activityInput = document.createElement('input');
+		    activityInput.value = rec.Activity || '';
+		    activityInput.addEventListener('change', async () => {
+		      await window.grist.docApi.updateRecords('Activities', [
+		        { id: rec.id, fields: { Activity: activityInput.value } }
+		      ]);
+		    });
+		    activityCell.appendChild(activityInput);
 
-		    // Start date
+		    // -------- Start date (editable)
 		    const startCell = row.insertCell();
-		    startCell.innerText = rec.Start_date || '';
+		    const startInput = document.createElement('input');
+		    startInput.type = 'date';
+		    startInput.value = rec.Start_date || '';
+		    startInput.addEventListener('change', async () => {
+		      await window.grist.docApi.updateRecords('Activities', [
+		        { id: rec.id, fields: { Start_date: startInput.value } }
+		      ]);
+		    });
+		    startCell.appendChild(startInput);
 
-		    // End date
+		    // -------- End date (editable)
 		    const endCell = row.insertCell();
-		    endCell.innerText = rec.End_date || '';
+		    const endInput = document.createElement('input');
+		    endInput.type = 'date';
+		    endInput.value = rec.End_date || '';
+		    endInput.addEventListener('change', async () => {
+		      await window.grist.docApi.updateRecords('Activities', [
+		        { id: rec.id, fields: { End_date: endInput.value } }
+		      ]);
+		    });
+		    endCell.appendChild(endInput);
 
-		    // Rate
+		    // -------- Rate (%) (editable)
 		    const rateCell = row.insertCell();
-		    rateCell.innerText = rec.Rate_ || '';
+		    const rateInput = document.createElement('input');
+		    rateInput.type = 'number';
+		    rateInput.min = 0;
+		    rateInput.max = 100;
+		    rateInput.value = rec.Rate_ || 0;
+		    rateInput.addEventListener('change', async () => {
+		      await window.grist.docApi.updateRecords('Activities', [
+		        { id: rec.id, fields: { Rate_: parseFloat(rateInput.value) } }
+		      ]);
+		    });
+		    rateCell.appendChild(rateInput);
 
-		    // Access (exemple : bouton)
+		    // -------- Access (read-only example)
 		    const accessCell = row.insertCell();
 		    const accessBtn = document.createElement('button');
 		    accessBtn.innerText = 'Voir';
-		    accessBtn.onclick = () => {
-		      alert(`Accès à ${rec.Activity}`);
-		    };
+		    accessBtn.onclick = () => alert(`Accès à : ${rec.Activity}`);
 		    accessCell.appendChild(accessBtn);
 
-		    // Duplicate (exemple : crée une copie de la ligne)
+		    // -------- Duplicate
 		    const dupCell = row.insertCell();
 		    const dupBtn = document.createElement('button');
 		    dupBtn.innerText = 'Dupliquer';
@@ -116,7 +145,7 @@
 		    dupCell.appendChild(dupBtn);
 		  }
 		});
-  </script>
+	</script>
 </body>
 </html>
 
