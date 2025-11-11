@@ -4,56 +4,63 @@
   <meta charset="utf-8">
   <title>Activities Declaration</title>
   <link rel="stylesheet" href="//web2018.epfl.ch/8.2.0/css/elements.min.css">
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    #records iframe {
-      width: 100%;
-      height: calc(100vh - 80px); /* en dessous du header */
-      border: none;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 20px;
-      background: #f5f5f5;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-  </style>
 </head>
 <body>
   <header role="banner" class="header">
     <a class="logo" href="#">
-      <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid" style="height:40px;">
+      <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
     </a>
+    
     <nav class="ml-auto">
-      <div id="user-info">Chargement...</div>
+      <div id="user-info"></div>
     </nav>
   </header>
 
-  <div id="records">
-    <iframe 
-      id="grist-table"
-      src="https://grist.fsd.epfl.ch/o/isas-fsd/p/mwjR6HEbg69V" 
-      allowfullscreen>
-    </iframe>
-  </div>
+  <div id="records"></div>
 
+  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
   <script>
-    async function getCurrentUser() {
-      try {
-        const res = await fetch("/api/profile", { credentials: 'include' });
-        const user = await res.json();
-        document.getElementById("user-info").innerText = user.name || user.email;
-      } catch {
-        document.getElementById("user-info").innerText = "Utilisateur inconnu";
-      }
-    }
-    getCurrentUser();
+    window.grist.ready();
+
+		window.grist.onRecords((records) => {
+			const container = document.getElementById('records');
+			container.innerHTML = '';
+
+			if (!records || records.length === 0) {
+				container.innerHTML = '<p>Aucune donnée trouvée.</p>';
+				return;
+			}
+
+			for (const rec of records) {
+				const div = document.createElement('div');
+				div.className = 'card';
+
+				const nameInput = document.createElement('input');
+				nameInput.value = rec.Name || '';
+				nameInput.addEventListener('change', async () => {
+				  await window.grist.docApi.updateRecords('Activities', [
+				    { id: rec.id, fields: { Name: nameInput.value } }
+				  ]);
+				});
+
+				const rateInput = document.createElement('input');
+				rateInput.type = 'number';
+				rateInput.value = rec.Rate_ || 0;
+				rateInput.addEventListener('change', async () => {
+				  await window.grist.docApi.updateRecords('Activities', [
+				    { id: rec.id, fields: { Rate_: parseFloat(rateInput.value) } }
+				  ]);
+				});
+
+				div.appendChild(nameInput);
+				div.appendChild(rateInput);
+				container.appendChild(div);
+			}
+		});
+		
+		getCurrentUser();
   </script>
 </body>
 </html>
+
+
