@@ -166,7 +166,7 @@
 		function validateDates(row) {
 		  const startInput = row.cells[1];
 			const endInput   = row.cells[2];
-			if (rec.Start_date && endInput.value && endInput.value < startInput.value) {
+			if (startInput.value && endInput.value && endInput.value < startInput.value) {
 				endInput.style.border = '2px solid red';
 				endInput.title = "La date de fin ne peut pas être antérieure à la date de début";
 			} else {
