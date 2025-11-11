@@ -121,7 +121,7 @@
 				const icon = document.createElement('span');
 				icon.style.fontSize = '18px';
 				icon.style.cursor = 'default'; // non cliquable
-				icon.textContent = (rec.exception || !rec.readonly) ? "🟢" : "🛑";
+				icon.textContent = rec.Access;
 				accessCell.appendChild(icon);
 
 				// Actions (Duplicate + Delete)
