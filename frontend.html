@@ -17,7 +17,7 @@
   </header>
 
 	<div>
-		<table id="table">
+		<table id="table" class="table table-boxed">
 	    <tr>
 	      <th>Activity</th>
 	      <th>Start date</th>
@@ -160,6 +160,24 @@
 		      });
 		    };
 		    dupCell.appendChild(dupBtn);
+		    
+		    // Delete
+				const delCell = row.insertCell();
+				const delBtn = document.createElement('button');
+				delBtn.textContent = '🗑️ Supprimer';
+				delBtn.style.color = 'red';
+				delBtn.onclick = async () => {
+					const confirmDelete = confirm(`Supprimer définitivement l’activité "${rec.Activity}" ?`);
+					if (!confirmDelete) return;
+					try {
+						await window.grist.selectedTable.destroy([rec.id]);
+						row.remove();
+					} catch (err) {
+						console.error("Erreur lors de la suppression :", err);
+						alert("❌ Impossible de supprimer la ligne.");
+					}
+				};
+				delCell.appendChild(delBtn);
 		  }
 		});
 	</script>
