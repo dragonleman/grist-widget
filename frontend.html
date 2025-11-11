@@ -80,7 +80,7 @@
 		          fields: { Start_date: startInput.value }
 		        });
 		      }
-		      validateDates();
+		      validateDates(row);
 		    });
 		    startCell.appendChild(startInput);
 
@@ -96,20 +96,9 @@
 		          fields: { End_date: endInput.value }
 		        });
 		      }
-		      validateDates();
+		      validateDates(row);
 		    });
 		    endCell.appendChild(endInput);
-
-				// Fonction de validation
-				function validateDates() {
-					if (startInput.value && endInput.value && endInput.value < startInput.value) {
-						endInput.style.border = '2px solid red';
-						endInput.title = "La date de fin ne peut pas être antérieure à la date de début";
-					} else {
-						endInput.style.border = '';
-						endInput.title = '';
-					}
-				}
 
 		    // Rate (%)
 		    const rateCell = row.insertCell();
@@ -172,6 +161,19 @@
 		    tdActions.appendChild(delBtn);
 		  }
 		});
+		
+		// Fonction de validation
+		function validateDates(row) {
+		  const startInput = row.cells[1];
+			const endInput   = row.cells[2];
+			if (rec.Start_date && endInput.value && endInput.value < startInput.value) {
+				endInput.style.border = '2px solid red';
+				endInput.title = "La date de fin ne peut pas être antérieure à la date de début";
+			} else {
+				endInput.style.border = '';
+				endInput.title = '';
+			}
+		}
 	</script>
 </body>
 </html>
