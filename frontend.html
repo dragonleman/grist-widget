@@ -48,7 +48,7 @@
 
   <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
   <script>
-		window.grist.ready();
+		window.grist.ready({ requiredAccess: 'full' });
 
 		window.grist.onRecords((records) => {
 		  const table = document.getElementById('table');
