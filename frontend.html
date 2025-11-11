@@ -132,18 +132,25 @@
 		    rateCell.appendChild(rateInput);
 
 		    // Access
-		    const accessCell = row.insertCell();
-		    const accessBtn = document.createElement('button');
-		    accessBtn.textContent = 'Voir';
-		    accessBtn.onclick = () => alert(`Accès à ${rec.Activity}`);
-		    accessCell.appendChild(accessBtn);
+				const accessCell = row.insertCell();
+				const icon = document.createElement('span');
+				icon.style.fontSize = '18px';
+				icon.style.cursor = 'default'; // non cliquable
+
+				if (rec.Access) {
+					icon.textContent = '✅';
+				} else {
+					icon.textContent = '🚫';
+				}
+
+				accessCell.appendChild(icon);
 
 		    // Duplicate
 		    const dupCell = row.insertCell();
 		    const dupBtn = document.createElement('button');
 		    dupBtn.textContent = 'Dupliquer';
 		    dupBtn.onclick = async () => {
-		      await window.grist.selectedTable.add({
+		      await window.grist.selectedTable.create({
 		        fields: {
 		          Activity: rec.Activity,
 		          Start_date: rec.Start_date,
