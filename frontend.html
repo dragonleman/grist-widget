@@ -95,6 +95,7 @@
 		    endInput.type = 'date';
 		    endInput.value = rec.End_date || '';
 		    endInput.style.border = 'none';
+		    endInput.style.backgroundColor = rec.ErrorDate || 'white';
 		    endInput.addEventListener('blur', async () => {
 		      if (endInput.value !== rec.End_date) {
 		        await window.grist.selectedTable.update({
