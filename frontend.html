@@ -105,6 +105,11 @@
 		      }
 		    });
 		    endCell.appendChild(endInput);
+		    
+		    const endInputColor = document.createElement('input');
+		    endInputColor.type = 'color';
+		    endInputColor.value = rec.ErrorDate || 'white';
+		    endCell.appendChild(endInputColor);
 
 		    // Rate (%)
 		    const rateCell = row.insertCell();
