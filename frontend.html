@@ -61,6 +61,7 @@
 		    const activityCell = row.insertCell();
 		    const activityInput = document.createElement('input');
 		    activityInput.value = rec.Activity || '';
+		    activityInput.style.border = 'none';
 		    // 🔸 mise à jour seulement au blur
 		    activityInput.addEventListener('blur', async () => {
 		      if (activityInput.value !== rec.Activity) {
@@ -77,6 +78,7 @@
 		    const startInput = document.createElement('input');
 		    startInput.type = 'date';
 		    startInput.value = rec.Start_date || '';
+		    startInput.style.border = 'none';
 		    startInput.addEventListener('blur', async () => {
 		      if (startInput.value !== rec.Start_date) {
 		        await window.grist.selectedTable.update({
@@ -92,7 +94,7 @@
 		    const endInput = document.createElement('input');
 		    endInput.type = 'date';
 		    endInput.value = rec.End_date || '';
-		    endInput.style.backgroundColor = rec.Color;
+		    endInput.style.border = 'none';
 		    endInput.addEventListener('blur', async () => {
 		      if (endInput.value !== rec.End_date) {
 		        await window.grist.selectedTable.update({
@@ -110,6 +112,7 @@
 		    rateInput.min = 0;
 		    rateInput.max = 100;
 		    rateInput.value = rec.Rate_ || 0;
+		    rateInput.style.border = 'none';
 		    rateInput.addEventListener('blur', async () => {
 		      const newValue = parseFloat(rateInput.value);
 		      if (newValue !== rec.Rate_) {
@@ -136,6 +139,7 @@
 		    const dupBtn = document.createElement('button');
 		    dupBtn.textContent = '🔁';
 		    dupBtn.title = "Dupliquer";
+		    dupBtn.style.border = 'none';
 		    dupBtn.onclick = async () => {
 		      await window.grist.selectedTable.create({
 		        fields: {
@@ -153,6 +157,7 @@
 		    delBtn.textContent = '🗑️';
 		    delBtn.title = "Supprimer";
 		    delBtn.style.marginLeft = '5px';
+		    delBtn.style.border = 'none';
 		    delBtn.onclick = async () => {
 		      const confirmDelete = confirm(`Supprimer "${rec.Activity}" ?`);
 		      if (!confirmDelete) return;
