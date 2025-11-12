@@ -16,6 +16,8 @@
     </nav>
   </header>
 
+  <div style="text-align:right"><button id="addBtn">Ajouter une ligne</button></div>
+
 	<div>
 		<table id="table" class="table table-boxed">
 	    <tr>
@@ -29,10 +31,12 @@
 		</table>
 	</div>
 
-  <div id="records"></div>
-
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
+		const addButton = document.getElementById('addBtn');
+	  
+	  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+	  
 		window.grist.ready({ requiredAccess: 'full' });
 
 		window.grist.onRecords((records) => {
@@ -80,7 +84,7 @@
 		          fields: { Start_date: startInput.value }
 		        });
 		      }
-		      validateDates(row);
+		      //validateDates(row);
 		    });
 		    startCell.appendChild(startInput);
 
@@ -89,6 +93,7 @@
 		    const endInput = document.createElement('input');
 		    endInput.type = 'date';
 		    endInput.value = rec.End_date || '';
+		    endInput.style.Color = rec.Color;
 		    endInput.addEventListener('blur', async () => {
 		      if (endInput.value !== rec.End_date) {
 		        await window.grist.selectedTable.update({
@@ -96,7 +101,7 @@
 		          fields: { End_date: endInput.value }
 		        });
 		      }
-		      validateDates(row);
+		      //validateDates(row);
 		    });
 		    endCell.appendChild(endInput);
 
@@ -134,7 +139,6 @@
 		    dupBtn.textContent = '🔁';
 		    dupBtn.title = "Dupliquer";
 		    dupBtn.onclick = async () => {
-		      const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		      await window.grist.selectedTable.create({
 		        fields: {
 		          Activity: rec.Activity,
@@ -174,6 +178,18 @@
 				endInput.title = '';
 			}
 		}
+		
+		addButton.addEventListener('click', async () => {
+			await grist.selectedTable.create({
+			  fields: {
+          Activity: "",
+          Start_date: today,
+          End_date: today,
+          Rate_: 0,
+        },
+			}) 
+		});
+
 	</script>
 </body>
 </html>
