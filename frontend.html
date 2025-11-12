@@ -93,7 +93,7 @@
 		    const endInput = document.createElement('input');
 		    endInput.type = 'date';
 		    endInput.value = rec.End_date || '';
-		    endInput.style.background-color = rec.Color;
+		    endInput.style.backgroundColor = rec.Color;
 		    endInput.addEventListener('blur', async () => {
 		      if (endInput.value !== rec.End_date) {
 		        await window.grist.selectedTable.update({
