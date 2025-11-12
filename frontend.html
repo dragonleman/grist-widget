@@ -113,6 +113,8 @@
 		    rateInput.max = 100;
 		    rateInput.value = rec.Rate_ || 0;
 		    rateInput.style.border = 'none';
+		    rateInput.style.textAlign = 'right';
+				rateInput.style.width = '60px';
 		    rateInput.addEventListener('blur', async () => {
 		      const newValue = parseFloat(rateInput.value);
 		      if (newValue !== rec.Rate_) {
