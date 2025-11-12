@@ -16,7 +16,7 @@
     </nav>
   </header>
 
-  <div style="text-align:right"><button id="addBtn" class="btn btn-primary">Add new activity</button></div>
+  <div class="p-3" style="text-align:right"><button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button></div>
 
 	<div>
 		<table id="table" class="table table-boxed">
@@ -84,7 +84,6 @@
 		          fields: { Start_date: startInput.value }
 		        });
 		      }
-		      //validateDates(row);
 		    });
 		    startCell.appendChild(startInput);
 
@@ -101,14 +100,8 @@
 		          fields: { End_date: endInput.value }
 		        });
 		      }
-		      //validateDates(row);
 		    });
 		    endCell.appendChild(endInput);
-		    
-		    const endInputColor = document.createElement('input');
-		    endInputColor.type = 'color';
-		    endInputColor.value = rec.Color;
-		    endCell.appendChild(endInputColor);
 
 		    // Rate (%)
 		    const rateCell = row.insertCell();
@@ -160,7 +153,6 @@
 		    delBtn.textContent = '🗑️';
 		    delBtn.title = "Supprimer";
 		    delBtn.style.marginLeft = '5px';
-		    delBtn.style.color = 'red';
 		    delBtn.onclick = async () => {
 		      const confirmDelete = confirm(`Supprimer "${rec.Activity}" ?`);
 		      if (!confirmDelete) return;
@@ -170,19 +162,6 @@
 		    tdActions.appendChild(delBtn);
 		  }
 		});
-		
-		// Fonction de validation
-		function validateDates(row) {
-		  const startInput = row.cells[1].querySelector('input');
-			const endInput   = row.cells[2].querySelector('input');
-			if (startInput.value && endInput.value && endInput.value < startInput.value) {
-				endInput.style.border = '2px solid red';
-				endInput.title = "La date de fin ne peut pas être antérieure à la date de début";
-			} else {
-				endInput.style.border = '';
-				endInput.title = '';
-			}
-		}
 		
 		addButton.addEventListener('click', async () => {
 			await grist.selectedTable.create({
