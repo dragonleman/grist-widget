@@ -16,7 +16,7 @@
     </nav>
   </header>
 
-  <div style="text-align:right"><button id="addBtn">Ajouter une ligne</button></div>
+  <div style="text-align:right"><button id="addBtn" class="btn btn-primary">Add new activity</button></div>
 
 	<div>
 		<table id="table" class="table table-boxed">
@@ -93,7 +93,7 @@
 		    const endInput = document.createElement('input');
 		    endInput.type = 'date';
 		    endInput.value = rec.End_date || '';
-		    endInput.style.Color = rec.Color;
+		    endInput.style.background-color = rec.Color;
 		    endInput.addEventListener('blur', async () => {
 		      if (endInput.value !== rec.End_date) {
 		        await window.grist.selectedTable.update({
@@ -104,6 +104,11 @@
 		      //validateDates(row);
 		    });
 		    endCell.appendChild(endInput);
+		    
+		    const endInputColor = document.createElement('input');
+		    endInputColor.type = 'color';
+		    endInputColor.value = rec.Color;
+		    endCell.appendChild(endInputColor);
 
 		    // Rate (%)
 		    const rateCell = row.insertCell();
