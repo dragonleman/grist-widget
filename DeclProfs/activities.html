@@ -173,6 +173,42 @@
 		      row.remove();
 		    };
 		    tdActions.appendChild(delBtn);
+		    
+		    // Download CSV
+				const dlBtn = document.createElement('button');
+				dlBtn.textContent = '📥';
+				dlBtn.title = "Télécharger en CSV";
+				dlBtn.style.marginLeft = '5px';
+				dlBtn.style.border = 'none';
+
+				dlBtn.onclick = () => {
+					// Récupérer les paires clé => valeur
+					const keys = Object.keys(rec);
+					const values = keys.map(k => rec[k] ?? "");
+
+					// Construire CSV
+					const csvContent =
+						keys.join(",") + "\n" +
+						values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
+
+					// Créer un blob
+					const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+					// Créer un lien temporaire
+					const link = document.createElement("a");
+					link.href = URL.createObjectURL(blob);
+
+					// Nom du fichier (ex: Activity_123.csv)
+					link.download = `${rec.Activity || "ligne"}_${rec.id}.csv`;
+
+					// Télécharger
+					link.click();
+
+					// Nettoyer l’URL Blob
+					URL.revokeObjectURL(link.href);
+				};
+
+				tdActions.appendChild(dlBtn);
 		  }
 		});
 		
