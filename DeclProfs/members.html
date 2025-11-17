@@ -29,7 +29,7 @@
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
-		window.grist.ready({ requiredAccess: 'read' });
+		window.grist.ready({ requiredAccess: 'read table' });
 
 		window.grist.onRecords((records) => {
 		  const table = document.getElementById('table');
