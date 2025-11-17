@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Activities Declaration</title>
+  <link rel="stylesheet" href="//web2018.epfl.ch/8.2.0/css/elements.min.css">
+</head>
+<body>
+  <header role="banner" class="header">
+    <a class="logo" href="#">
+      <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
+    </a>
+    
+    <nav class="ml-auto">
+      <div id="user-info"></div>
+    </nav>
+  </header>
+
+  <div class="p-3" style="text-align:right"><button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button></div>
+
+	<div>
+		<table id="table" class="table table-boxed">
+	    <tr>
+	      <th>Name</th>
+	      <th>Username</th>
+	      <th>Email</th>
+	      <th>Sciper</th>
+	    </tr>
+		</table>
+	</div>
+
+	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+	<script>
+		window.grist.ready({ requiredAccess: 'read' });
+
+		window.grist.onRecords((records) => {
+		  const table = document.getElementById('table');
+
+		  // Efface tout sauf l'entête
+		  while (table.rows.length > 1) table.deleteRow(1);
+
+		  if (!records || records.length === 0) {
+		    const row = table.insertRow();
+		    const cell = row.insertCell();
+		    cell.colSpan = 6;
+		    cell.textContent = 'Aucune donnée trouvée.';
+		    cell.style.textAlign = 'center';
+		    return;
+		  }
+
+		  for (const rec of records) {
+		    const row = table.insertRow();
+
+		    // Name
+		    const nameCell = row.insertCell();
+		    const nameSpan = document.createElement('span');
+				nameSpan.textContent = rec.Name;
+				nameCell.appendChild(nameSpan);
+				
+				// Username
+		    const usernameCell = row.insertCell();
+		    const usernameSpan = document.createElement('span');
+				usernameSpan.textContent = rec.Username;
+				usernameCell.appendChild(usernameSpan);
+
+		    // Email
+		    const emailCell = row.insertCell();
+		    const emailSpan = document.createElement('span');
+				emailSpan.textContent = rec.Email;
+				emailCell.appendChild(emailSpan);
+
+		    // UserId
+		    const sciperCell = row.insertCell();
+		    const sciperSpan = document.createElement('span');
+				sciperSpan.textContent = rec.UserId;
+				sciperCell.appendChild(emailSpan);
+		  }
+		});
+	</script>
+</body>
+</html>
+
+
