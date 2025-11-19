@@ -15,6 +15,8 @@
       <div id="user-info"></div>
     </nav>
   </header>
+  
+  <p id="debugText"></p>
 
   <div class="p-3" style="text-align:right"><button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button></div>
 
@@ -33,6 +35,19 @@
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
+	  const spanText = document.getElementById('debugText');
+	  
+		grist.ready(async () => {
+			const tableId = await grist.getTableId();     // ID de la table liée à la vue
+			const table = await grist.docApi.fetchTable(tableId);
+
+			// Récupérer les colonnes
+			const columnNames = Object.keys(table.schema.columns);
+
+			spanText.textContent = "Colonnes : " + columnNames.join(", ");
+		});
+
+
 		const addButton = document.getElementById('addBtn');
 	  
 	  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
