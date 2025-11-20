@@ -41,7 +41,7 @@
 
 		window.grist.onRecords((records) => {
 		  
-		  const columnNames = []
+		  let columnNames = []
 		  if (records.length > 0) {
 		    columnNames = Object.keys(records[0]);
 				console.log("Colonnes disponibles :", columnNames);
