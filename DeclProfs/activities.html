@@ -65,7 +65,7 @@
 		    const row = table.insertRow();
 		    
 		    // Name
-		    if ('Name' in columnNames) {
+		    if (columnNames.includes('Name')) {
 				  const nameCell = row.insertCell();
 				  const nameSpan = document.createElement('span');
 				  nameSpan.value = rec.Name || '';
@@ -74,7 +74,7 @@
 		    }
 
 		    // Activity
-		    if ('Activity' in columnNames) {
+		    if (columnNames.includes('Activity')) {
 				  const activityCell = row.insertCell();
 				  const activityInput = document.createElement('input');
 				  activityInput.value = rec.Activity || '';
@@ -91,7 +91,7 @@
 		    }
 
 		    // Start date
-		    if ('Start_date' in columnNames) {
+		    if (columnNames.includes('Start_date')) {
 				  const startCell = row.insertCell();
 				  const startInput = document.createElement('input');
 				  startInput.type = 'date';
@@ -109,7 +109,7 @@
 		    }
 
 		    // End date
-		    if ('End_date' in columnNames) {
+		    if (columnNames.includes('End_date')) {
 				  const endCell = row.insertCell();
 				  const endInput = document.createElement('input');
 				  endInput.type = 'date';
@@ -128,7 +128,7 @@
 		    }
 
 		    // Rate (%)
-		    if ('Rate_' in columnNames) {
+		    if (columnNames.includes('Rate_')) {
 				  const rateCell = row.insertCell();
 				  const rateInput = document.createElement('input');
 				  rateInput.type = 'number';
@@ -151,7 +151,7 @@
 		    }
 
 		    // Access
-				if ('Access' in columnNames) {
+				if (columnNames.includes('Access')) {
 					const accessCell = row.insertCell();
 					const icon = document.createElement('span');
 					icon.style.fontSize = '18px';
