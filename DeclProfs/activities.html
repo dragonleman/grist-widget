@@ -54,6 +54,8 @@
 		    return;
 		  }
 		  
+		  const header = table.insertRow();
+		  
 			for (const col of columnNames) {
 			  if (columnNamesAccepted.includes(col)) {
 					const th = document.createElement('th');
