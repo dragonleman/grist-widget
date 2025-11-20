@@ -79,6 +79,15 @@
 				  nameSpan.style.border = 'none';
 				  nameCell.appendChild(nameSpan);
 		    }
+		    
+		    // Name
+		    if (columnNames.includes('Email')) {
+				  const emailCell = row.insertCell();
+				  const emailSpan = document.createElement('span');
+				  emailSpan.textContent = rec.Email || '';
+				  emailSpan.style.border = 'none';
+				  emailCell.appendChild(emailSpan);
+		    }
 
 		    // Activity
 		    if (columnNames.includes('Activity')) {
@@ -165,7 +174,29 @@
 					icon.style.cursor = 'default'; // non cliquable
 					icon.textContent = rec.Access;
 					accessCell.appendChild(icon);
-				}	
+				}
+				
+				// Exception
+		    if (columnNames.includes('exception')) {
+				  const exceptionCell = row.insertCell();
+
+					// Création du toggle
+					const toggle = document.createElement('input');
+					toggle.type = 'checkbox';
+					toggle.checked = Boolean(rec.exception);  // Grist → widget
+					toggle.style.transform = 'scale(1.4)';
+					toggle.style.cursor = 'pointer';
+
+					// Action sur changement
+					toggle.addEventListener('change', async () => {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { exception: toggle.checked }   // widget → Grist
+						});
+					});
+
+					exceptionCell.appendChild(toggle);
+		    }
 
 				// Actions (Duplicate + Delete)
 		    const tdActions = row.insertCell();
