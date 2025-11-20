@@ -70,14 +70,6 @@
 				  const nameSpan = document.createElement('span');
 				  nameSpan.value = rec.Name || '';
 				  nameSpan.style.border = 'none';
-				  nameSpan.addEventListener('blur', async () => {
-				    if (nameSpan.value !== rec.Activity) {
-				      await window.grist.selectedTable.update({
-				        id: rec.id,
-				        fields: { Activity: activityInput.value }
-				      });
-				    }
-				  });
 				  nameCell.appendChild(nameSpan);
 		    }
 
@@ -159,13 +151,14 @@
 		    }
 
 		    // Access
-		    if ('Start_date' in columnNames) {
-				const accessCell = row.insertCell();
-				const icon = document.createElement('span');
-				icon.style.fontSize = '18px';
-				icon.style.cursor = 'default'; // non cliquable
-				icon.textContent = rec.Access;
-				accessCell.appendChild(icon);
+				if ('Access' in columnNames) {
+					const accessCell = row.insertCell();
+					const icon = document.createElement('span');
+					icon.style.fontSize = '18px';
+					icon.style.cursor = 'default'; // non cliquable
+					icon.textContent = rec.Access;
+					accessCell.appendChild(icon);
+				}	
 
 				// Actions (Duplicate + Delete)
 		    const tdActions = row.insertCell();
