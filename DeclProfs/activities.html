@@ -63,6 +63,23 @@
 
 		  for (const rec of records) {
 		    const row = table.insertRow();
+		    
+		    // Name
+		    if ('Name' in columnNames) {
+				  const nameCell = row.insertCell();
+				  const nameSpan = document.createElement('span');
+				  nameSpan.value = rec.Name || '';
+				  nameSpan.style.border = 'none';
+				  nameSpan.addEventListener('blur', async () => {
+				    if (nameSpan.value !== rec.Activity) {
+				      await window.grist.selectedTable.update({
+				        id: rec.id,
+				        fields: { Activity: activityInput.value }
+				      });
+				    }
+				  });
+				  nameCell.appendChild(nameSpan);
+		    }
 
 		    // Activity
 		    if ('Activity' in columnNames) {
@@ -70,7 +87,6 @@
 				  const activityInput = document.createElement('input');
 				  activityInput.value = rec.Activity || '';
 				  activityInput.style.border = 'none';
-				  // 🔸 mise à jour seulement au blur
 				  activityInput.addEventListener('blur', async () => {
 				    if (activityInput.value !== rec.Activity) {
 				      await window.grist.selectedTable.update({
@@ -83,60 +99,67 @@
 		    }
 
 		    // Start date
-		    const startCell = row.insertCell();
-		    const startInput = document.createElement('input');
-		    startInput.type = 'date';
-		    startInput.value = rec.Start_date || '';
-		    startInput.style.border = 'none';
-		    startInput.addEventListener('blur', async () => {
-		      if (startInput.value !== rec.Start_date) {
-		        await window.grist.selectedTable.update({
-		          id: rec.id,
-		          fields: { Start_date: startInput.value }
-		        });
-		      }
-		    });
-		    startCell.appendChild(startInput);
+		    if ('Start_date' in columnNames) {
+				  const startCell = row.insertCell();
+				  const startInput = document.createElement('input');
+				  startInput.type = 'date';
+				  startInput.value = rec.Start_date || '';
+				  startInput.style.border = 'none';
+				  startInput.addEventListener('blur', async () => {
+				    if (startInput.value !== rec.Start_date) {
+				      await window.grist.selectedTable.update({
+				        id: rec.id,
+				        fields: { Start_date: startInput.value }
+				      });
+				    }
+				  });
+				  startCell.appendChild(startInput);
+		    }
 
 		    // End date
-		    const endCell = row.insertCell();
-		    const endInput = document.createElement('input');
-		    endInput.type = 'date';
-		    endInput.value = rec.End_date || '';
-		    endInput.style.border = 'none';
-		    endInput.style.backgroundColor = rec.ErrorDate || 'white';
-		    endInput.addEventListener('blur', async () => {
-		      if (endInput.value !== rec.End_date) {
-		        await window.grist.selectedTable.update({
-		          id: rec.id,
-		          fields: { End_date: endInput.value }
-		        });
-		      }
-		    });
-		    endCell.appendChild(endInput);
+		    if ('End_date' in columnNames) {
+				  const endCell = row.insertCell();
+				  const endInput = document.createElement('input');
+				  endInput.type = 'date';
+				  endInput.value = rec.End_date || '';
+				  endInput.style.border = 'none';
+				  endInput.style.backgroundColor = rec.ErrorDate || 'white';
+				  endInput.addEventListener('blur', async () => {
+				    if (endInput.value !== rec.End_date) {
+				      await window.grist.selectedTable.update({
+				        id: rec.id,
+				        fields: { End_date: endInput.value }
+				      });
+				    }
+				  });
+				  endCell.appendChild(endInput);
+		    }
 
 		    // Rate (%)
-		    const rateCell = row.insertCell();
-		    const rateInput = document.createElement('input');
-		    rateInput.type = 'number';
-		    rateInput.min = 0;
-		    rateInput.max = 100;
-		    rateInput.value = rec.Rate_ || 0;
-		    rateInput.style.border = 'none';
-		    rateInput.style.textAlign = 'right';
-				rateInput.style.width = '60px';
-		    rateInput.addEventListener('blur', async () => {
-		      const newValue = parseFloat(rateInput.value);
-		      if (newValue !== rec.Rate_) {
-		        await window.grist.selectedTable.update({
-		          id: rec.id,
-		          fields: { Rate_: newValue }
-		        });
-		      }
-		    });
-		    rateCell.appendChild(rateInput);
+		    if ('Rate_' in columnNames) {
+				  const rateCell = row.insertCell();
+				  const rateInput = document.createElement('input');
+				  rateInput.type = 'number';
+				  rateInput.min = 0;
+				  rateInput.max = 100;
+				  rateInput.value = rec.Rate_ || 0;
+				  rateInput.style.border = 'none';
+				  rateInput.style.textAlign = 'right';
+					rateInput.style.width = '60px';
+				  rateInput.addEventListener('blur', async () => {
+				    const newValue = parseFloat(rateInput.value);
+				    if (newValue !== rec.Rate_) {
+				      await window.grist.selectedTable.update({
+				        id: rec.id,
+				        fields: { Rate_: newValue }
+				      });
+				    }
+				  });
+				  rateCell.appendChild(rateInput);
+		    }
 
 		    // Access
+		    if ('Start_date' in columnNames) {
 				const accessCell = row.insertCell();
 				const icon = document.createElement('span');
 				icon.style.fontSize = '18px';
