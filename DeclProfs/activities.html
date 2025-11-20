@@ -71,7 +71,7 @@
 		    if (columnNames.includes('Name')) {
 				  const nameCell = row.insertCell();
 				  const nameSpan = document.createElement('span');
-				  nameSpan.value = rec.Name || '';
+				  nameSpan.textContent = rec.Name || '';
 				  nameSpan.style.border = 'none';
 				  nameCell.appendChild(nameSpan);
 		    }
