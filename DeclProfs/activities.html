@@ -19,16 +19,7 @@
   <div class="p-3" style="text-align:right"><button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button></div>
 
 	<div>
-		<table id="table" class="table table-boxed">
-	    <tr>
-	      <th>Activity</th>
-	      <th>Start date</th>
-	      <th>End date</th>
-	      <th>Rate (%)</th>
-	      <th>Access</th>
-	      <th>Actions</th>
-	    </tr>
-		</table>
+		<table id="table" class="table table-boxed"></table>
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
@@ -46,11 +37,13 @@
 		    columnNames = Object.keys(records[0]);
 				console.log("Colonnes disponibles :", columnNames);
 			}
+			
+			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Rate_', 'Access'] 
   
 		  const table = document.getElementById('table');
 
-		  // Efface tout sauf l'entête
-		  while (table.rows.length > 1) table.deleteRow(1);
+		  // Efface tout
+		  while (table.rows.length > 0) table.deleteRow(0);
 
 		  if (!records || records.length === 0) {
 		    const row = table.insertRow();
@@ -60,7 +53,15 @@
 		    cell.style.textAlign = 'center';
 		    return;
 		  }
-
+		  
+			for (const col of columnNames) {
+			  if (columnNamesAccepted.includes(col)) {
+					const th = document.createElement('th');
+					th.textContent = col;
+					header.appendChild(th);
+				}
+			}
+			
 		  for (const rec of records) {
 		    const row = table.insertRow();
 		    
