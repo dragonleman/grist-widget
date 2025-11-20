@@ -56,8 +56,8 @@
 		  
 		  const header = table.insertRow();
 		  
-			for (const col of columnNames) {
-			  if (columnNamesAccepted.includes(col)) {
+			for (const col of columnNamesAccepted) {
+			  if (columnNames.includes(col)) {
 					const th = document.createElement('th');
 					th.textContent = col;
 					header.appendChild(th);
@@ -80,7 +80,7 @@
 				  nameCell.appendChild(nameSpan);
 		    }
 		    
-		    // Name
+		    // Email
 		    if (columnNames.includes('Email')) {
 				  const emailCell = row.insertCell();
 				  const emailSpan = document.createElement('span');
