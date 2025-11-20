@@ -38,7 +38,7 @@
 				console.log("Colonnes disponibles :", columnNames);
 			}
 			
-			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Rate_', 'Access'] 
+			const columnNamesAccepted = ['Name', 'Email', 'Activity', 'Start_date', 'End_date', 'Rate_', 'Access', 'exception'] 
   
 		  const table = document.getElementById('table');
 
@@ -63,6 +63,10 @@
 					header.appendChild(th);
 				}
 			}
+			
+			const th = document.createElement('th');
+			th.textContent = 'Actions';
+			header.appendChild(th);
 			
 		  for (const rec of records) {
 		    const row = table.insertRow();
