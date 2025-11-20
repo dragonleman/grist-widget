@@ -15,8 +15,6 @@
       <div id="user-info"></div>
     </nav>
   </header>
-  
-  <p id="debugText"></p>
 
   <div class="p-3" style="text-align:right"><button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button></div>
 
@@ -35,19 +33,6 @@
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
-	  const spanText = document.getElementById('debugText');
-	  
-		grist.ready(async () => {
-			const tableId = await grist.getTableId();     // ID de la table liée à la vue
-			const table = await grist.docApi.fetchTable(tableId);
-
-			// Récupérer les colonnes
-			const columnNames = Object.keys(table.schema.columns);
-
-			spanText.textContent = "Colonnes : " + columnNames.join(", ");
-		});
-
-
 		const addButton = document.getElementById('addBtn');
 	  
 	  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
@@ -56,8 +41,10 @@
 
 		window.grist.onRecords((records) => {
 		  
+		  const columnNames = []
 		  if (records.length > 0) {
-				console.log("Colonnes disponibles :", Object.keys(records[0]));
+		    columnNames = Object.keys(records[0]);
+				console.log("Colonnes disponibles :", columnNames);
 			}
   
 		  const table = document.getElementById('table');
@@ -78,20 +65,22 @@
 		    const row = table.insertRow();
 
 		    // Activity
-		    const activityCell = row.insertCell();
-		    const activityInput = document.createElement('input');
-		    activityInput.value = rec.Activity || '';
-		    activityInput.style.border = 'none';
-		    // 🔸 mise à jour seulement au blur
-		    activityInput.addEventListener('blur', async () => {
-		      if (activityInput.value !== rec.Activity) {
-		        await window.grist.selectedTable.update({
-		          id: rec.id,
-		          fields: { Activity: activityInput.value }
-		        });
-		      }
-		    });
-		    activityCell.appendChild(activityInput);
+		    if ('Activity' in columnNames) {
+				  const activityCell = row.insertCell();
+				  const activityInput = document.createElement('input');
+				  activityInput.value = rec.Activity || '';
+				  activityInput.style.border = 'none';
+				  // 🔸 mise à jour seulement au blur
+				  activityInput.addEventListener('blur', async () => {
+				    if (activityInput.value !== rec.Activity) {
+				      await window.grist.selectedTable.update({
+				        id: rec.id,
+				        fields: { Activity: activityInput.value }
+				      });
+				    }
+				  });
+				  activityCell.appendChild(activityInput);
+		    }
 
 		    // Start date
 		    const startCell = row.insertCell();
