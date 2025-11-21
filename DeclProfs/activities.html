@@ -180,10 +180,15 @@
 		    if (columnNames.includes('exception')) {
 				  const exceptionCell = row.insertCell();
 
+					// Wrapper
+					const exceptionWrapper = document.createElement('div');
+  				exceptionWrapper.className = 'custom-control custom-switch';
+
 					// Création du toggle
 					const toggle = document.createElement('input');
 					toggle.type = 'checkbox';
 					toggle.checked = Boolean(rec.exception);  // Grist → widget
+					toggle.className = 'custom-control-input';
 					toggle.style.transform = 'scale(1.4)';
 					toggle.style.cursor = 'pointer';
 
@@ -195,6 +200,7 @@
 						});
 					});
 
+					exceptionWrapper.appendChild(toggle);
 					exceptionCell.appendChild(toggle);
 		    }
 
