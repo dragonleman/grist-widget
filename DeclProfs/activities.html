@@ -177,36 +177,44 @@
 				}
 				
 				// Exception
-		    if (columnNames.includes('exception')) {
-				  const exceptionCell = row.insertCell();
+				if (columnNames.includes('exception')) {
+					const exceptionCell = row.insertCell();
 
 					// Wrapper
-					const exceptionWrapper = document.createElement('div');
-  				exceptionWrapper.className = 'custom-control custom-switch';
+					const wrapper = document.createElement('div');
+					wrapper.className = 'custom-control custom-switch';
 
-					// Création du toggle
+					// ID unique par ligne
+					const switchId = `switch-exception-${rec.id}`;
+
+					// Input checkbox
 					const toggle = document.createElement('input');
 					toggle.type = 'checkbox';
-					toggle.checked = Boolean(rec.exception);  // Grist → widget
 					toggle.className = 'custom-control-input';
-					toggle.style.transform = 'scale(1.4)';
-					toggle.style.cursor = 'pointer';
-					
-					const label = document.createElement('label');
-  				label.className = 'custom-control-label';
+					toggle.id = switchId;
 
-					// Action sur changement
+					// Valeur initiale depuis Grist
+					toggle.checked = Boolean(rec.exception);
+
+					// Label
+					const label = document.createElement('label');
+					label.className = 'custom-control-label';
+					label.htmlFor = switchId;
+					label.textContent = '';  // laisser vide si tu ne veux pas de texte
+
+					// Push dans DOM
+					wrapper.appendChild(toggle);
+					wrapper.appendChild(label);
+					exceptionCell.appendChild(wrapper);
+
+					// Mise à jour Grist lorsque l'utilisateur clique
 					toggle.addEventListener('change', async () => {
 						await window.grist.selectedTable.update({
 							id: rec.id,
-							fields: { exception: toggle.checked }   // widget → Grist
+							fields: { exception: toggle.checked }
 						});
 					});
-
-					exceptionWrapper.appendChild(toggle);
-					exceptionWrapper.appendChild(label);
-					exceptionCell.appendChild(exceptionWrapper);
-		    }
+				}
 
 				// Actions (Duplicate + Delete)
 		    const tdActions = row.insertCell();
