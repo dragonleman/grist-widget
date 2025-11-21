@@ -191,6 +191,9 @@
 					toggle.className = 'custom-control-input';
 					toggle.style.transform = 'scale(1.4)';
 					toggle.style.cursor = 'pointer';
+					
+					const label = document.createElement('label');
+  				label.className = 'custom-control-label';
 
 					// Action sur changement
 					toggle.addEventListener('change', async () => {
@@ -201,6 +204,7 @@
 					});
 
 					exceptionWrapper.appendChild(toggle);
+					exceptionWrapper.appendChild(label);
 					exceptionCell.appendChild(exceptionWrapper);
 		    }
 
