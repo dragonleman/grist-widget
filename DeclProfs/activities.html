@@ -17,11 +17,12 @@
     </nav>
   </header>
   
-	<div class="p-3" style="display: flex; align-items: center; gap: 8px;">
-		<svg class="icon" aria-hidden="true" style="width: 20px; height: 20px;">
+	<div style="position: relative; max-width: 300px;">
+		<input type="text" id="searchInput" placeholder="Search someone..." style="width: 100%; padding-left: 30px; box-sizing: border-box;">
+		<svg class="icon" aria-hidden="true" 
+		     style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
 		  <use xlink:href="#icon-search"></use>
 		</svg>
-		<input type="text" id="searchInput" class="form-control" placeholder="Search someone..." style="flex: 1;">
 	</div>
 
   <div class="p-3" style="text-align:right">
