@@ -17,7 +17,7 @@
     </nav>
   </header>
   
-	<div style="position: relative; max-width: 300px;">
+	<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
 		<input type="text" id="searchInput" placeholder="Search someone..." style="width: 100%; padding-left: 30px; box-sizing: border-box;">
 		<svg class="icon" aria-hidden="true" 
 		     style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
@@ -70,6 +70,9 @@
 		  
 			for (const col of columnNamesAccepted) {
 			  if (columnNames.includes(col)) {
+			    if (col == 'Name') {
+			      document.getElementById('searchDiv').style.display = 'block';
+			    }
 					const th = document.createElement('th');
 					th.textContent = col;
 					header.appendChild(th);
