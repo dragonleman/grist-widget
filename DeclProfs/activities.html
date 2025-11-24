@@ -16,8 +16,14 @@
       <div id="user-info"></div>
     </nav>
   </header>
+  
+  <div class="p-3" style="text-align:left">
+		<input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
+	</div>
 
-  <div class="p-3" style="text-align:right"><button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button></div>
+  <div class="p-3" style="text-align:right">
+  	<button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button>
+  </div>
 
 	<div>
 		<table id="table" class="table table-boxed"></table>
@@ -26,12 +32,13 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
 		const addButton = document.getElementById('addBtn');
-	  
+		const searchInput = document.getElementById('searchInput');
 	  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+	  let allRecords = [];
 	  
 		window.grist.ready({ requiredAccess: 'full' });
 
-		window.grist.onRecords((records) => {
+		function renderTable(records) {
 		  
 		  let columnNames = []
 		  if (records.length > 0) {
@@ -334,6 +341,27 @@
           Rate_: 0,
         },
 			}) 
+		});
+		
+		window.grist.onRecords(records => {
+		  allRecords = records;  
+		  renderTable(records);
+		});
+
+		// Recherche locale
+		searchInput.addEventListener('input', () => {
+		  const query = searchInput.value.trim().toLowerCase();
+
+		  if (!query) {
+		    renderTable(allRecords); // réaffiche tout
+		    return;
+		  }
+
+		  const filtered = allRecords.filter(rec =>
+		    (rec.Name || "").toLowerCase().includes(query)
+		  );
+
+		  renderTable(filtered);
 		});
 
 	</script>
