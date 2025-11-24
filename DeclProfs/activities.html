@@ -301,23 +301,25 @@
 
 				tdActions.appendChild(dlBtn);
 				
-				// Send email
-		    const emailBtn = document.createElement('button');
-		    //emailBtn.textContent = '📩';
-		    emailBtn.innerHTML = `
-					<svg class="icon" aria-hidden="true">
-						<use xlink:href="#mail"></use>
-					</svg>
-				`;
-		    emailBtn.title = "Send email";
-		    emailBtn.style.border = 'none';
-		    emailBtn.addEventListener('click', async () => {
-					await window.grist.selectedTable.update({
-						id: rec.id,
-						fields: { SendEmail: true }
+				if (columnNames.includes('Name')) {
+					// Send email
+				  const emailBtn = document.createElement('button');
+				  //emailBtn.textContent = '📩';
+				  emailBtn.innerHTML = `
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#mail"></use>
+						</svg>
+					`;
+				  emailBtn.title = "Send email";
+				  emailBtn.style.border = 'none';
+				  emailBtn.addEventListener('click', async () => {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { SendEmail: true }
+						});
 					});
-				});
-		    tdActions.appendChild(emailBtn);
+				  tdActions.appendChild(emailBtn);
+		    }
 		  }
 		});
 		
