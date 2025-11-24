@@ -313,6 +313,8 @@
 				  emailBtn.title = "Send email";
 				  emailBtn.style.border = 'none';
 				  emailBtn.addEventListener('click', async () => {
+				    const confirmDelete = confirm(`Send email to "${rec.Name}" ?`);
+				    if (!confirmDelete) return;
 						await window.grist.selectedTable.update({
 							id: rec.id,
 							fields: { SendEmail: true }
