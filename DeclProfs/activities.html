@@ -363,42 +363,40 @@
 		  allRecords = records;  
 		  renderTable(records);
 		});
-
-		// Search people
-		searchInput.addEventListener('input', () => {
-		  const query = searchInput.value.trim().toLowerCase();
-
-		  if (!query) {
-		    renderTable(allRecords); // réaffiche tout
-		    return;
-		  }
-
-		  const filtered = allRecords.filter(rec =>
-		    (rec.Name || "").toLowerCase().includes(query)
-		  );
-
-		  renderTable(filtered);
-		});
 		
-		// Search by year
-		yearInput.addEventListener("input", () => {
-			let val = yearInput.value.trim();
+		function applyFilters() {
+			const nameQuery = searchInput.value.trim().toLowerCase();
+			const yearQuery = yearInput.value.trim();
 
-			// Nettoyer : garder seulement les chiffres
-			val = val.replace(/\D/g, "");
-			yearInput.value = val;   // met à jour ce que voit l'utilisateur
+			let filtered = allRecords;
 
-			if (val.length === 4) {
-				// Filtrer par année
-				filteredRecords = allRecords.filter(rec =>
-				  rec.Start_date && String(rec.Start_date).startsWith(val)
+			// Filtre par nom
+			if (nameQuery) {
+				filtered = filtered.filter(rec =>
+				  (rec.Name || "").toLowerCase().includes(nameQuery)
 				);
-			} else {
-				// Si ce ne sont pas 4 chiffres → reset
-				filteredRecords = allRecords;
 			}
 
-			renderTable(filteredRecords);
+			// Filtre par année (exact 4 chiffres)
+			if (yearQuery.length === 4) {
+				filtered = filtered.filter(rec =>
+				  rec.Start_date && String(rec.Start_date).startsWith(yearQuery)
+				);
+			}
+
+			renderTable(filtered);
+		}
+
+		// Search by Name
+		searchInput.addEventListener('input', () => {
+			applyFilters();
+		});
+		
+		// Search by Year
+		yearInput.addEventListener("input", () => {
+			let val = yearInput.value.trim().replace(/\D/g, "");
+			yearInput.value = val; // garde seulement les chiffres
+			applyFilters();
 		});
 
 	</script>
