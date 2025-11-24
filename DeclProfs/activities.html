@@ -222,8 +222,12 @@
 
 		    // Duplicate
 		    const dupBtn = document.createElement('button');
-		    dupBtn.textContent = '🔁';
-		    dupBtn.title = "Dupliquer";
+		    //dupBtn.textContent = '🔁';
+		    dupBtn.innerHTML = `
+					<svg class="icon" aria-hidden="true">
+						<use xlink:href="#copy"></use>
+					</svg>
+				`;
 		    dupBtn.style.border = 'none';
 		    dupBtn.onclick = async () => {
 		      await window.grist.selectedTable.create({
@@ -239,7 +243,12 @@
 
 		    // Delete
 		    const delBtn = document.createElement('button');
-		    delBtn.textContent = '🗑️';
+		    //delBtn.textContent = '🗑️';
+		    delBtn.innerHTML = `
+					<svg class="icon" aria-hidden="true">
+						<use xlink:href="#delete"></use>
+					</svg>
+				`;
 		    delBtn.title = "Supprimer";
 		    delBtn.style.marginLeft = '5px';
 		    delBtn.style.border = 'none';
@@ -253,7 +262,12 @@
 		    
 		    // Download CSV
 				const dlBtn = document.createElement('button');
-				dlBtn.textContent = '📥';
+				//dlBtn.textContent = '📥';
+		    dlBtn.innerHTML = `
+					<svg class="icon" aria-hidden="true">
+						<use xlink:href="#download"></use>
+					</svg>
+				`;
 				dlBtn.title = "Télécharger en CSV";
 				dlBtn.style.marginLeft = '5px';
 				dlBtn.style.border = 'none';
@@ -290,7 +304,7 @@
 				// Send email
 		    const emailBtn = document.createElement('button');
 		    //emailBtn.textContent = '📩';
-		   emailBtn.innerHTML = `
+		    emailBtn.innerHTML = `
 					<svg class="icon" aria-hidden="true">
 						<use xlink:href="#mail"></use>
 					</svg>
