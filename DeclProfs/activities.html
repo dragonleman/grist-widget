@@ -24,6 +24,12 @@
 		  <use xlink:href="#icon-search"></use>
 		</svg>
 	</div>
+	
+	<div style="margin-bottom: 15px;">
+		<label for="yearInput">Filter by year:</label>
+		<input type="text" id="yearInput" maxlength="4" placeholder="YYYY"
+		       class="form-control" style="width:100px; display:inline-block;">
+	</div>
 
   <div class="p-3" style="text-align:right">
   	<button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button>
@@ -37,6 +43,8 @@
 	<script>
 		const addButton = document.getElementById('addBtn');
 		const searchInput = document.getElementById('searchInput');
+		const yearInput = document.getElementById("yearInput");
+
 	  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 	  let allRecords = [];
 	  
@@ -356,7 +364,7 @@
 		  renderTable(records);
 		});
 
-		// Recherche locale
+		// Search people
 		searchInput.addEventListener('input', () => {
 		  const query = searchInput.value.trim().toLowerCase();
 
@@ -370,6 +378,27 @@
 		  );
 
 		  renderTable(filtered);
+		});
+		
+		// Search by year
+		yearInput.addEventListener("input", () => {
+			let val = yearInput.value.trim();
+
+			// Nettoyer : garder seulement les chiffres
+			val = val.replace(/\D/g, "");
+			yearInput.value = val;   // met à jour ce que voit l'utilisateur
+
+			if (val.length === 4) {
+				// Filtrer par année
+				filteredRecords = allRecords.filter(rec =>
+				  rec.Start_date && String(rec.Start_date).startsWith(val)
+				);
+			} else {
+				// Si ce ne sont pas 4 chiffres → reset
+				filteredRecords = allRecords;
+			}
+
+			renderTable(filteredRecords);
 		});
 
 	</script>
