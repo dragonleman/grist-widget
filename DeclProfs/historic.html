@@ -82,6 +82,12 @@
 					updatedSpan.textContent = "";
 				}
 				updatedCell.appendChild(updatedSpan);
+
+		    // Unit
+		    const unitCell = row.insertCell();
+		    const unitSpan = document.createElement('span');
+				unitSpan.textContent = rec.Unite;
+				unitCell.appendChild(unitSpan);
 		  }
 		};
 
