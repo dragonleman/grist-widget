@@ -18,6 +18,14 @@
     </nav>
   </header>
 
+	<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
+		<input type="text" id="searchInput" placeholder="Search someone..." style="width: 100%; padding-left: 30px; box-sizing: border-box;">
+		<svg class="icon" aria-hidden="true" 
+		     style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
+		  <use xlink:href="#icon-search"></use>
+		</svg>
+	</div>
+
 	<div>
 		<table id="table" class="table table-boxed">
 	    <tr>
@@ -30,9 +38,12 @@
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
+		const searchInput = document.getElementById('searchInput');
+	  let allRecords = []
+
 		window.grist.ready({ requiredAccess: 'read table' });
 
-		window.grist.onRecords((records) => {
+		function renderTable(records) {
 		  const table = document.getElementById('table');
 
 		  // Efface tout sauf l'entête
@@ -65,11 +76,43 @@
 		    // Updated at
 		    const updatedCell = row.insertCell();
 		    const updatedSpan = document.createElement('span');
-				updatedSpan.textContent = rec.UpdatedAt;
+				if (rec.UpdatedAt) {
+					updatedSpan.textContent = new Date(rec.UpdatedAt).toLocaleString("sv-SE");
+				} else {
+					updatedSpan.textContent = "";
+				}
 				updatedCell.appendChild(updatedSpan);
 		  }
 		});
+
+		window.grist.onRecords(records => {
+		  allRecords = records;  
+		  renderTable(records);
+		});
+
+		// Search by Name
+		searchInput.addEventListener('input', () => {
+			const nameQuery = searchInput.value.trim().toLowerCase();
+
+			let filtered = allRecords;
+
+			// Filtre par nom
+			if (nameQuery) {
+				filtered = filtered.filter(rec =>
+				  (rec.Name || "").toLowerCase().includes(nameQuery)
+				);
+			}
+
+			renderTable(filtered);
+		});
+
 	</script>
+	</script>
+
+	<script>
+    svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+    featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+  </script>
 </body>
 </html>
 
