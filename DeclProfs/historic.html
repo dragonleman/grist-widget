@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Activities Declaration</title>
+  <link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+  <link rel="stylesheet" href="css/declprofs.css">
+	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+</head>
+<body>
+  <header role="banner" class="header">
+    <a class="logo" href="#">
+      <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
+    </a>
+    
+    <nav class="ml-auto">
+      <div id="user-info"></div>
+    </nav>
+  </header>
+
+	<div>
+		<table id="table" class="table table-boxed">
+	    <tr>
+	      <th>Name</th>
+	      <th>Email</th>
+	      <th>Updated at</th>
+	    </tr>
+		</table>
+	</div>
+
+	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+	<script>
+		window.grist.ready({ requiredAccess: 'read table' });
+
+		window.grist.onRecords((records) => {
+		  const table = document.getElementById('table');
+
+		  // Efface tout sauf l'entête
+		  while (table.rows.length > 1) table.deleteRow(1);
+
+		  if (!records || records.length === 0) {
+		    const row = table.insertRow();
+		    const cell = row.insertCell();
+		    cell.colSpan = 6;
+		    cell.textContent = 'Aucune donnée trouvée.';
+		    cell.style.textAlign = 'center';
+		    return;
+		  }
+
+		  for (const rec of records) {
+		    const row = table.insertRow();
+
+		    // Name
+		    const nameCell = row.insertCell();
+		    const nameSpan = document.createElement('span');
+				nameSpan.textContent = rec.Name;
+				nameCell.appendChild(nameSpan);
+
+		    // Email
+		    const emailCell = row.insertCell();
+		    const emailSpan = document.createElement('span');
+				emailSpan.textContent = rec.Email;
+				emailCell.appendChild(emailSpan);
+
+		    // Updated at
+		    const updatedCell = row.insertCell();
+		    const updatedSpan = document.createElement('span');
+				updatedSpan.textContent = rec.UpdatedAt;
+				updatedCell.appendChild(updatedSpan);
+		  }
+		});
+	</script>
+</body>
+</html>
+
+
