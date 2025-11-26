@@ -1,8 +1,12 @@
-#table tr:nth-child(even) {
+.cc-window.cc-banner {
+  display: none;
+}
+
+#table_alt tr:nth-child(even) {
 	background-color: #f2f2f2; /* gris clair */
 }
 
-#table tr:nth-child(odd) {
+#table_alt tr:nth-child(odd) {
 	background-color: #ffffff; /* blanc */
 }
 

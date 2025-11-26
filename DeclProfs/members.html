@@ -4,11 +4,6 @@
   <meta charset="utf-8">
   <title>Activities Declaration</title>
   <link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
-  <style>
-		.cc-window.cc-banner {
-		  display: none;
-		}
-	</style>
   <link rel="stylesheet" href="css/declprofs.css">
 	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
 </head>
@@ -23,8 +18,16 @@
     </nav>
   </header>
 
+	<div id="searchDiv" class="mb-3" style="position: relative; max-width: 300px;">
+		<input type="text" id="searchInput" placeholder="Search someone..." style="width: 93.5%; padding-left: 30px; box-sizing: border-box;">
+		<svg class="icon" aria-hidden="true" 
+		     style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
+		  <use xlink:href="#icon-search"></use>
+		</svg>
+	</div>
+
 	<div>
-		<table id="table" class="table table-boxed">
+		<table id="table_alt" class="table table-boxed">
 	    <tr>
 	      <th>Name</th>
 	      <th>Username</th>
@@ -39,7 +42,7 @@
 		window.grist.ready({ requiredAccess: 'read table' });
 
 		window.grist.onRecords((records) => {
-		  const table = document.getElementById('table');
+		  const table = document.getElementById('table_alt');
 
 		  // Efface tout sauf l'entête
 		  while (table.rows.length > 1) table.deleteRow(1);
