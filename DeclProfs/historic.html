@@ -32,6 +32,7 @@
 	      <th>Name</th>
 	      <th>Email</th>
 	      <th>Updated at</th>
+	      <th>Status</th>
 	      <th>Unit</th>
 	    </tr>
 		</table>
@@ -83,6 +84,12 @@
 					updatedSpan.textContent = "";
 				}
 				updatedCell.appendChild(updatedSpan);
+
+		    // Status
+		    const statusCell = row.insertCell();
+		    const statusSpan = document.createElement('span');
+				statusSpan.textContent = rec.Status;
+				statusCell.appendChild(statusSpan);
 
 		    // Unit
 		    const unitCell = row.insertCell();
