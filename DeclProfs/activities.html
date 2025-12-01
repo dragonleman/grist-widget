@@ -353,10 +353,10 @@
 			}) 
 		});
 		
-		window.grist.onRecords(records => {
-		  allRecords = records;  
-		  renderTable(records);
-		});
+		// window.grist.onRecords(records => {
+		//   allRecords = records;  
+		//   renderTable(records);
+		// });
 		
 		function applyFilters() {
 			const nameQuery = searchInput.value.trim().toLowerCase();
@@ -394,8 +394,8 @@
 		});
 		
 		document.addEventListener("DOMContentLoaded", () => {
-  		yearInput.value = new Date().getFullYear();
-  		applyFilters();
+			yearInput.value = new Date().getFullYear();
+			applyFilters();
 		});
 
 	</script>
