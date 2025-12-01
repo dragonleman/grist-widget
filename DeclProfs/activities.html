@@ -48,15 +48,6 @@
 		const searchInput = document.getElementById('searchInput');
 		const yearInput = document.getElementById("yearInput");
 
-		const transColumns = {
-			Name: "Name",
-			Activity: "Activity",
-			Start_date: "Start date",
-			End_date: "End date",
-			Rate_: "Rate",
-			Access: "Access",
-			exception: "Exception"
-		}
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
 	  
@@ -70,7 +61,16 @@
 				console.log("Colonnes disponibles :", columnNames);
 			}
 			
-			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Rate_', 'Access', 'exception'] 
+			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Rate_', 'Access', 'exception']
+			const transColumns = {
+				Name: "Name",
+				Activity: "Activity",
+				Start_date: "Start date",
+				End_date: "End date",
+				Rate_: "Rate",
+				Access: "Access",
+				exception: "Exception"
+			}
   
 		  	const table = document.getElementById('table');
 
@@ -94,7 +94,7 @@
 			      document.getElementById('searchDiv').style.display = 'block';
 			    }
 					const th = document.createElement('th');
-					th.textContent = col;
+					th.textContent = transColumns[col];
 					header.appendChild(th);
 				}
 			}
@@ -110,7 +110,7 @@
 		    if (columnNames.includes('Name')) {
 				  const nameCell = row.insertCell();
 				  const nameSpan = document.createElement('span');
-				  nameSpan.textContent = transColumns[rec.Name];
+				  nameSpan.textContent = rec.Name || '';
 				  nameSpan.style.border = 'none';
 				  nameCell.appendChild(nameSpan);
 		    }
@@ -137,7 +137,7 @@
 				  const startCell = row.insertCell();
 				  const startInput = document.createElement('input');
 				  startInput.type = 'date';
-				  startInput.value = transColumns[rec.Start_date];
+				  startInput.value = rec.Start_date || '';
 				  startInput.style.border = 'none';
 				  startInput.addEventListener('blur', async () => {
 				    if (startInput.value !== rec.Start_date) {
