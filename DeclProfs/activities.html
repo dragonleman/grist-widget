@@ -354,15 +354,15 @@
 		});
 		
 		window.grist.onRecords(records => {
-		  allRecords = records;  
-		  renderTable(records);
+			yearInput.value = new Date().getFullYear();
+			applyFilters();
+		  //allRecords = records;  
+		  //renderTable(records);
 		});
 		
 		function applyFilters() {
 			const nameQuery = searchInput.value.trim().toLowerCase();
 			const yearQuery = yearInput.value.trim();
-
-			alert(yearQuery);
 
 			let filtered = allRecords;
 
@@ -380,8 +380,6 @@
 				);
 			}
 
-			alert(filtered.length);
-
 			renderTable(filtered.length);
 		}
 
@@ -394,11 +392,6 @@
 		yearInput.addEventListener("input", () => {
 			let val = yearInput.value.trim().replace(/\D/g, "");
 			yearInput.value = val; // garde seulement les chiffres
-			applyFilters();
-		});
-		
-		document.addEventListener("DOMContentLoaded", () => {
-			yearInput.value = new Date().getFullYear();
 			applyFilters();
 		});
 
