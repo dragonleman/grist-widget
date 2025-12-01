@@ -373,18 +373,13 @@
 				);
 			}
 
-			alert(filtered);
-
-			//renderTable(filtered.length);
 			renderTable(filtered);
 		}
 		
 		window.grist.onRecords(records => {
 			yearInput.value = new Date().getFullYear();
-			alert(yearInput.value);
 			allRecords = records;
 			applyFilters();
-		  //renderTable(records);
 		});
 
 		// Search by Name
