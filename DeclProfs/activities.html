@@ -48,6 +48,15 @@
 		const searchInput = document.getElementById('searchInput');
 		const yearInput = document.getElementById("yearInput");
 
+		const transColumns = {
+			Name: "Name",
+			Activity: "Activity",
+			Start_date: "Start date",
+			End_date: "End date",
+			Rate_: "Rate",
+			Access: "Access",
+			exception: "Exception"
+		}
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
 	  
@@ -55,29 +64,29 @@
 
 		function renderTable(records) {
 		  
-		  let columnNames = []
-		  if (records.length > 0) {
-		    columnNames = Object.keys(records[0]);
+			let columnNames = []
+			if (records.length > 0) {
+				columnNames = Object.keys(records[0]);
 				console.log("Colonnes disponibles :", columnNames);
 			}
 			
 			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Rate_', 'Access', 'exception'] 
   
-		  const table = document.getElementById('table');
+		  	const table = document.getElementById('table');
 
-		  // Efface tout
-		  while (table.rows.length > 0) table.deleteRow(0);
+			// Efface tout
+			while (table.rows.length > 0) table.deleteRow(0);
 
-		  if (!records || records.length === 0) {
-		    const row = table.insertRow();
-		    const cell = row.insertCell();
-		    cell.colSpan = 6;
-		    cell.textContent = 'Aucune donnée trouvée.';
-		    cell.style.textAlign = 'center';
-		    return;
-		  }
-		  
-		  const header = table.insertRow();
+			if (!records || records.length === 0) {
+				const row = table.insertRow();
+				const cell = row.insertCell();
+				cell.colSpan = 6;
+				cell.textContent = 'Aucune donnée trouvée.';
+				cell.style.textAlign = 'center';
+				return;
+			}
+			
+			const header = table.insertRow();
 		  
 			for (const col of columnNamesAccepted) {
 			  if (columnNames.includes(col)) {
@@ -101,7 +110,7 @@
 		    if (columnNames.includes('Name')) {
 				  const nameCell = row.insertCell();
 				  const nameSpan = document.createElement('span');
-				  nameSpan.textContent = rec.Name || '';
+				  nameSpan.textContent = transColumns[rec.Name];
 				  nameSpan.style.border = 'none';
 				  nameCell.appendChild(nameSpan);
 		    }
@@ -128,7 +137,7 @@
 				  const startCell = row.insertCell();
 				  const startInput = document.createElement('input');
 				  startInput.type = 'date';
-				  startInput.value = rec.Start_date || '';
+				  startInput.value = transColumns[rec.Start_date];
 				  startInput.style.border = 'none';
 				  startInput.addEventListener('blur', async () => {
 				    if (startInput.value !== rec.Start_date) {
