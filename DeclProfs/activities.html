@@ -392,6 +392,11 @@
 			yearInput.value = val; // garde seulement les chiffres
 			applyFilters();
 		});
+		
+		document.addEventListener("DOMContentLoaded", () => {
+  		yearInput.value = new Date().getFullYear();
+  		applyFilters();
+		});
 
 	</script>
 	
