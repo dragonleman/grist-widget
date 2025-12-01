@@ -381,8 +381,8 @@
 		window.grist.onRecords(records => {
 			yearInput.value = new Date().getFullYear();
 			alert(yearInput.value);
+			allRecords = records;
 			applyFilters();
-		  //allRecords = records;  
 		  //renderTable(records);
 		});
 
