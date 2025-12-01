@@ -48,8 +48,8 @@
 		const searchInput = document.getElementById('searchInput');
 		const yearInput = document.getElementById("yearInput");
 
-	  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-	  let allRecords = [];
+		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+		let allRecords = [];
 	  
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -353,13 +353,6 @@
 			}) 
 		});
 		
-		window.grist.onRecords(records => {
-			yearInput.value = new Date().getFullYear();
-			applyFilters();
-		  //allRecords = records;  
-		  //renderTable(records);
-		});
-		
 		function applyFilters() {
 			const nameQuery = searchInput.value.trim().toLowerCase();
 			const yearQuery = yearInput.value.trim();
@@ -380,8 +373,18 @@
 				);
 			}
 
+			alert(filtered);
+
 			renderTable(filtered.length);
 		}
+		
+		window.grist.onRecords(records => {
+			yearInput.value = new Date().getFullYear();
+			alert(yearInput.value);
+			applyFilters();
+		  //allRecords = records;  
+		  //renderTable(records);
+		});
 
 		// Search by Name
 		searchInput.addEventListener('input', () => {
