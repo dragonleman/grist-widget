@@ -21,7 +21,7 @@
 			<input type="text" id="searchInput" placeholder="Search someone..." style="padding-left: 30px; box-sizing: border-box;">
 			<svg class="icon" aria-hidden="true" 
 				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-			<use xlink:href="#user"></use>
+				<use xlink:href="#user"></use>
 			</svg>
 		</div>
 
@@ -29,7 +29,7 @@
 			<input type="text" id="yearInput" placeholder="YYYY" style="padding-left: 30px; box-sizing: border-box;">
 			<svg class="icon" aria-hidden="true" 
 				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-			<use xlink:href="#calendar"></use>
+				<use xlink:href="#calendar"></use>
 			</svg>
 		</div>	
 
@@ -74,14 +74,14 @@
   
 		  	const table = document.getElementById('table');
 
-			// Efface tout
+			// Empty table
 			while (table.rows.length > 0) table.deleteRow(0);
 
 			if (!records || records.length === 0) {
 				const row = table.insertRow();
 				const cell = row.insertCell();
 				cell.colSpan = 6;
-				cell.textContent = 'Aucune donnée trouvée.';
+				cell.textContent = 'No data found.';
 				cell.style.textAlign = 'center';
 				return;
 			}
@@ -89,10 +89,10 @@
 			const header = table.insertRow();
 		  
 			for (const col of columnNamesAccepted) {
-			  if (columnNames.includes(col)) {
-			    if (col == 'Name') {
-			      document.getElementById('searchDiv').style.display = 'block';
-			    }
+			  	if (columnNames.includes(col)) {
+					if (col == 'Name') {
+						document.getElementById('searchDiv').style.display = 'block';
+					}
 					const th = document.createElement('th');
 					th.textContent = transColumns[col];
 					header.appendChild(th);
@@ -103,96 +103,96 @@
 			th.textContent = 'Actions';
 			header.appendChild(th);
 			
-		  for (const rec of records) {
-		    const row = table.insertRow();
+		  	for (const rec of records) {
+		    	const row = table.insertRow();
 		    
-		    // Name
-		    if (columnNames.includes('Name')) {
-				  const nameCell = row.insertCell();
-				  const nameSpan = document.createElement('span');
-				  nameSpan.textContent = rec.Name || '';
-				  nameSpan.style.border = 'none';
-				  nameCell.appendChild(nameSpan);
-		    }
+				// Name
+				if (columnNames.includes('Name')) {
+					const nameCell = row.insertCell();
+					const nameSpan = document.createElement('span');
+					nameSpan.textContent = rec.Name || '';
+					nameSpan.style.border = 'none';
+					nameCell.appendChild(nameSpan);
+				}
 		    
-		    // Activity
-		    if (columnNames.includes('Activity')) {
-				  const activityCell = row.insertCell();
-				  const activityInput = document.createElement('input');
-				  activityInput.value = rec.Activity || '';
-				  activityInput.style.border = 'none';
-				  activityInput.addEventListener('blur', async () => {
-				    if (activityInput.value !== rec.Activity) {
-				      await window.grist.selectedTable.update({
-				        id: rec.id,
-				        fields: { Activity: activityInput.value }
-				      });
-				    }
-				  });
-				  activityCell.appendChild(activityInput);
-		    }
+				// Activity
+				if (columnNames.includes('Activity')) {
+					const activityCell = row.insertCell();
+					const activityInput = document.createElement('input');
+					activityInput.value = rec.Activity || '';
+					activityInput.style.border = 'none';
+					activityInput.addEventListener('blur', async () => {
+						if (activityInput.value !== rec.Activity) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { Activity: activityInput.value }
+						});
+						}
+					});
+					activityCell.appendChild(activityInput);
+				}
 
-		    // Start date
-		    if (columnNames.includes('Start_date')) {
-				  const startCell = row.insertCell();
-				  const startInput = document.createElement('input');
-				  startInput.type = 'date';
-				  startInput.value = rec.Start_date || '';
-				  startInput.style.border = 'none';
-				  startInput.addEventListener('blur', async () => {
-				    if (startInput.value !== rec.Start_date) {
-				      await window.grist.selectedTable.update({
-				        id: rec.id,
-				        fields: { Start_date: startInput.value }
-				      });
-				    }
-				  });
-				  startCell.appendChild(startInput);
-		    }
+				// Start date
+				if (columnNames.includes('Start_date')) {
+					const startCell = row.insertCell();
+					const startInput = document.createElement('input');
+					startInput.type = 'date';
+					startInput.value = rec.Start_date || '';
+					startInput.style.border = 'none';
+					startInput.addEventListener('blur', async () => {
+						if (startInput.value !== rec.Start_date) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { Start_date: startInput.value }
+						});
+						}
+					});
+					startCell.appendChild(startInput);
+				}
 
-		    // End date
-		    if (columnNames.includes('End_date')) {
-				  const endCell = row.insertCell();
-				  const endInput = document.createElement('input');
-				  endInput.type = 'date';
-				  endInput.value = rec.End_date || '';
-				  endInput.style.border = 'none';
-				  endInput.style.backgroundColor = rec.ErrorDate || '';
-				  endInput.addEventListener('blur', async () => {
-				    if (endInput.value !== rec.End_date) {
-				      await window.grist.selectedTable.update({
-				        id: rec.id,
-				        fields: { End_date: endInput.value }
-				      });
-				    }
-				  });
-				  endCell.appendChild(endInput);
-		    }
+				// End date
+				if (columnNames.includes('End_date')) {
+					const endCell = row.insertCell();
+					const endInput = document.createElement('input');
+					endInput.type = 'date';
+					endInput.value = rec.End_date || '';
+					endInput.style.border = 'none';
+					endInput.style.backgroundColor = rec.ErrorDate || '';
+					endInput.addEventListener('blur', async () => {
+						if (endInput.value !== rec.End_date) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { End_date: endInput.value }
+						});
+						}
+					});
+					endCell.appendChild(endInput);
+				}
 
-		    // Rate (%)
-		    if (columnNames.includes('Rate_')) {
-				  const rateCell = row.insertCell();
-				  const rateInput = document.createElement('input');
-				  rateInput.type = 'number';
-				  rateInput.min = 0;
-				  rateInput.max = 100;
-				  rateInput.value = rec.Rate_ || 0;
-				  rateInput.style.border = 'none';
-				  rateInput.style.textAlign = 'right';
-					rateInput.style.width = '60px';
-				  rateInput.addEventListener('blur', async () => {
-				    const newValue = parseFloat(rateInput.value);
-				    if (newValue !== rec.Rate_) {
-				      await window.grist.selectedTable.update({
-				        id: rec.id,
-				        fields: { Rate_: newValue }
-				      });
-				    }
-				  });
-				  rateCell.appendChild(rateInput);
-		    }
+				// Rate (%)
+				if (columnNames.includes('Rate_')) {
+					const rateCell = row.insertCell();
+					const rateInput = document.createElement('input');
+					rateInput.type = 'number';
+					rateInput.min = 0;
+					rateInput.max = 100;
+					rateInput.value = rec.Rate_ || 0;
+					rateInput.style.border = 'none';
+					rateInput.style.textAlign = 'right';
+						rateInput.style.width = '60px';
+					rateInput.addEventListener('blur', async () => {
+						const newValue = parseFloat(rateInput.value);
+						if (newValue !== rec.Rate_) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { Rate_: newValue }
+						});
+						}
+					});
+					rateCell.appendChild(rateInput);
+				}
 
-		    // Access
+		    	// Access
 				if (columnNames.includes('Access')) {
 					const accessCell = row.insertCell();
 					const icon = document.createElement('span');
@@ -243,57 +243,55 @@
 				}
 
 				// Actions (Duplicate + Delete)
-		    const tdActions = row.insertCell();
+				const tdActions = row.insertCell();
 
-		    // Duplicate
-		    const dupBtn = document.createElement('button');
-		    dupBtn.title = "Dupliquer";
-		    //dupBtn.textContent = '🔁';
-		    dupBtn.innerHTML = `
-					<svg class="icon" aria-hidden="true">
-						<use xlink:href="#copy"></use>
-					</svg>
-				`;
-		    dupBtn.style.border = 'none';
-		    dupBtn.onclick = async () => {
-		      await window.grist.selectedTable.create({
-		        fields: {
-		          Activity: rec.Activity,
-		          Start_date: today,
-		          End_date: today,
-		          Rate_: rec.Rate_,
-		        },
-		      });
-		    };
-		    tdActions.appendChild(dupBtn);
+				// Duplicate
+				const dupBtn = document.createElement('button');
+				dupBtn.title = "Dupliquer";
+				//dupBtn.textContent = '🔁';
+				dupBtn.innerHTML = `
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#copy"></use>
+						</svg>
+					`;
+				dupBtn.style.border = 'none';
+				dupBtn.onclick = async () => {
+				await window.grist.selectedTable.create({
+					fields: {
+					Activity: rec.Activity,
+					Start_date: today,
+					End_date: today,
+					Rate_: rec.Rate_,
+					},
+				});
+				};
+				tdActions.appendChild(dupBtn);
 
-		    // Delete
-		    const delBtn = document.createElement('button');
-		    //delBtn.textContent = '🗑️';
-		    delBtn.innerHTML = `
-					<svg class="icon" aria-hidden="true">
-						<use xlink:href="#delete"></use>
-					</svg>
-				`;
-		    delBtn.title = "Supprimer";
-		    delBtn.style.marginLeft = '5px';
-		    delBtn.style.border = 'none';
-		    delBtn.onclick = async () => {
-		      const confirmDelete = confirm(`Supprimer "${rec.Activity}" ?`);
-		      if (!confirmDelete) return;
-		      await window.grist.selectedTable.destroy([rec.id]);
-		      row.remove();
-		    };
-		    tdActions.appendChild(delBtn);
-		    
-		    // Download CSV
+				// Delete
+				const delBtn = document.createElement('button');
+				delBtn.innerHTML = `
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#delete"></use>
+						</svg>
+					`;
+				delBtn.title = "Supprimer";
+				delBtn.style.marginLeft = '5px';
+				delBtn.style.border = 'none';
+				delBtn.onclick = async () => {
+					const confirmDelete = confirm(`Supprimer "${rec.Activity}" ?`);
+					if (!confirmDelete) return;
+					await window.grist.selectedTable.destroy([rec.id]);
+					row.remove();
+				};
+				tdActions.appendChild(delBtn);
+				
+				// Download CSV
 				const dlBtn = document.createElement('button');
-				//dlBtn.textContent = '📥';
-		    dlBtn.innerHTML = `
-					<svg class="icon" aria-hidden="true">
-						<use xlink:href="#download"></use>
-					</svg>
-				`;
+				dlBtn.innerHTML = `
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#download"></use>
+						</svg>
+					`;
 				dlBtn.title = "Télécharger en CSV";
 				dlBtn.style.marginLeft = '5px';
 				dlBtn.style.border = 'none';
@@ -329,36 +327,36 @@
 				
 				if (columnNames.includes('Name')) {
 					// Send email
-				  const emailBtn = document.createElement('button');
-				  //emailBtn.textContent = '📩';
-				  emailBtn.innerHTML = `
+					const emailBtn = document.createElement('button');
+					//emailBtn.textContent = '📩';
+					emailBtn.innerHTML = `
 						<svg class="icon" aria-hidden="true">
 							<use xlink:href="#mail"></use>
 						</svg>
 					`;
-				  emailBtn.title = "Send email";
-				  emailBtn.style.border = 'none';
-				  emailBtn.addEventListener('click', async () => {
-				    const confirmDelete = confirm(`Send email to "${rec.Name}" ?`);
-				    if (!confirmDelete) return;
+					emailBtn.title = "Send email";
+					emailBtn.style.border = 'none';
+					emailBtn.addEventListener('click', async () => {
+					const confirmDelete = confirm(`Send email to "${rec.Name}" ?`);
+					if (!confirmDelete) return;
 						await window.grist.selectedTable.update({
 							id: rec.id,
 							fields: { SendEmail: true }
 						});
 					});
-				  tdActions.appendChild(emailBtn);
-		    }
-		  }
+					tdActions.appendChild(emailBtn);
+				}
+		  	}
 		};
 		
 		addButton.addEventListener('click', async () => {
 			await grist.selectedTable.create({
-			  fields: {
-          Activity: "",
-          Start_date: today,
-          End_date: today,
-          Rate_: 0,
-        },
+			  	fields: {
+					Activity: "",
+					Start_date: today,
+					End_date: today,
+					Rate_: 0,
+				},
 			}) 
 		});
 		

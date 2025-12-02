@@ -34,47 +34,47 @@
 		window.grist.ready({ requiredAccess: 'read table' });
 
 		window.grist.onRecords((records) => {
-		  const table = document.getElementById('table_alt');
+			const table = document.getElementById('table_alt');
 
-		  // Efface tout sauf l'entête
-		  while (table.rows.length > 1) table.deleteRow(1);
+			// Efface tout sauf l'entête
+			while (table.rows.length > 1) table.deleteRow(1);
 
-		  if (!records || records.length === 0) {
-		    const row = table.insertRow();
-		    const cell = row.insertCell();
-		    cell.colSpan = 6;
-		    cell.textContent = 'Aucune donnée trouvée.';
-		    cell.style.textAlign = 'center';
-		    return;
-		  }
+			if (!records || records.length === 0) {
+				const row = table.insertRow();
+				const cell = row.insertCell();
+				cell.colSpan = 6;
+				cell.textContent = 'No data found.';
+				cell.style.textAlign = 'center';
+				return;
+			}
 
-		  for (const rec of records) {
-		    const row = table.insertRow();
+			for (const rec of records) {
+				const row = table.insertRow();
 
-		    // Name
-		    const nameCell = row.insertCell();
-		    const nameSpan = document.createElement('span');
+				// Name
+				const nameCell = row.insertCell();
+				const nameSpan = document.createElement('span');
 				nameSpan.textContent = rec.Name;
 				nameCell.appendChild(nameSpan);
 				
 				// Username
-		    const usernameCell = row.insertCell();
-		    const usernameSpan = document.createElement('span');
+				const usernameCell = row.insertCell();
+				const usernameSpan = document.createElement('span');
 				usernameSpan.textContent = rec.Username;
 				usernameCell.appendChild(usernameSpan);
 
-		    // Email
-		    const emailCell = row.insertCell();
-		    const emailSpan = document.createElement('span');
+				// Email
+				const emailCell = row.insertCell();
+				const emailSpan = document.createElement('span');
 				emailSpan.textContent = rec.Email;
 				emailCell.appendChild(emailSpan);
 
-		    // UserId
-		    const sciperCell = row.insertCell();
-		    const sciperSpan = document.createElement('span');
+				// UserId
+				const sciperCell = row.insertCell();
+				const sciperSpan = document.createElement('span');
 				sciperSpan.textContent = rec.UserId;
 				sciperCell.appendChild(sciperSpan);
-		  }
+			}
 		});
 	</script>
 </body>

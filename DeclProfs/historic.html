@@ -21,7 +21,7 @@
 			<input type="text" id="searchInput" placeholder="Search someone..." style="width: 93.5%; padding-left: 30px; box-sizing: border-box;">
 			<svg class="icon" aria-hidden="true" 
 				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-			<use xlink:href="#user"></use>
+				<use xlink:href="#user"></use>
 			</svg>
 		</div>
 
@@ -41,43 +41,43 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
 		const searchInput = document.getElementById('searchInput');
-	  let allRecords = []
+	  	let allRecords = []
 
 		window.grist.ready({ requiredAccess: 'read table' });
 
 		function renderTable(records) {
-		  const table = document.getElementById('table_alt');
+			const table = document.getElementById('table_alt');
 
-		  // Efface tout sauf l'entête
-		  while (table.rows.length > 1) table.deleteRow(1);
+			// Efface tout sauf l'entête
+			while (table.rows.length > 1) table.deleteRow(1);
 
-		  if (!records || records.length === 0) {
-		    const row = table.insertRow();
-		    const cell = row.insertCell();
-		    cell.colSpan = 6;
-		    cell.textContent = 'Aucune donnée trouvée.';
-		    cell.style.textAlign = 'center';
-		    return;
-		  }
+			if (!records || records.length === 0) {
+				const row = table.insertRow();
+				const cell = row.insertCell();
+				cell.colSpan = 6;
+				cell.textContent = 'No data found.';
+				cell.style.textAlign = 'center';
+				return;
+			}
 
-		  for (const rec of records) {
-		    const row = table.insertRow();
+			for (const rec of records) {
+				const row = table.insertRow();
 
-		    // Name
-		    const nameCell = row.insertCell();
-		    const nameSpan = document.createElement('span');
+				// Name
+				const nameCell = row.insertCell();
+				const nameSpan = document.createElement('span');
 				nameSpan.textContent = rec.Name;
 				nameCell.appendChild(nameSpan);
 
-		    // Email
-		    const emailCell = row.insertCell();
-		    const emailSpan = document.createElement('span');
+				// Email
+				const emailCell = row.insertCell();
+				const emailSpan = document.createElement('span');
 				emailSpan.textContent = rec.Email;
 				emailCell.appendChild(emailSpan);
 
-		    // Updated at
-		    const updatedCell = row.insertCell();
-		    const updatedSpan = document.createElement('span');
+				// Updated at
+				const updatedCell = row.insertCell();
+				const updatedSpan = document.createElement('span');
 				if (rec.UpdatedAt) {
 					updatedSpan.textContent = new Date(rec.UpdatedAt).toLocaleString("sv-SE");
 				} else {
@@ -85,23 +85,23 @@
 				}
 				updatedCell.appendChild(updatedSpan);
 
-		    // Status
-		    const statusCell = row.insertCell();
-		    const statusSpan = document.createElement('span');
+				// Status
+				const statusCell = row.insertCell();
+				const statusSpan = document.createElement('span');
 				statusSpan.textContent = rec.Status;
 				statusCell.appendChild(statusSpan);
 
-		    // Unit
-		    const unitCell = row.insertCell();
-		    const unitSpan = document.createElement('span');
+				// Unit
+				const unitCell = row.insertCell();
+				const unitSpan = document.createElement('span');
 				unitSpan.textContent = rec.Unit;
 				unitCell.appendChild(unitSpan);
-		  }
+			}
 		};
 
 		window.grist.onRecords(records => {
-		  allRecords = records;  
-		  renderTable(records);
+			allRecords = records;  
+			renderTable(records);
 		});
 
 		// Search by Name
@@ -110,10 +110,10 @@
 
 			let filtered = allRecords;
 
-			// Filtre par nom
+			// Filter by name
 			if (nameQuery) {
 				filtered = filtered.filter(rec =>
-				  (rec.Name || "").toLowerCase().includes(nameQuery)
+					(rec.Name || "").toLowerCase().includes(nameQuery)
 				);
 			}
 
