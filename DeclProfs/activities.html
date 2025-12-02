@@ -8,36 +8,38 @@
 	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
 </head>
 <body>
-  <header class="header header-light">
-	<div class="header-light-content">
-		<a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
-		<p class="site-title"><a href="#">Professor outside activities</a></p>
-		<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
-	</div>
-  </header>
+  	<header class="header header-light">
+		<div class="header-light-content">
+			<a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
+			<p class="site-title"><a href="#">Professor outside activities</a></p>
+			<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+		</div>
+  	</header>
   
-	<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
-		<input type="text" id="searchInput" placeholder="Search someone..." style="padding-left: 30px; box-sizing: border-box;">
-		<svg class="icon" aria-hidden="true" 
-		     style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-		  <use xlink:href="#user"></use>
-		</svg>
-	</div>
+  	<div class="main-container mb-4">
+		<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
+			<input type="text" id="searchInput" placeholder="Search someone..." style="padding-left: 30px; box-sizing: border-box;">
+			<svg class="icon" aria-hidden="true" 
+				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
+			<use xlink:href="#user"></use>
+			</svg>
+		</div>
 
-	<div class="my-1" style="position: relative; max-width: 300px;">
-		<input type="text" id="yearInput" placeholder="YYYY" style="padding-left: 30px; box-sizing: border-box;">
-		<svg class="icon" aria-hidden="true" 
-		     style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-		  <use xlink:href="#calendar"></use>
-		</svg>
-	</div>	
+		<div class="my-1" style="position: relative; max-width: 300px;">
+			<input type="text" id="yearInput" placeholder="YYYY" style="padding-left: 30px; box-sizing: border-box;">
+			<svg class="icon" aria-hidden="true" 
+				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
+			<use xlink:href="#calendar"></use>
+			</svg>
+		</div>	
 
-  <div class="p-3" style="text-align:right">
-  	<button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button>
-  </div>
+		<div class="p-3" style="text-align:right">
+			<button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button>
+		</div>
 
-	<div>
-		<table id="table" class="table table-boxed"></table>
+		<div>
+			<table id="table" class="table table-boxed"></table>
+		</div>
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
