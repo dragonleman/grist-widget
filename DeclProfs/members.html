@@ -8,33 +8,33 @@
 	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
 </head>
 <body>
-  <header role="banner" class="header">
-    <a class="logo" href="#">
-      <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
-    </a>
-    
-    <nav class="ml-auto">
-      <div id="user-info"></div>
-    </nav>
-  </header>
+  	<header class="header header-light my-2">
+		<div class="header-light-content">
+			<a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
+			<p class="site-title"><a href="#">Professor outside activities</a></p>
+			<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+		</div>
+  	</header>
+  
+  	<div class="main-container m-4">
+		<div id="searchDiv" class="mb-3" style="position: relative; max-width: 300px;">
+			<input type="text" id="searchInput" placeholder="Search someone..." style="width: 93.5%; padding-left: 30px; box-sizing: border-box;">
+			<svg class="icon" aria-hidden="true" 
+				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
+			<use xlink:href="#user"></use>
+			</svg>
+		</div>
 
-	<div id="searchDiv" class="mb-3" style="position: relative; max-width: 300px;">
-		<input type="text" id="searchInput" placeholder="Search someone..." style="width: 93.5%; padding-left: 30px; box-sizing: border-box;">
-		<svg class="icon" aria-hidden="true" 
-		     style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-		  <use xlink:href="#user"></use>
-		</svg>
-	</div>
-
-	<div>
-		<table id="table_alt" class="table table-boxed">
-	    <tr>
-	      <th>Name</th>
-	      <th>Username</th>
-	      <th>Email</th>
-	      <th>Sciper</th>
-	    </tr>
-		</table>
+		<div>
+			<table id="table_alt" class="table table-boxed">
+				<tr>
+					<th>Name</th>
+					<th>Username</th>
+					<th>Email</th>
+					<th>Sciper</th>
+				</tr>
+			</table>
+		</div>
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
