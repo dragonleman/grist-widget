@@ -90,7 +90,8 @@
 				return;
 			}
 			
-			const header = table.insertRow();
+			const header = table.createTHead();
+			const headerRow = header.insertRow();
 		  
 			for (const col of columnNamesAccepted) {
 			  	if (columnNames.includes(col)) {
@@ -99,7 +100,7 @@
 					}
 					const th = document.createElement('th');
 					th.textContent = transColumns[col];
-					header.appendChild(th);
+					headerRow.appendChild(th);
 				}
 			}
 			
