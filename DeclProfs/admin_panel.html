@@ -72,27 +72,25 @@
 		window.grist.ready({ requiredAccess: 'read table' });
 
 		window.grist.onRecords(records => {
-			for (const rec of records) {
-				const row = table.insertRow();
+            const rec = records[0]
 
-                // Exception (Switch)
-                excBtn.checked = Boolean(rec.exception);
+            // Exception (Switch)
+            excBtn.checked = Boolean(rec.exception);
 
-                excBtn.addEventListener('change', async () => {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: { exception: excBtn.checked }
-                    });
+            excBtn.addEventListener('change', async () => {
+                await window.grist.selectedTable.update({
+                    id: rec.id,
+                    fields: { exception: excBtn.checked }
                 });
+            });
 
-				// Send Ecmails
-				sendmailBtn.addEventListener('change', async () => {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: { exception: sendmailBtn.checked }
-                    });
+            // Send Ecmails
+            sendmailBtn.addEventListener('change', async () => {
+                await window.grist.selectedTable.update({
+                    id: rec.id,
+                    fields: { exception: sendmailBtn.checked }
                 });
-			}
+            });
         });
 	</script>
 	</script>
