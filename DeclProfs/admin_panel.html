@@ -69,7 +69,7 @@
         const excBtn = document.getElementById('exceptionSwitch');
         const sendmailBtn = document.getElementById('sendmailButton');
 
-		window.grist.ready({ requiredAccess: 'read table' });
+		window.grist.ready({ requiredAccess: 'full' });
 
 		window.grist.onRecords(records => {
             const rec = records[0];
@@ -85,10 +85,10 @@
             });
 
             // Send Emails
-            sendmailBtn.addEventListener('change', async () => {
+            sendmailBtn.addEventListener('click', async () => {
                 await window.grist.selectedTable.update({
                     id: rec.id,
-                    fields: { exception: sendmailBtn.checked }
+                    fields: { SendEmails: true }
                 });
             });
         });
