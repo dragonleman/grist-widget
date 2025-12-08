@@ -38,7 +38,7 @@
                 <div class="col-sm">
                     <div class="custom-control custom-switch">
                         <input id="exceptionSwitch" type="checkbox" class="custom-control-input" style="width: 200px">
-                        <label class="custom-control-label" for="exceptionSwitch">Activate Exception</label>
+                        <label class="custom-control-label" for="exceptionSwitch">Exception</label>
                     </div>
                 </div>
                 <div class="col-sm">
@@ -72,7 +72,9 @@
 		window.grist.ready({ requiredAccess: 'read table' });
 
 		window.grist.onRecords(records => {
-            const rec = records[0]
+            const rec = records[0];
+
+            alert(rec);
 
             // Exception (Switch)
             excBtn.checked = Boolean(rec.exception);
@@ -84,7 +86,7 @@
                 });
             });
 
-            // Send Ecmails
+            // Send Emails
             sendmailBtn.addEventListener('change', async () => {
                 await window.grist.selectedTable.update({
                     id: rec.id,
