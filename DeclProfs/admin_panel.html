@@ -53,7 +53,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm">
-                    <p>Sen emails to all people that have not yet filled their forms.</p>
+                    <p>Send emails to all people that have not yet filled their forms.</p>
                 </div>
                 <div class="col-sm">
                     <button id="sendmailButton" class="btn btn-primary">Send emails</button>
@@ -89,7 +89,7 @@
             sendmailBtn.addEventListener('click', async () => {
                 await window.grist.selectedTable.update({
                     id: rec.id,
-                    fields: { SendEmails: true }
+                    fields: { sendEmails: true }
                 });
             });
         });
