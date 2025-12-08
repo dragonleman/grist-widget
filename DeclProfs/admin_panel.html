@@ -38,7 +38,7 @@
                 <div class="col-sm">
                     <div class="custom-control custom-switch">
                         <input id="exceptionSwitch" type="checkbox" class="custom-control-input" style="width: 200px">
-                        <label class="custom-control-label" for="custom-switch12">Activate Exception</label>
+                        <label class="custom-control-label" for="exceptionSwitch">Activate Exception</label>
                     </div>
                 </div>
                 <div class="col-sm">
@@ -55,7 +55,7 @@
                 <div class="col-sm">
                 </div>
                 <div class="col-sm">
-                    <button id="sendemailButton" class="btn btn-primary">Send emails</button>
+                    <button id="sendmailButton" class="btn btn-primary">Send emails</button>
                 </div>
                 <div class="col-sm">
                 </div>
@@ -67,7 +67,7 @@
 	<script>
 		const dateInput = document.getElementById('dateInput');
         const excBtn = document.getElementById('exceptionSwitch');
-        const sendmailBtn = document.getElementById('sendemailButton');
+        const sendmailBtn = document.getElementById('sendmailButton');
 
 		window.grist.ready({ requiredAccess: 'read table' });
 
