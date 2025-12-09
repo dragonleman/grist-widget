@@ -146,10 +146,10 @@
 					startInput.style.border = 'none';
 					startInput.addEventListener('blur', async () => {
 						if (startInput.value !== rec.Start_date) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Start_date: startInput.value }
-						});
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { Start_date: startInput.value }
+							});
 						}
 					});
 					startCell.appendChild(startInput);
@@ -165,10 +165,10 @@
 					endInput.style.backgroundColor = rec.ErrorDate || '';
 					endInput.addEventListener('blur', async () => {
 						if (endInput.value !== rec.End_date) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { End_date: endInput.value }
-						});
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { End_date: endInput.value }
+							});
 						}
 					});
 					endCell.appendChild(endInput);
@@ -188,10 +188,10 @@
 					rateInput.addEventListener('blur', async () => {
 						const newValue = parseFloat(rateInput.value);
 						if (newValue !== rec.Rate_) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Rate_: newValue }
-						});
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { Rate_: newValue }
+							});
 						}
 					});
 					rateCell.appendChild(rateInput);

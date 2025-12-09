@@ -78,12 +78,14 @@
             // End date
             dateInput.value = rec.End_date || '';
 
+            alert(dateInput.value);
+
             dateInput.addEventListener('blur', async () => {
                 if (dateInput.value !== rec.End_date) {
-                await window.grist.selectedTable.update({
-                    id: rec.id,
-                    fields: { End_date: dateInput.value }
-                });
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: { End_date: dateInput.value }
+                    });
                 }
             });
 
