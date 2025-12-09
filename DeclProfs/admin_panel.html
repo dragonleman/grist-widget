@@ -75,6 +75,19 @@
 		window.grist.onRecords(records => {
             const rec = records[0];
 
+
+            // End date
+            dateInput.value = rec.End_date || '';
+
+            dateInput.addEventListener('blur', async () => {
+                if (dateInput.value !== rec.End_date) {
+                await window.grist.selectedTable.update({
+                    id: rec.id,
+                    fields: { End_date: dateInput.value }
+                });
+                }
+            });
+
             // Exception (Switch)
             excBtn.checked = Boolean(rec.exception);
 
