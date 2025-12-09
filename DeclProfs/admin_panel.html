@@ -75,6 +75,8 @@
 		window.grist.onRecords(records => {
             const rec = records[0];
 
+            alert(rec);
+
             // End date
             dateInput.value = rec.End_date || '';
 
