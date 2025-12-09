@@ -32,7 +32,7 @@
                 <div class="col-sm">
                     <p>End date of exception</p>
                     <div class="datepicker-wrapper">
-                        <input id="dateInput" type="text" class="datepicker">
+                        <input id="dateInput" type="date">
                     </div>
                 </div>
                 <div class="col-sm">
@@ -74,7 +74,6 @@
 
 		window.grist.onRecords(records => {
             const rec = records[0];
-
 
             // End date
             dateInput.value = rec.End_date || '';
