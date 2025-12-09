@@ -75,12 +75,8 @@
 		window.grist.onRecords(records => {
             const rec = records[0];
 
-            alert(JSON.stringify(rec, null, 2))
-
             // End date
             dateInput.value = rec.End_date || '';
-
-            alert(rec.End_date);
 
             dateInput.addEventListener('blur', async () => {
                 if (dateInput.value !== rec.End_date) {
