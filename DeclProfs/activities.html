@@ -126,6 +126,7 @@
 					const activityInput = document.createElement('input');
 					activityInput.value = rec.Activity || '';
 					activityInput.style.border = 'none';
+					activityInput.style.width = '100%';
 					activityInput.addEventListener('blur', async () => {
 						if (activityInput.value !== rec.Activity) {
 						await window.grist.selectedTable.update({
