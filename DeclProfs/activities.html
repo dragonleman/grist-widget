@@ -363,7 +363,7 @@
 					const startYear = new Date(rec.Start_date).getFullYear();
 					const endYear = rec.End_date
 						? new Date(rec.End_date).getFullYear()
-						: startYear; // ou Infinity si fin ouverte
+						: Infinity;
 
 					return year >= startYear && year <= endYear;
 				});
