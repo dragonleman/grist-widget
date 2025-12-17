@@ -65,13 +65,12 @@
 				console.log("Colonnes disponibles :", columnNames);
 			}
 			
-			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Rate_', 'Access']
+			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access']
 			const transColumns = {
 				Name: "Name",
 				Activity: "Activity",
 				Start_date: "Start date",
 				End_date: "End date",
-				Rate_: "Rate",
 				Access: "Access",
 				exception: "Exception"
 			}
@@ -175,29 +174,6 @@
 					endCell.appendChild(endInput);
 				}
 
-				// Rate (%)
-				if (columnNames.includes('Rate_')) {
-					const rateCell = row.insertCell();
-					const rateInput = document.createElement('input');
-					rateInput.type = 'number';
-					rateInput.min = 0;
-					rateInput.max = 100;
-					rateInput.value = rec.Rate_ || 0;
-					rateInput.style.border = 'none';
-					rateInput.style.textAlign = 'right';
-						rateInput.style.width = '60px';
-					rateInput.addEventListener('blur', async () => {
-						const newValue = parseFloat(rateInput.value);
-						if (newValue !== rec.Rate_) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { Rate_: newValue }
-							});
-						}
-					});
-					rateCell.appendChild(rateInput);
-				}
-
 		    	// Access
 				if (columnNames.includes('Access')) {
 					const accessCell = row.insertCell();
@@ -264,10 +240,9 @@
 				dupBtn.onclick = async () => {
 				await window.grist.selectedTable.create({
 					fields: {
-					Activity: rec.Activity,
-					Start_date: today,
-					End_date: today,
-					Rate_: rec.Rate_,
+						Activity: rec.Activity,
+						Start_date: today,
+						End_date: today,
 					},
 				});
 				};
@@ -361,7 +336,6 @@
 					Activity: "",
 					Start_date: today,
 					End_date: today,
-					Rate_: 0,
 				},
 			}) 
 		});
@@ -381,9 +355,18 @@
 
 			// Filtre par année (exact 4 chiffres)
 			if (yearQuery.length === 4) {
-				filtered = filtered.filter(rec =>
-				  rec.Start_date && String(rec.Start_date).startsWith(yearQuery)
-				);
+				const year = parseInt(yearQuery, 10);
+
+				filtered = filtered.filter(rec => {
+					if (!rec.Start_date) return false;
+
+					const startYear = new Date(rec.Start_date).getFullYear();
+					const endYear = rec.End_date
+						? new Date(rec.End_date).getFullYear()
+						: startYear; // ou Infinity si fin ouverte
+
+					return year >= startYear && year <= endYear;
+				});
 			}
 
 			renderTable(filtered);
