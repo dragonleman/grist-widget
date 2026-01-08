@@ -56,6 +56,18 @@
 
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
+		
+		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins']
+		const transColumns = {
+			Name: "Name",
+			Activity: "Activity",
+			Start_date: "Start date",
+			End_date: "End date",
+			Access: "Access",
+			exception: "Exception",
+			Comments: "Comments",
+			Comments_admins: "Comments admins"
+		}
 	  
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -65,21 +77,9 @@
 			if (records.length > 0) {
 				columnNames = Object.keys(records[0]);
 				console.log("Colonnes disponibles :", columnNames);
-			}
-			
-			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins']
-			const transColumns = {
-				Name: "Name",
-				Activity: "Activity",
-				Start_date: "Start date",
-				End_date: "End date",
-				Access: "Access",
-				exception: "Exception",
-				Comments: "Comments",
-				Comments_admins: "Comments admins"
-			}
-  
-		  	const table = document.getElementById('table');
+			}  
+		  
+		  const table = document.getElementById('table');
 
 			// Empty table
 			while (table.rows.length > 0) table.deleteRow(0);
