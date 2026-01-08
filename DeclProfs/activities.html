@@ -189,7 +189,7 @@
 				if (columnNames.includes('Comments')) {
 					const commentsCell = row.insertCell();
 					const commentsInput = document.createElement('input');
-					commentsInput.value = rec.Activity || '';
+					commentsInput.value = rec.Comments || '';
 					commentsInput.style.border = 'none';
 					commentsInput.style.width = '100%';
 					commentsInput.addEventListener('blur', async () => {
