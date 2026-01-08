@@ -437,14 +437,29 @@
 				return;
 			}
 
-			const keys = Object.keys(records[0]);
+			// Colonnes réellement présentes
+			const availableColumns = columnNamesAccepted.filter(col =>
+				records.some(r => r[col] !== undefined)
+			);
+
+			if (availableColumns.length === 0) {
+				alert("No valid columns to export");
+				return;
+			}
 
 			const csvRows = [];
-			csvRows.push(keys.join(","));
 
+			// Header (avec noms traduits si dispo)
+			csvRows.push(
+				availableColumns
+				  .map(col => `"${transColumns?.[col] || col}"`)
+				  .join(",")
+			);
+
+			// Rows
 			for (const rec of records) {
-				const row = keys.map(k =>
-				  `"${String(rec[k] ?? "").replace(/"/g, '""')}"`
+				const row = availableColumns.map(col =>
+				  `"${String(rec[col] ?? "").replace(/"/g, '""')}"`
 				);
 				csvRows.push(row.join(","));
 			}
