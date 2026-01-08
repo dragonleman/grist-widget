@@ -65,14 +65,15 @@
 				console.log("Colonnes disponibles :", columnNames);
 			}
 			
-			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access']
+			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments']
 			const transColumns = {
 				Name: "Name",
 				Activity: "Activity",
 				Start_date: "Start date",
 				End_date: "End date",
 				Access: "Access",
-				exception: "Exception"
+				exception: "Exception",
+				Comments: "Comments"
 			}
   
 		  	const table = document.getElementById('table');
@@ -174,7 +175,7 @@
 					endCell.appendChild(endInput);
 				}
 
-		    	// Access
+		    // Access
 				if (columnNames.includes('Access')) {
 					const accessCell = row.insertCell();
 					const icon = document.createElement('span');
@@ -183,6 +184,25 @@
 					icon.textContent = rec.Access;
 					accessCell.appendChild(icon);
 				}
+				
+				// Comments
+				if (columnNames.includes('Comments')) {
+					const commentsCell = row.insertCell();
+					const commentsInput = document.createElement('input');
+					commentsInput.value = rec.Activity || '';
+					commentsInput.style.border = 'none';
+					commentsInput.style.width = '100%';
+					commentsInput.addEventListener('blur', async () => {
+						if (commentsInput.value !== rec.Comments) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { Comments: commentsInput.value }
+						});
+						}
+					});
+					commentsCell.appendChild(commentsInput);
+				}
+				
 				/*
 				// Exception
 				if (columnNames.includes('exception')) {
