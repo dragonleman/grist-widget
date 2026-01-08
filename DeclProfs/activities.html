@@ -39,6 +39,7 @@
 
 		<div class="p-3" style="text-align:right">
 			<button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button>
+			<button id="downloadAllBtn" class="btn btn-secondary btn-sm ml-2">Download CSV</button>
 		</div>
 
 		<div>
@@ -49,6 +50,7 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
 		const addButton = document.getElementById('addBtn');
+		const downloadAllBtn = document.getElementById('downloadAllBtn');
 		const searchInput = document.getElementById('searchInput');
 		const yearInput = document.getElementById("yearInput");
 
@@ -427,6 +429,65 @@
 			let val = yearInput.value.trim().replace(/\D/g, "");
 			yearInput.value = val; // garde seulement les chiffres
 			applyFilters();
+		});
+		
+		function downloadCSV(records, filename = "activities.csv") {
+			if (!records || records.length === 0) {
+				alert("No data to export");
+				return;
+			}
+
+			const keys = Object.keys(records[0]);
+
+			const csvRows = [];
+			csvRows.push(keys.join(","));
+
+			for (const rec of records) {
+				const row = keys.map(k =>
+				  `"${String(rec[k] ?? "").replace(/"/g, '""')}"`
+				);
+				csvRows.push(row.join(","));
+			}
+
+			const csvContent = csvRows.join("\n");
+			const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+			const link = document.createElement("a");
+			link.href = URL.createObjectURL(blob);
+			link.download = filename;
+			link.click();
+
+			URL.revokeObjectURL(link.href);
+		}
+		
+		downloadAllBtn.addEventListener("click", () => {
+			const nameQuery = searchInput.value.trim().toLowerCase();
+			const yearQuery = yearInput.value.trim();
+
+			let filtered = allRecords;
+
+			if (nameQuery) {
+				filtered = filtered.filter(rec =>
+				  (rec.Name || "").toLowerCase().includes(nameQuery)
+				);
+			}
+
+			if (yearQuery.length === 4) {
+				const year = parseInt(yearQuery, 10);
+
+				filtered = filtered.filter(rec => {
+				  if (!rec.Start_date) return false;
+
+				  const startYear = new Date(rec.Start_date).getFullYear();
+				  const endYear = rec.End_date
+				    ? new Date(rec.End_date).getFullYear()
+				    : Infinity;
+
+				  return year >= startYear && year <= endYear;
+				});
+			}
+
+			downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
 		});
 
 	</script>
