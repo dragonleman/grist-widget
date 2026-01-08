@@ -65,7 +65,7 @@
 				console.log("Colonnes disponibles :", columnNames);
 			}
 			
-			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments']
+			const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins']
 			const transColumns = {
 				Name: "Name",
 				Activity: "Activity",
@@ -73,7 +73,8 @@
 				End_date: "End date",
 				Access: "Access",
 				exception: "Exception",
-				Comments: "Comments"
+				Comments: "Comments",
+				Comments_admins: "Comments admins"
 			}
   
 		  	const table = document.getElementById('table');
@@ -203,6 +204,24 @@
 					commentsCell.appendChild(commentsInput);
 				}
 				
+				// Comments admins
+				if (columnNames.includes('Comments_admins')) {
+					const commentsadminsCell = row.insertCell();
+					const commentsadminsInput = document.createElement('input');
+					commentsadminsInput.value = rec.Comments_admins || '';
+					commentsadminsInput.style.border = 'none';
+					commentsadminsInput.style.width = '100%';
+					commentsadminsInput.addEventListener('blur', async () => {
+						if (commentsadminsInput.value !== rec.Comments) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { Comments_admins: commentsadminsInput.value }
+						});
+						}
+					});
+					commentsadminsCell.appendChild(commentsadminsInput);
+				}
+
 				/*
 				// Exception
 				if (columnNames.includes('exception')) {
