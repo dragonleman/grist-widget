@@ -270,11 +270,23 @@
 				// Updated at
 				if (columnNames.includes('UpdatedAt')) {
 					const updatedatCell = row.insertCell();
-					const updatedatSpan = document.createElement('span');
-					updatedatSpan.value = rec.UpdatedAt || '';
-					updatedatSpan.style.border = 'none';
-					updatedatSpan.style.width = '100%';
-					updatedatCell.appendChild(updatedatSpan);
+
+					const updatedatInput = document.createElement('input');
+					updatedatInput.type = 'date';
+
+					updatedatInput.value = rec.UpdatedAt
+						? new Date(rec.UpdatedAt).toISOString().substring(0, 10)
+						: '';
+
+					updatedatInput.readOnly = true;     // empêche la saisie
+					updatedatInput.disabled = true;     // empêche aussi le date picker
+
+					updatedatInput.style.border = 'none';
+					updatedatInput.style.background = 'transparent';
+					updatedatInput.style.width = '100%';
+					updatedatInput.style.pointerEvents = 'none'; // bloque toute interaction
+
+					updatedatCell.appendChild(updatedatInput);
 				}
 
 				// Actions (Duplicate + Delete)
