@@ -57,7 +57,7 @@
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
 		
-		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins']
+		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt']
 		const transColumns = {
 			Name: "Name",
 			Activity: "Activity",
@@ -66,7 +66,8 @@
 			Access: "Access",
 			exception: "Exception",
 			Comments: "Comments",
-			Comments_admins: "Comments admins"
+			Comments_admins: "Comments admins",
+			UpdatedAt: "Updated at"
 		}
 	  
 		window.grist.ready({ requiredAccess: 'full' });
@@ -178,7 +179,7 @@
 					endCell.appendChild(endInput);
 				}
 
-		    // Access
+		    	// Access
 				if (columnNames.includes('Access')) {
 					const accessCell = row.insertCell();
 					const icon = document.createElement('span');
@@ -367,6 +368,16 @@
 						});
 					});
 					tdActions.appendChild(emailBtn);
+				}
+
+				// Updated at
+				if (columnNames.includes('UpdatedAt')) {
+					const updatedatCell = row.insertCell();
+					const updatedatSpan = document.createElement('span');
+					updatedatSpan.value = rec.UpdatedAt || '';
+					updatedatSpan.style.border = 'none';
+					updatedatSpan.style.width = '100%';
+					updatedatCell.appendChild(updatedatSpan);
 				}
 		  	}
 		};
