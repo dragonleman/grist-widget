@@ -266,6 +266,17 @@
 					});
 				}
 				*/
+
+				// Updated at
+				if (columnNames.includes('UpdatedAt')) {
+					const updatedatCell = row.insertCell();
+					const updatedatSpan = document.createElement('span');
+					updatedatSpan.value = rec.UpdatedAt || '';
+					updatedatSpan.style.border = 'none';
+					updatedatSpan.style.width = '100%';
+					updatedatCell.appendChild(updatedatSpan);
+				}
+
 				// Actions (Duplicate + Delete)
 				const tdActions = row.insertCell();
 
@@ -368,16 +379,6 @@
 						});
 					});
 					tdActions.appendChild(emailBtn);
-				}
-
-				// Updated at
-				if (columnNames.includes('UpdatedAt')) {
-					const updatedatCell = row.insertCell();
-					const updatedatSpan = document.createElement('span');
-					updatedatSpan.value = rec.UpdatedAt || '';
-					updatedatSpan.style.border = 'none';
-					updatedatSpan.style.width = '100%';
-					updatedatCell.appendChild(updatedatSpan);
 				}
 		  	}
 		};
