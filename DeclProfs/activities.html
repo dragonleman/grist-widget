@@ -80,7 +80,7 @@
 				console.log("Colonnes disponibles :", columnNames);
 			}  
 		  
-		  const table = document.getElementById('table');
+		  	const table = document.getElementById('table');
 
 			// Empty table
 			while (table.rows.length > 0) table.deleteRow(0);
@@ -528,6 +528,10 @@
 
 			downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
 		});
+
+		const currentUser = window.grist.docApi.fetchTable("CurrentUser");
+		people = currentUser.records;
+		alert(people);
 
 	</script>
 	
