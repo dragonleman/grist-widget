@@ -529,10 +529,11 @@
 			downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
 		});
 
-		const currentUser = window.grist.docApi.fetchTable("CurrentUser");
-		alert(currentUser);
+		(async function() {
+		const currentUser = await window.grist.docApi.fetchTable("CurrentUser");
 		people = currentUser.records;
-		alert(people);
+		alert("CurrentUser loaded", people);
+		})();
 
 	</script>
 	
