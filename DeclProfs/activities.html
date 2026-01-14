@@ -530,9 +530,9 @@
 		});
 
 		(async function() {
-		const currentUser = await window.grist.docApi.fetchTable("CurrentUser");
-		people = currentUser.records;
-		alert("CurrentUser loaded", people);
+			const currentUser = await window.grist.docApi.fetchTable("Disclosure");
+			people = currentUser.records;
+			alert("CurrentUser loaded\n" + JSON.stringify(people, null, 2));
 		})();
 
 	</script>
