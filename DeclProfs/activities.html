@@ -82,6 +82,7 @@
 		grist.ready({ requiredAccess: 'full', getSelectedRows: true });
 
 		function onRowClick(record) {
+			alert("Coucou");
 			if (!record) return;
 			window.grist.setSelectedRows([record.id]);
 		}
