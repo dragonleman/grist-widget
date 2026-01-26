@@ -469,7 +469,6 @@
 		});
 
 		function selectRowFromWidget(record) {
-			alert(record);
 			if (!record) return;
 
 			selectedId = record.id;
@@ -501,6 +500,7 @@
 		});
 
 		grist.onRecord(record => {
+			alert(record);
 			if (!record) return;
 
 			selectedId = record.id;
