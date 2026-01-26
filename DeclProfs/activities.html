@@ -79,7 +79,7 @@
 			UpdatedAt: "Updated at"
 		}
 	  
-		window.grist.ready({ requiredAccess: 'full' });
+		grist.ready({ requiredAccess: 'full', getSelectedRows: true });
 
 		function onRowClick(record) {
 			if (!record) return;
