@@ -38,7 +38,6 @@
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	
-	<!--
 	<script>
 		const addButton = document.getElementById('addBtn');
 
@@ -290,17 +289,6 @@
 			const index = allRecords.findIndex(r => r.id === record.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 		});
-	</script>
--->
-
-	<script>
-		grist.onRecord((record) => {
-			alert(record);
-			if (record) {
-				alert("Enregistrement reçu :" + record.id);
-			}
-		});
-		grist.ready({ requiredAccess: 'read table' });
 	</script>
 
 	<script>
