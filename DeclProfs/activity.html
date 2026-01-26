@@ -310,11 +310,6 @@
 		
 		window.grist.onRecords(records => {
 			allRecords = records;
-
-			// si rien n’est sélectionné, sélectionner la première ligne
-			if (!selectedId && records.length > 0) {
-				window.grist.ssetSelectedRows(records[0].id);
-			}
 		});
 
 		window.grist.onRecord(record => {
