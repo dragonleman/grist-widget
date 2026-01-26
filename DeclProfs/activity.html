@@ -510,21 +510,20 @@
 		function selectRowFromWidget(target) {
 			if (!target) return;
 
-			isSelectingFromWidget = true;
+			isSelectingFromWidget = true; // évite boucle
+
 			selectedId = target.id;
 
 			// Sélection dans Grist
 			window.grist.setSelectedRows([target.id]);
 
-			// Rendu du widget
+			// Rendu dans le widget
 			renderTable([target]);
 
-			// Mettre à jour compteur
 			const index = allRecords.findIndex(r => r.id === target.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 
-			// Remettre flag
-			setTimeout(() => { isSelectingFromWidget = false; }, 0);
+			setTimeout(() => { isSelectingFromWidget = false; }, 0); // remet le flag
 		}
 
 		function selectRelative(offset) {
@@ -566,12 +565,20 @@
 		// Synchronisation table → widget
 		window.grist.onSelectedRows(rowIds => {
 			if (!rowIds || rowIds.length === 0) return;
+			if (!allRecords || allRecords.length === 0) return;
+
+			// Ignore si la sélection vient du widget
 			if (isSelectingFromWidget) return;
 
 			const record = allRecords.find(r => r.id === rowIds[0]);
 			if (!record) return;
 
-			selectRowFromWidget(record);
+			// MAJ du widget sans changer la sélection dans Grist
+			renderTable([record]);
+			selectedId = record.id;
+
+			const index = allRecords.findIndex(r => r.id === record.id);
+			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 		});
 	</script>
 
