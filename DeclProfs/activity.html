@@ -464,17 +464,13 @@
 
 			selectedId = record.id;
 
-			// 🔥 synchro widget → table
 			grist.setSelectedRows([record.id]);
 
-			// rendu widget
 			renderTable([record]);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
-			document.getElementById("navCounter").textContent =
-				`${index + 1} / ${allRecords.length}`;
+			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 
-			// relâche le lock
 			setTimeout(() => { isSelectingFromWidget = false; }, 0);
 		}
 
