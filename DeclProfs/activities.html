@@ -81,6 +81,11 @@
 	  
 		window.grist.ready({ requiredAccess: 'full' });
 
+		function onRowClick(record) {
+			if (!record) return;
+			window.grist.setSelectedRows([record.id]);
+		}
+
 		function renderTable(records) {
 		  
 			let columnNames = []
@@ -123,6 +128,8 @@
 			
 		  	for (const rec of records) {
 		    	const row = table.insertRow();
+
+				row.addEventListener("click", () => onRowClick(rec));
 		    
 				// Name
 				if (columnNames.includes('Name')) {
