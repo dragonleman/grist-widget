@@ -37,7 +37,7 @@
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
-	<script>
+	<!-- <script>
 		const addButton = document.getElementById('addBtn');
 
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
@@ -330,27 +330,252 @@
 			}
 		});
 
-		// window.grist.onRecord(record => {
-		// 	if (!record) return;
-		// 	if (isSelectingFromWidget) return;
-
-		// 	selectedId = record.id;
-
-		// 	renderTable([record]);
-
-		// 	const index = allRecords.findIndex(r => r.id === record.id);
-		// 	document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
-		// });
-
 		window.grist.onRecord(record => {
 			if (!record) return;
+			if (isSelectingFromWidget) return;
 
-			if (isSelectingFromWidget) return;  // Ignore si c'est notre propre sélection
+			selectRowFromWidget(record);
+		});
+	</script> -->
+	
+	<script>
+		const addButton = document.getElementById('addBtn');
+
+		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+		let allRecords = [];
+		let selectedId = null;
+		let isSelectingFromWidget = false;
+
+		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt'];
+		const transColumns = {
+			Name: "Name",
+			Activity: "Activity",
+			Start_date: "Start date",
+			End_date: "End date",
+			Access: "Access",
+			exception: "Exception",
+			Comments: "Comments",
+			Comments_admins: "Comments admins",
+			UpdatedAt: "Updated at"
+		};
+
+		window.grist.ready({ requiredAccess: 'full' });
+
+		// ---------- RENDER TABLE ----------
+		function renderTable(records) {
+			const table = document.getElementById('table');
+			while (table.rows.length > 0) table.deleteRow(0);
+
+			if (!records || records.length === 0) {
+				const row = table.insertRow();
+				const cell = row.insertCell();
+				cell.colSpan = 6;
+				cell.textContent = 'No data found.';
+				cell.style.textAlign = 'center';
+				return;
+			}
+
+			const columnNames = Object.keys(records[0] || {});
+			const header = table.createTHead();
+			const headerRow = header.insertRow();
+
+			for (const col of columnNamesAccepted) {
+				if (columnNames.includes(col)) {
+					const th = document.createElement('th');
+					th.textContent = transColumns[col];
+					headerRow.appendChild(th);
+				}
+			}
+
+			const th = document.createElement('th');
+			th.textContent = 'Actions';
+			headerRow.appendChild(th);
+
+			for (const rec of records) {
+				const row = table.insertRow();
+
+				// Name
+				if (columnNames.includes('Name')) {
+					const cell = row.insertCell();
+					const span = document.createElement('span');
+					span.textContent = rec.Name || '';
+					span.style.border = 'none';
+					cell.appendChild(span);
+				}
+
+				// Activity
+				if (columnNames.includes('Activity')) {
+					const cell = row.insertCell();
+					const input = document.createElement('input');
+					input.value = rec.Activity || '';
+					input.style.width = '100%';
+					input.style.border = 'none';
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Activity) {
+							await window.grist.selectedTable.update({ id: rec.id, fields: { Activity: input.value } });
+						}
+					});
+					cell.appendChild(input);
+				}
+
+				// Start date
+				if (columnNames.includes('Start_date')) {
+					const cell = row.insertCell();
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.Start_date || '';
+					input.style.border = 'none';
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Start_date) {
+							await window.grist.selectedTable.update({ id: rec.id, fields: { Start_date: input.value } });
+						}
+					});
+					cell.appendChild(input);
+				}
+
+				// End date
+				if (columnNames.includes('End_date')) {
+					const cell = row.insertCell();
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.End_date || '';
+					input.style.border = 'none';
+					input.style.backgroundColor = rec.ErrorDate || '';
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.End_date) {
+							await window.grist.selectedTable.update({ id: rec.id, fields: { End_date: input.value } });
+						}
+					});
+					cell.appendChild(input);
+				}
+
+				// Access
+				if (columnNames.includes('Access')) {
+					const cell = row.insertCell();
+					const span = document.createElement('span');
+					span.textContent = rec.Access || '';
+					span.style.fontSize = '18px';
+					span.style.cursor = 'default';
+					cell.appendChild(span);
+				}
+
+				// Comments
+				if (columnNames.includes('Comments')) {
+					const cell = row.insertCell();
+					const input = document.createElement('input');
+					input.value = rec.Comments || '';
+					input.style.border = 'none';
+					input.style.width = '100%';
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Comments) {
+							await window.grist.selectedTable.update({ id: rec.id, fields: { Comments: input.value } });
+						}
+					});
+					cell.appendChild(input);
+				}
+
+				// Comments admins
+				if (columnNames.includes('Comments_admins')) {
+					const cell = row.insertCell();
+					const input = document.createElement('input');
+					input.value = rec.Comments_admins || '';
+					input.style.border = 'none';
+					input.style.width = '100%';
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Comments_admins) {
+							await window.grist.selectedTable.update({ id: rec.id, fields: { Comments_admins: input.value } });
+						}
+					});
+					cell.appendChild(input);
+				}
+
+				// UpdatedAt
+				if (columnNames.includes('UpdatedAt')) {
+					const cell = row.insertCell();
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
+					input.readOnly = true;
+					input.disabled = true;
+					input.style.border = 'none';
+					input.style.background = 'transparent';
+					input.style.width = '100%';
+					input.style.pointerEvents = 'none';
+					cell.appendChild(input);
+				}
+			}
+		}
+
+		// ---------- SELECTION ----------
+		function selectRowFromWidget(target) {
+			if (!target) return;
+
+			isSelectingFromWidget = true;
+			selectedId = target.id;
+
+			// Sélection dans Grist
+			window.grist.setSelectedRows([target.id]);
+
+			// Rendu du widget
+			renderTable([target]);
+
+			// Mettre à jour compteur
+			const index = allRecords.findIndex(r => r.id === target.id);
+			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
+
+			// Remettre flag
+			setTimeout(() => { isSelectingFromWidget = false; }, 0);
+		}
+
+		function selectRelative(offset) {
+			if (!selectedId) return;
+
+			const index = allRecords.findIndex(r => r.id === selectedId);
+			if (index === -1) return;
+
+			const target = allRecords[index + offset];
+			if (!target) return;
+
+			selectRowFromWidget(target);
+		}
+
+		// ---------- EVENTS ----------
+		addButton.addEventListener('click', async () => {
+			await window.grist.selectedTable.create({
+				fields: {
+					Activity: "",
+					Start_date: today,
+					End_date: today,
+				},
+			});
+		});
+
+		document.getElementById("prevBtn").addEventListener("click", () => selectRelative(-1));
+		document.getElementById("nextBtn").addEventListener("click", () => selectRelative(1));
+
+		// ---------- GRIST HOOKS ----------
+		window.grist.onRecords(records => {
+			allRecords = records;
+
+			// Sélection initiale
+			if (!selectedId && allRecords.length > 0) {
+				selectRowFromWidget(allRecords[0]);
+			}
+		});
+
+		// Synchronisation table → widget
+		window.grist.onSelectedRows(rowIds => {
+			if (!rowIds || rowIds.length === 0) return;
+			if (isSelectingFromWidget) return;
+
+			const record = allRecords.find(r => r.id === rowIds[0]);
+			if (!record) return;
 
 			selectRowFromWidget(record);
 		});
 	</script>
-	
+
+
 	<script>
     	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
     	featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
