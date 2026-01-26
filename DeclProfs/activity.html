@@ -565,6 +565,12 @@
 			}
 		});
 
+		window.grist.onRecord((record) => {
+			console.log("ID de l'enregistrement :", record.id);
+			// Pour l'index réel dans votre tableau de données :
+			const selIndex = allRecords.findIndex(r => r.id === record.id);
+		});
+
 		// Synchronisation table → widget
 		window.grist.onSelectedRows(rowIds => {
 			if (!rowIds || rowIds.length === 0) return;
