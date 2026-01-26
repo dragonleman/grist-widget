@@ -299,7 +299,15 @@
 			alert("target : " + target);
 			if (!target) return;
 
+			selectedId = target.id;
+
 			window.grist.setSelectedRows([target.id]);
+
+			renderTable([target]);
+
+			const newIndex = allRecords.findIndex(r => r.id === target.id);
+			document.getElementById("navCounter").textContent =
+				`${newIndex + 1} / ${allRecords.length}`;
 		}
 
 		document.getElementById("prevBtn").addEventListener("click", () => {
@@ -316,9 +324,9 @@
 
 		window.grist.onRecord(record => {
 			if (!record) {
-				renderTable([]);
-				document.getElementById("navCounter").textContent = "0 / 0";
-				selectedId = null;
+			// 	renderTable([]);
+			// 	document.getElementById("navCounter").textContent = "0 / 0";
+			// 	selectedId = null;
 				return;
 			}
 
