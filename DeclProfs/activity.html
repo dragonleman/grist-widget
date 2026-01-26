@@ -295,6 +295,7 @@
 
 	<script>
 		grist.onRecord((record) => {
+			alert(record);
 			if (record) {
 				alert("Enregistrement reçu :" + record.id);
 			}
