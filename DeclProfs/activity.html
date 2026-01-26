@@ -500,11 +500,9 @@
 		});
 
 		grist.onRecord(record => {
-			alert(record);
 			if (!record) return;
 
 			selectedId = record.id;
-			alert("selectedId : " + selectedId);
 
 			renderCard([record]);
 
