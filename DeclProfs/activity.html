@@ -38,6 +38,7 @@
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	
+	<!--
 	<script>
 		const addButton = document.getElementById('addBtn');
 
@@ -58,6 +59,8 @@
 			Comments_admins: "Comments admins",
 			UpdatedAt: "Updated at"
 		};
+
+		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true });
 
 		// ---------- RENDER TABLE ----------
 		function renderTable(records) {
@@ -263,24 +266,41 @@
 			}
 		});
 
-		window.grist.onRecord(record => {
+		window.grist.onRecord((record) => {
+			// Pour l'index réel dans votre tableau de données :
+			const selIndex = allRecords.findIndex(r => r.id === record.id);
+			alert("ID de l'enregistrement : " + selIndex);
+		});
 
-			alert(record.id);
-
-			if (!record) return;
+		// Synchronisation table → widget
+		window.grist.onSelectedRows(rowIds => {
+			if (!rowIds || rowIds.length === 0) return;
+			if (!allRecords || allRecords.length === 0) return;
 
 			// Ignore si la sélection vient du widget
 			if (isSelectingFromWidget) return;
 
-			selectedId = record.id;
+			const record = allRecords.find(r => r.id === rowIds[0]);
+			if (!record) return;
 
+			// MAJ du widget sans changer la sélection dans Grist
 			renderTable([record]);
+			selectedId = record.id;
 
 			const index = allRecords.findIndex(r => r.id === record.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 		});
+	</script>
+-->
 
-		window.grist.ready({ requiredAccess: 'full' });
+	<script>
+		grist.onRecord((record) => {
+			alert(record);
+			if (record) {
+				alert("Enregistrement reçu :" + record.id);
+			}
+		});
+		grist.ready({ requiredAccess: 'read table' });
 	</script>
 
 	<script>
