@@ -298,7 +298,6 @@
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
 		let selectedId = null;
-		let isSelectingFromWidget = false;
 
 		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt'];
 		const transColumns = {
@@ -460,8 +459,6 @@
 		function selectRowFromWidget(record) {
 			if (!record) return;
 
-			isSelectingFromWidget = true;
-
 			selectedId = record.id;
 
 			grist.setSelectedRows([record.id]);
@@ -470,8 +467,6 @@
 
 			const index = allRecords.findIndex(r => r.id === record.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
-
-			setTimeout(() => { isSelectingFromWidget = false; }, 0);
 		}
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
@@ -494,9 +489,6 @@
 
 		grist.onRecord(record => {
 			if (!record) return;
-
-			// Ignore si la sélection vient du widget
-			if (isSelectingFromWidget) return;
 
 			selectedId = record.id;
 
