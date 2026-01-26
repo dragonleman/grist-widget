@@ -359,7 +359,7 @@
 			UpdatedAt: "Updated at"
 		};
 
-		window.grist.ready({ requiredAccess: 'full' });
+		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true });
 
 		// ---------- RENDER TABLE ----------
 		function renderTable(records) {
