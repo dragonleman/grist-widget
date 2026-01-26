@@ -59,8 +59,6 @@
 			UpdatedAt: "Updated at"
 		};
 
-		window.grist.ready({ requiredAccess: 'full' });
-
 		// ---------- RENDER TABLE ----------
 		function renderTable(records) {
 			const table = document.getElementById('table');
@@ -266,6 +264,9 @@
 		});
 
 		window.grist.onRecord(record => {
+
+			alert(record.id);
+
 			if (!record) return;
 
 			// Ignore si la sélection vient du widget
@@ -276,9 +277,10 @@
 			renderTable([record]);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
-			document.getElementById("navCounter").textContent =
-				`${index + 1} / ${allRecords.length}`;
+			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 		});
+
+		window.grist.ready({ requiredAccess: 'full' });
 	</script>
 
 	<script>
