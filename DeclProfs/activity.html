@@ -419,6 +419,41 @@
 				},
 			}) 
 		});
+		
+		function applyFilters() {
+			const nameQuery = searchInput.value.trim().toLowerCase();
+			const yearQuery = yearInput.value.trim();
+
+			filteredRecords = allRecords;
+
+			if (nameQuery) {
+				filteredRecords = filteredRecords.filter(rec =>
+				(rec.Name || "").toLowerCase().includes(nameQuery)
+				);
+			}
+
+			if (yearQuery.length === 4) {
+				const year = parseInt(yearQuery, 10);
+
+				filteredRecords = filteredRecords.filter(rec => {
+				if (!rec.Start_date) return false;
+
+				const startYear = new Date(rec.Start_date).getFullYear();
+				const endYear = rec.End_date
+					? new Date(rec.End_date).getFullYear()
+					: Infinity;
+
+				return year >= startYear && year <= endYear;
+				});
+			}
+
+			// Reset index si hors limite
+			if (currentIndex >= filteredRecords.length) {
+				currentIndex = 0;
+			}
+
+			renderSingleRecord(filteredRecords[currentIndex]);
+		}
 
 		document.getElementById("prevBtn").addEventListener("click", () => {
 			if (currentIndex > 0) {
@@ -438,6 +473,19 @@
 			yearInput.value = new Date().getFullYear();
 			allRecords = records;
 			currentIndex = 0;
+			applyFilters();
+		});
+
+		// Search by Name
+		searchInput.addEventListener('input', () => {
+			applyFilters();
+		});
+		
+		// Search by Year
+		yearInput.addEventListener("input", () => {
+			let val = yearInput.value.trim().replace(/\D/g, "");
+			yearInput.value = val; // garde seulement les chiffres
+			applyFilters();
 		});
 		
 		function downloadCSV(records, filename = "activities.csv") {
