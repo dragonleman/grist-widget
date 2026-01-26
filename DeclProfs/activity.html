@@ -286,12 +286,15 @@
 		});
 
 		function selectRelative(offset) {
+			alert("offset : " + offset);
 			if (!selectedId) return;
 
 			const index = allRecords.findIndex(r => r.id === selectedId);
+			alert("index : " + index);
 			if (index === -1) return;
 
 			const target = allRecords[index + offset];
+			alert("target : " + target);
 			if (!target) return;
 
 			window.grist.setSelectedRows([target.id]);
