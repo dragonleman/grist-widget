@@ -39,6 +39,7 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
 		const addButton = document.getElementById('addBtn');
+		let isSelectingFromWidget = false;
 		let currentIndex = 0;
 		let filteredRecords = [];
 
@@ -417,7 +418,14 @@
 
 		function selectInGrist(rec) {
 			if (!rec) return;
+
+			isSelectingFromWidget = true;
 			window.grist.selectedTable.selectById(rec.id);
+
+			// Laisser le temps à Grist de notifier
+			setTimeout(() => {
+				isSelectingFromWidget = false;
+			}, 0);
 		}
 
 		document.getElementById("prevBtn").addEventListener("click", () => {
@@ -440,10 +448,10 @@
 		
 		window.grist.onRecords(records => {
 			allRecords = records;
+
 			if (currentIndex >= records.length) {
-				currentIndex = 0;
+				currentIndex = records.length - 1;
 			}
-			applyFilters();
 		});
 
 		window.grist.onRecord(record => {
@@ -453,7 +461,9 @@
 				return;
 			}
 
-			// Met à jour l’index interne pour rester cohérent
+			// ⛔ Ignore si la sélection vient du widget
+			if (isSelectingFromWidget) return;
+
 			const index = allRecords.findIndex(r => r.id === record.id);
 			if (index !== -1) {
 				currentIndex = index;
