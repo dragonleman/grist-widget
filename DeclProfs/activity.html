@@ -294,7 +294,23 @@
 -->
 
 	<script>
+		const addButton = document.getElementById('addBtn');
+
+		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
+
+		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt'];
+		const transColumns = {
+			Name: "Name",
+			Activity: "Activity",
+			Start_date: "Start date",
+			End_date: "End date",
+			Access: "Access",
+			exception: "Exception",
+			Comments: "Comments",
+			Comments_admins: "Comments admins",
+			UpdatedAt: "Updated at"
+		};
 
 		function renderTable(records) {
 			const table = document.getElementById('table');
