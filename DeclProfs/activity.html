@@ -37,307 +37,8 @@
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
-	<!-- <script>
-		const addButton = document.getElementById('addBtn');
-
-		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-		let allRecords = [];
-		let selectedId = null;
-		let isSelectingFromWidget = false;
-		
-		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt']
-		const transColumns = {
-			Name: "Name",
-			Activity: "Activity",
-			Start_date: "Start date",
-			End_date: "End date",
-			Access: "Access",
-			exception: "Exception",
-			Comments: "Comments",
-			Comments_admins: "Comments admins",
-			UpdatedAt: "Updated at"
-		}
-	  
-		window.grist.ready({ requiredAccess: 'full' });
-
-		function renderTable(records) {
-		  
-			let columnNames = []
-			if (records.length > 0) {
-				columnNames = Object.keys(records[0]);
-				console.log("Colonnes disponibles :", columnNames);
-			}  
-		  
-		  	const table = document.getElementById('table');
-
-			// Empty table
-			while (table.rows.length > 0) table.deleteRow(0);
-
-			if (!records || records.length === 0) {
-				const row = table.insertRow();
-				const cell = row.insertCell();
-				cell.colSpan = 6;
-				cell.textContent = 'No data found.';
-				cell.style.textAlign = 'center';
-				return;
-			}
-			
-			const header = table.createTHead();
-			const headerRow = header.insertRow();
-		  
-			for (const col of columnNamesAccepted) {
-			  	if (columnNames.includes(col)) {
-					const th = document.createElement('th');
-					th.textContent = transColumns[col];
-					headerRow.appendChild(th);
-				}
-			}
-			
-			const th = document.createElement('th');
-			th.textContent = 'Actions';
-			headerRow.appendChild(th);
-			
-		  	for (const rec of records) {
-		    	const row = table.insertRow();
-		    
-				// Name
-				if (columnNames.includes('Name')) {
-					const nameCell = row.insertCell();
-					const nameSpan = document.createElement('span');
-					nameSpan.textContent = rec.Name || '';
-					nameSpan.style.border = 'none';
-					nameCell.appendChild(nameSpan);
-				}
-		    
-				// Activity
-				if (columnNames.includes('Activity')) {
-					const activityCell = row.insertCell();
-					const activityInput = document.createElement('input');
-					activityInput.value = rec.Activity || '';
-					activityInput.style.border = 'none';
-					activityInput.style.width = '100%';
-					activityInput.addEventListener('blur', async () => {
-						if (activityInput.value !== rec.Activity) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Activity: activityInput.value }
-						});
-						}
-					});
-					activityCell.appendChild(activityInput);
-				}
-
-				// Start date
-				if (columnNames.includes('Start_date')) {
-					const startCell = row.insertCell();
-					const startInput = document.createElement('input');
-					startInput.type = 'date';
-					startInput.value = rec.Start_date || '';
-					startInput.style.border = 'none';
-					startInput.addEventListener('blur', async () => {
-						if (startInput.value !== rec.Start_date) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { Start_date: startInput.value }
-							});
-						}
-					});
-					startCell.appendChild(startInput);
-				}
-
-				// End date
-				if (columnNames.includes('End_date')) {
-					const endCell = row.insertCell();
-					const endInput = document.createElement('input');
-					endInput.type = 'date';
-					endInput.value = rec.End_date || '';
-					endInput.style.border = 'none';
-					endInput.style.backgroundColor = rec.ErrorDate || '';
-					endInput.addEventListener('blur', async () => {
-						if (endInput.value !== rec.End_date) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { End_date: endInput.value }
-							});
-						}
-					});
-					endCell.appendChild(endInput);
-				}
-
-		    	// Access
-				if (columnNames.includes('Access')) {
-					const accessCell = row.insertCell();
-					const icon = document.createElement('span');
-					icon.style.fontSize = '18px';
-					icon.style.cursor = 'default'; // non cliquable
-					icon.textContent = rec.Access;
-					accessCell.appendChild(icon);
-				}
-				
-				// Comments
-				if (columnNames.includes('Comments')) {
-					const commentsCell = row.insertCell();
-					const commentsInput = document.createElement('input');
-					commentsInput.value = rec.Comments || '';
-					commentsInput.style.border = 'none';
-					commentsInput.style.width = '100%';
-					commentsInput.addEventListener('blur', async () => {
-						if (commentsInput.value !== rec.Comments) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Comments: commentsInput.value }
-						});
-						}
-					});
-					commentsCell.appendChild(commentsInput);
-				}
-				
-				// Comments admins
-				if (columnNames.includes('Comments_admins')) {
-					const commentsadminsCell = row.insertCell();
-					const commentsadminsInput = document.createElement('input');
-					commentsadminsInput.value = rec.Comments_admins || '';
-					commentsadminsInput.style.border = 'none';
-					commentsadminsInput.style.width = '100%';
-					commentsadminsInput.addEventListener('blur', async () => {
-						if (commentsadminsInput.value !== rec.Comments) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Comments_admins: commentsadminsInput.value }
-						});
-						}
-					});
-					commentsadminsCell.appendChild(commentsadminsInput);
-				}
-
-				/*
-				// Exception
-				if (columnNames.includes('exception')) {
-					const exceptionCell = row.insertCell();
-
-					// Wrapper
-					const wrapper = document.createElement('div');
-					wrapper.className = 'custom-control custom-switch';
-
-					// ID unique par ligne
-					const switchId = `switch-exception-${rec.id}`;
-
-					// Input checkbox
-					const toggle = document.createElement('input');
-					toggle.type = 'checkbox';
-					toggle.className = 'custom-control-input';
-					toggle.id = switchId;
-
-					// Valeur initiale depuis Grist
-					toggle.checked = Boolean(rec.exception);
-
-					// Label
-					const label = document.createElement('label');
-					label.className = 'custom-control-label';
-					label.htmlFor = switchId;
-					label.textContent = '';  // laisser vide si tu ne veux pas de texte
-
-					// Push dans DOM
-					wrapper.appendChild(toggle);
-					wrapper.appendChild(label);
-					exceptionCell.appendChild(wrapper);
-
-					// Mise à jour Grist lorsque l'utilisateur clique
-					toggle.addEventListener('change', async () => {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { exception: toggle.checked }
-						});
-					});
-				}
-				*/
-
-				// Updated at
-				if (columnNames.includes('UpdatedAt')) {
-					const updatedatCell = row.insertCell();
-
-					const updatedatInput = document.createElement('input');
-					updatedatInput.type = 'date';
-
-					updatedatInput.value = rec.UpdatedAt
-						? new Date(rec.UpdatedAt).toISOString().substring(0, 10)
-						: '';
-
-					updatedatInput.readOnly = true;     // empêche la saisie
-					updatedatInput.disabled = true;     // empêche aussi le date picker
-
-					updatedatInput.style.border = 'none';
-					updatedatInput.style.background = 'transparent';
-					updatedatInput.style.width = '100%';
-					updatedatInput.style.pointerEvents = 'none'; // bloque toute interaction
-
-					updatedatCell.appendChild(updatedatInput);
-				}
-		  	}
-		};
-		
-		addButton.addEventListener('click', async () => {
-			await grist.selectedTable.create({
-			  	fields: {
-					Activity: "",
-					Start_date: today,
-					End_date: today,
-				},
-			})
-		});
-
-		function selectRowFromWidget(target) {
-			if (!target) return;
-
-			isSelectingFromWidget = true;   // évite boucle
-			selectedId = target.id;
-
-			// Sélectionner dans la table Grist
-			window.grist.setSelectedRows([target.id]);
-
-			// Rendu dans le widget
-			renderTable([target]);
-
-			// Mettre à jour le compteur
-			const index = allRecords.findIndex(r => r.id === target.id);
-			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
-
-			// remettre le flag après un petit délai
-			setTimeout(() => { isSelectingFromWidget = false; }, 0);
-		}
-
-		// Modifier selectRelative pour réutiliser selectRowFromWidget
-		function selectRelative(offset) {
-			if (!selectedId) return;
-
-			const index = allRecords.findIndex(r => r.id === selectedId);
-			if (index === -1) return;
-
-			const target = allRecords[index + offset];
-			if (!target) return;
-
-			selectRowFromWidget(target);
-		}
-
-		// Boutons Next / Previous
-		document.getElementById("prevBtn").addEventListener("click", () => selectRelative(-1));
-		document.getElementById("nextBtn").addEventListener("click", () => selectRelative(1));
-		
-		window.grist.onRecords(records => {
-			allRecords = records;
-			if (!selectedId && allRecords.length > 0) {
-				selectRowFromWidget(allRecords[0]);
-			}
-		});
-
-		window.grist.onRecord(record => {
-			if (!record) return;
-			if (isSelectingFromWidget) return;
-
-			selectRowFromWidget(record);
-		});
-	</script> -->
 	
+	<!--
 	<script>
 		const addButton = document.getElementById('addBtn');
 
@@ -566,9 +267,9 @@
 		});
 
 		window.grist.onRecord((record) => {
-			alert("ID de l'enregistrement : " + record.id);
 			// Pour l'index réel dans votre tableau de données :
 			const selIndex = allRecords.findIndex(r => r.id === record.id);
+			alert("ID de l'enregistrement : " + selIndex);
 		});
 
 		// Synchronisation table → widget
@@ -590,7 +291,33 @@
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 		});
 	</script>
+-->
 
+	<script>
+		let allRecords = []; // Stockage local des données
+
+		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true });
+
+		// 1. On récupère la liste complète des lignes (s'exécute quand les données changent)
+		window.grist.onRecords((records) => {
+		allRecords = records;
+		console.log("Données chargées :", allRecords.length, "lignes");
+		});
+
+		// 2. On écoute le changement de sélection (s'exécute à CHAQUE clic sur une ligne)
+		window.grist.onRecord((record) => {
+		if (record && allRecords.length > 0) {
+			// On cherche l'index de la ligne cliquée dans la liste complète
+			const selIndex = allRecords.findIndex(r => r.id === record.id);
+			
+			console.log("Nouvelle sélection - Index:", selIndex, "ID:", record.id);
+			
+			// Votre logique d'affichage ici
+			document.getElementById('display').innerText = "Index sélectionné : " + selIndex;
+		}
+		});
+
+	</script>
 
 	<script>
     	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
