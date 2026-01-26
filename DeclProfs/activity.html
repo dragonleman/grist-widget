@@ -566,7 +566,7 @@
 		});
 
 		window.grist.onRecord((record) => {
-			console.log("ID de l'enregistrement :", record.id);
+			alert("ID de l'enregistrement : " + record.id);
 			// Pour l'index réel dans votre tableau de données :
 			const selIndex = allRecords.findIndex(r => r.id === record.id);
 		});
