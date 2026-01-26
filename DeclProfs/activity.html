@@ -294,6 +294,12 @@
 -->
 
 	<script>
+		let allRecords = [];
+
+		grist.onRecords(records => {
+			allRecords = records;
+		});
+
 		grist.onRecord(record => {
 			if (!record) return;
 
