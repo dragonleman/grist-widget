@@ -312,7 +312,7 @@
 			UpdatedAt: "Updated at"
 		};
 
-		grist.ready({ requiredAccess: 'full' });
+		grist.ready({ requiredAccess: 'full', getSelectedRows: true });
 
 		function renderCard(records) {
 			const table = document.getElementById('table');
