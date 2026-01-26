@@ -274,18 +274,6 @@
 				}
 		  	}
 		};
-
-		function renderSingleRecord(rec) {
-			if (!rec) {
-				renderTable([]);
-				document.getElementById("navCounter").textContent = "0 / 0";
-				return;
-			}
-
-			renderTable([rec]); // 👈 on réutilise ton rendu existant
-			document.getElementById("navCounter").textContent =
-				`${currentIndex + 1} / ${filteredRecords.length}`;
-		}
 		
 		addButton.addEventListener('click', async () => {
 			await grist.selectedTable.create({
@@ -295,20 +283,7 @@
 					End_date: today,
 				},
 			})
-			currentIndex = filteredRecords.length - 1;
-			applyFilters();
 		});
-		
-		function applyFilters() {
-			filteredRecords = allRecords;
-
-			// Reset index si hors limite
-			if (currentIndex >= filteredRecords.length) {
-				currentIndex = 0;
-			}
-
-			renderSingleRecord(filteredRecords[currentIndex]);
-		}
 
 		function selectRelative(offset) {
 			if (!selectedId) return;
