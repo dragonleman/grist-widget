@@ -21,34 +21,9 @@
 	</div>
   
   	<div class="main-container m-4">
-		<div class="alert alert-info alert-dismissible fade show" role="alert">
-			<p><strong>Professors' annual disclosure - 2026.</strong></p>
-			<p>According to the «Directive concerning the management of conflicts of interest within the context of activities or public duties engaged in outside the working sphere» dated December 1st, 2005 (LEX 4.1.1), professors shall disclose activities at regular intervals, whenever a new activity is taken up or in the event of any change.</p>
-			<p>Activities that have to be included in the disclosure are described at articles 1.a, 7 and 8 of LEX 4.1.1. Data will be filed and treated confidentially, subject to the Freedom of Information Act (FoIA, RS 152.3).</p>
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-
-		<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
-			<input type="text" id="searchInput" placeholder="Search someone..." style="padding-left: 30px; box-sizing: border-box;">
-			<svg class="icon" aria-hidden="true" 
-				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-				<use xlink:href="#user"></use>
-			</svg>
-		</div>
-
-		<div class="my-1" style="position: relative; max-width: 300px;">
-			<input type="text" id="yearInput" placeholder="YYYY" style="padding-left: 30px; box-sizing: border-box;">
-			<svg class="icon" aria-hidden="true" 
-				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-				<use xlink:href="#calendar"></use>
-			</svg>
-		</div>	
 
 		<div class="p-3" style="text-align:right">
 			<button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button>
-			<button id="downloadAllBtn" class="btn btn-secondary btn-sm ml-2">Download CSV</button>
 		</div>
 
 		<div>
@@ -65,9 +40,6 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
 		const addButton = document.getElementById('addBtn');
-		const downloadAllBtn = document.getElementById('downloadAllBtn');
-		const searchInput = document.getElementById('searchInput');
-		const yearInput = document.getElementById("yearInput");
 		let currentIndex = 0;
 		let filteredRecords = [];
 
@@ -419,7 +391,7 @@
 				return;
 			}
 
-			renderTable([rec]); // 👈 on réutilise ton rendu existant
+			renderTable([rec]);
 			document.getElementById("navCounter").textContent =
 				`${currentIndex + 1} / ${filteredRecords.length}`;
 		}
@@ -433,41 +405,6 @@
 				},
 			}) 
 		});
-		
-		function applyFilters() {
-			const nameQuery = searchInput.value.trim().toLowerCase();
-			const yearQuery = yearInput.value.trim();
-
-			filteredRecords = allRecords;
-
-			if (nameQuery) {
-				filteredRecords = filteredRecords.filter(rec =>
-				(rec.Name || "").toLowerCase().includes(nameQuery)
-				);
-			}
-
-			if (yearQuery.length === 4) {
-				const year = parseInt(yearQuery, 10);
-
-				filteredRecords = filteredRecords.filter(rec => {
-				if (!rec.Start_date) return false;
-
-				const startYear = new Date(rec.Start_date).getFullYear();
-				const endYear = rec.End_date
-					? new Date(rec.End_date).getFullYear()
-					: Infinity;
-
-				return year >= startYear && year <= endYear;
-				});
-			}
-
-			// Reset index si hors limite
-			if (currentIndex >= filteredRecords.length) {
-				currentIndex = 0;
-			}
-
-			renderSingleRecord(filteredRecords[currentIndex]);
-		}
 
 		document.getElementById("prevBtn").addEventListener("click", () => {
 			if (currentIndex > 0) {
@@ -487,93 +424,6 @@
 			yearInput.value = new Date().getFullYear();
 			allRecords = records;
 			currentIndex = 0;
-			applyFilters();
-		});
-
-		// Search by Name
-		searchInput.addEventListener('input', () => {
-			applyFilters();
-		});
-		
-		// Search by Year
-		yearInput.addEventListener("input", () => {
-			let val = yearInput.value.trim().replace(/\D/g, "");
-			yearInput.value = val; // garde seulement les chiffres
-			applyFilters();
-		});
-		
-		function downloadCSV(records, filename = "activities.csv") {
-			if (!records || records.length === 0) {
-				alert("No data to export");
-				return;
-			}
-
-			// Colonnes réellement présentes
-			const availableColumns = columnNamesAccepted.filter(col =>
-				records.some(r => r[col] !== undefined)
-			);
-
-			if (availableColumns.length === 0) {
-				alert("No valid columns to export");
-				return;
-			}
-
-			const csvRows = [];
-
-			// Header (avec noms traduits si dispo)
-			csvRows.push(
-				availableColumns
-				  .map(col => `"${transColumns?.[col] || col}"`)
-				  .join(",")
-			);
-
-			// Rows
-			for (const rec of records) {
-				const row = availableColumns.map(col =>
-				  `"${String(rec[col] ?? "").replace(/"/g, '""')}"`
-				);
-				csvRows.push(row.join(","));
-			}
-
-			const csvContent = csvRows.join("\n");
-			const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
-			const link = document.createElement("a");
-			link.href = URL.createObjectURL(blob);
-			link.download = filename;
-			link.click();
-
-			URL.revokeObjectURL(link.href);
-		}
-		
-		downloadAllBtn.addEventListener("click", () => {
-			const nameQuery = searchInput.value.trim().toLowerCase();
-			const yearQuery = yearInput.value.trim();
-
-			let filtered = allRecords;
-
-			if (nameQuery) {
-				filtered = filtered.filter(rec =>
-				  (rec.Name || "").toLowerCase().includes(nameQuery)
-				);
-			}
-
-			if (yearQuery.length === 4) {
-				const year = parseInt(yearQuery, 10);
-
-				filtered = filtered.filter(rec => {
-				  if (!rec.Start_date) return false;
-
-				  const startYear = new Date(rec.Start_date).getFullYear();
-				  const endYear = rec.End_date
-				    ? new Date(rec.End_date).getFullYear()
-				    : Infinity;
-
-				  return year >= startYear && year <= endYear;
-				});
-			}
-
-			downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
 		});
 	</script>
 	
