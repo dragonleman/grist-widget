@@ -291,10 +291,10 @@
 			const index = allRecords.findIndex(r => r.id === selectedId);
 			if (index === -1) return;
 
-			const nextIndex = index + offset;
-			if (nextIndex < 0 || nextIndex >= allRecords.length) return;
+			const target = allRecords[index + offset];
+			if (!target) return;
 
-			window.grist.selectedTable.selectById(allRecords[nextIndex].id);
+			window.grist.setSelectedRows([target.id]);
 		}
 
 		document.getElementById("prevBtn").addEventListener("click", () => {
@@ -310,7 +310,7 @@
 
 			// si rien n’est sélectionné, sélectionner la première ligne
 			if (!selectedId && records.length > 0) {
-				window.grist.selectedTable.selectById(records[0].id);
+				window.grist.ssetSelectedRows(records[0].id);
 			}
 		});
 
@@ -327,8 +327,7 @@
 			renderTable([record]);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
-			document.getElementById("navCounter").textContent =
-				`${index + 1} / ${allRecords.length}`;
+			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 		});
 	</script>
 	
