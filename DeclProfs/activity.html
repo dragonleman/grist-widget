@@ -415,24 +415,51 @@
 			renderSingleRecord(filteredRecords[currentIndex]);
 		}
 
+		function selectInGrist(rec) {
+			if (!rec) return;
+			window.grist.selectedTable.selectById(rec.id);
+		}
+
 		document.getElementById("prevBtn").addEventListener("click", () => {
 			if (currentIndex > 0) {
 				currentIndex--;
-				renderSingleRecord(filteredRecords[currentIndex]);
+				const rec = filteredRecords[currentIndex];
+				selectInGrist(rec);
+				renderSingleRecord(rec);
 			}
 		});
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
 			if (currentIndex < filteredRecords.length - 1) {
 				currentIndex++;
-				renderSingleRecord(filteredRecords[currentIndex]);
+				const rec = filteredRecords[currentIndex];
+				selectInGrist(rec);
+				renderSingleRecord(rec);
 			}
 		});
 		
 		window.grist.onRecords(records => {
 			allRecords = records;
-			currentIndex = 0;
+			if (currentIndex >= records.length) {
+				currentIndex = 0;
+			}
 			applyFilters();
+		});
+
+		window.grist.onRecord(record => {
+			if (!record) {
+				renderTable([]);
+				document.getElementById("navCounter").textContent = "0 / 0";
+				return;
+			}
+
+			// Met à jour l’index interne pour rester cohérent
+			const index = allRecords.findIndex(r => r.id === record.id);
+			if (index !== -1) {
+				currentIndex = index;
+			}
+
+			renderSingleRecord(record);
 		});
 		
 		function downloadCSV(records, filename = "activities.csv") {
