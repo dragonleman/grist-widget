@@ -399,7 +399,9 @@
 					Start_date: today,
 					End_date: today,
 				},
-			}) 
+			})
+			currentIndex = filteredRecords.length - 1;
+			applyFilters();
 		});
 		
 		function applyFilters() {
@@ -418,9 +420,9 @@
 				currentIndex--;
 				renderSingleRecord(filteredRecords[currentIndex]);
 			}
-			});
+		});
 
-			document.getElementById("nextBtn").addEventListener("click", () => {
+		document.getElementById("nextBtn").addEventListener("click", () => {
 			if (currentIndex < filteredRecords.length - 1) {
 				currentIndex++;
 				renderSingleRecord(filteredRecords[currentIndex]);
