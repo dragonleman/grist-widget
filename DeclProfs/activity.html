@@ -458,6 +458,16 @@
 			}
 		}
 
+		addButton.addEventListener('click', async () => {
+			await window.grist.selectedTable.create({
+				fields: {
+					Activity: "",
+					Start_date: today,
+					End_date: today,
+				},
+			});
+		});
+
 		function selectRowFromWidget(record) {
 			if (!record) return;
 
