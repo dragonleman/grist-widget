@@ -39,12 +39,10 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
 		const addButton = document.getElementById('addBtn');
-		let isSelectingFromWidget = false;
-		let currentIndex = 0;
-		let filteredRecords = [];
 
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
+		let selectedId = null;
 		
 		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt']
 		const transColumns = {
@@ -274,110 +272,6 @@
 
 					updatedatCell.appendChild(updatedatInput);
 				}
-
-				// Actions (Duplicate + Delete)
-				const tdActions = row.insertCell();
-
-				// Duplicate
-				const dupBtn = document.createElement('button');
-				dupBtn.title = "Dupliquer";
-				//dupBtn.textContent = '🔁';
-				dupBtn.innerHTML = `
-						<svg class="icon" aria-hidden="true">
-							<use xlink:href="#copy"></use>
-						</svg>
-					`;
-				dupBtn.style.border = 'none';
-				dupBtn.onclick = async () => {
-				await window.grist.selectedTable.create({
-					fields: {
-						Activity: rec.Activity,
-						Start_date: today,
-						End_date: today,
-					},
-				});
-				};
-				tdActions.appendChild(dupBtn);
-
-				// Delete
-				const delBtn = document.createElement('button');
-				delBtn.innerHTML = `
-						<svg class="icon" aria-hidden="true">
-							<use xlink:href="#delete"></use>
-						</svg>
-					`;
-				delBtn.title = "Supprimer";
-				delBtn.style.marginLeft = '5px';
-				delBtn.style.border = 'none';
-				delBtn.onclick = async () => {
-					const confirmDelete = confirm(`Supprimer "${rec.Activity}" ?`);
-					if (!confirmDelete) return;
-					await window.grist.selectedTable.destroy([rec.id]);
-					row.remove();
-				};
-				tdActions.appendChild(delBtn);
-				
-				// Download CSV
-				const dlBtn = document.createElement('button');
-				dlBtn.innerHTML = `
-						<svg class="icon" aria-hidden="true">
-							<use xlink:href="#download"></use>
-						</svg>
-					`;
-				dlBtn.title = "Télécharger en CSV";
-				dlBtn.style.marginLeft = '5px';
-				dlBtn.style.border = 'none';
-
-				dlBtn.onclick = () => {
-					// Récupérer les paires clé => valeur
-					const keys = Object.keys(rec);
-					const values = keys.map(k => rec[k] ?? "");
-
-					// Construire CSV
-					const csvContent =
-						keys.join(",") + "\n" +
-						values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
-
-					// Créer un blob
-					const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-					// Créer un lien temporaire
-					const link = document.createElement("a");
-					link.href = URL.createObjectURL(blob);
-
-					// Nom du fichier (ex: Activity_123.csv)
-					link.download = `${rec.Activity || "ligne"}_${rec.id}.csv`;
-
-					// Télécharger
-					link.click();
-
-					// Nettoyer l’URL Blob
-					URL.revokeObjectURL(link.href);
-				};
-
-				tdActions.appendChild(dlBtn);
-				
-				if (columnNames.includes('Name')) {
-					// Send email
-					const emailBtn = document.createElement('button');
-					//emailBtn.textContent = '📩';
-					emailBtn.innerHTML = `
-						<svg class="icon" aria-hidden="true">
-							<use xlink:href="#mail"></use>
-						</svg>
-					`;
-					emailBtn.title = "Send email";
-					emailBtn.style.border = 'none';
-					emailBtn.addEventListener('click', async () => {
-					const confirmDelete = confirm(`Send email to "${rec.Name}" ?`);
-					if (!confirmDelete) return;
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { SendEmail: true }
-						});
-					});
-					tdActions.appendChild(emailBtn);
-				}
 		  	}
 		};
 
@@ -416,41 +310,32 @@
 			renderSingleRecord(filteredRecords[currentIndex]);
 		}
 
-		function selectInGrist(rec) {
-			if (!rec) return;
+		function selectRelative(offset) {
+			if (!selectedId) return;
 
-			isSelectingFromWidget = true;
-			window.grist.selectedTable.selectById(rec.id);
+			const index = allRecords.findIndex(r => r.id === selectedId);
+			if (index === -1) return;
 
-			// Laisser le temps à Grist de notifier
-			setTimeout(() => {
-				isSelectingFromWidget = false;
-			}, 0);
+			const nextIndex = index + offset;
+			if (nextIndex < 0 || nextIndex >= allRecords.length) return;
+
+			window.grist.selectedTable.selectById(allRecords[nextIndex].id);
 		}
 
 		document.getElementById("prevBtn").addEventListener("click", () => {
-			if (currentIndex > 0) {
-				currentIndex--;
-				const rec = filteredRecords[currentIndex];
-				selectInGrist(rec);
-				renderSingleRecord(rec);
-			}
+			selectRelative(-1);
 		});
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
-			if (currentIndex < filteredRecords.length - 1) {
-				currentIndex++;
-				const rec = filteredRecords[currentIndex];
-				selectInGrist(rec);
-				renderSingleRecord(rec);
-			}
+			selectRelative(1);
 		});
 		
 		window.grist.onRecords(records => {
 			allRecords = records;
 
-			if (currentIndex >= records.length) {
-				currentIndex = records.length - 1;
+			// si rien n’est sélectionné, sélectionner la première ligne
+			if (!selectedId && records.length > 0) {
+				window.grist.selectedTable.selectById(records[0].id);
 			}
 		});
 
@@ -458,63 +343,18 @@
 			if (!record) {
 				renderTable([]);
 				document.getElementById("navCounter").textContent = "0 / 0";
+				selectedId = null;
 				return;
 			}
 
-			// ⛔ Ignore si la sélection vient du widget
-			if (isSelectingFromWidget) return;
+			selectedId = record.id;
+
+			renderTable([record]);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
-			if (index !== -1) {
-				currentIndex = index;
-			}
-
-			renderSingleRecord(record);
+			document.getElementById("navCounter").textContent =
+				`${index + 1} / ${allRecords.length}`;
 		});
-		
-		function downloadCSV(records, filename = "activities.csv") {
-			if (!records || records.length === 0) {
-				alert("No data to export");
-				return;
-			}
-
-			// Colonnes réellement présentes
-			const availableColumns = columnNamesAccepted.filter(col =>
-				records.some(r => r[col] !== undefined)
-			);
-
-			if (availableColumns.length === 0) {
-				alert("No valid columns to export");
-				return;
-			}
-
-			const csvRows = [];
-
-			// Header (avec noms traduits si dispo)
-			csvRows.push(
-				availableColumns
-				  .map(col => `"${transColumns?.[col] || col}"`)
-				  .join(",")
-			);
-
-			// Rows
-			for (const rec of records) {
-				const row = availableColumns.map(col =>
-				  `"${String(rec[col] ?? "").replace(/"/g, '""')}"`
-				);
-				csvRows.push(row.join(","));
-			}
-
-			const csvContent = csvRows.join("\n");
-			const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
-			const link = document.createElement("a");
-			link.href = URL.createObjectURL(blob);
-			link.download = filename;
-			link.click();
-
-			URL.revokeObjectURL(link.href);
-		}
 	</script>
 	
 	<script>
