@@ -21,14 +21,6 @@
 	</div>
   
   	<div class="main-container m-4">
-		<div class="my-1" style="position: relative; max-width: 300px;">
-			<input type="text" id="yearInput" placeholder="YYYY" style="padding-left: 30px; box-sizing: border-box;">
-			<svg class="icon" aria-hidden="true" 
-				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-				<use xlink:href="#calendar"></use>
-			</svg>
-		</div>	
-
 		<div class="p-3" style="text-align:right">
 			<button id="addBtn" class="btn btn-primary btn-sm">Add new activity</button>
 		</div>
@@ -47,7 +39,6 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
 		const addButton = document.getElementById('addBtn');
-		const yearInput = document.getElementById("yearInput");
 		let currentIndex = 0;
 		let filteredRecords = [];
 
@@ -412,24 +403,7 @@
 		});
 		
 		function applyFilters() {
-			const yearQuery = yearInput.value.trim();
-
 			filteredRecords = allRecords;
-
-			if (yearQuery.length === 4) {
-				const year = parseInt(yearQuery, 10);
-
-				filteredRecords = filteredRecords.filter(rec => {
-				if (!rec.Start_date) return false;
-
-				const startYear = new Date(rec.Start_date).getFullYear();
-				const endYear = rec.End_date
-					? new Date(rec.End_date).getFullYear()
-					: Infinity;
-
-				return year >= startYear && year <= endYear;
-				});
-			}
 
 			// Reset index si hors limite
 			if (currentIndex >= filteredRecords.length) {
@@ -454,16 +428,8 @@
 		});
 		
 		window.grist.onRecords(records => {
-			yearInput.value = new Date().getFullYear();
 			allRecords = records;
 			currentIndex = 0;
-			applyFilters();
-		});
-		
-		// Search by Year
-		yearInput.addEventListener("input", () => {
-			let val = yearInput.value.trim().replace(/\D/g, "");
-			yearInput.value = val; // garde seulement les chiffres
 			applyFilters();
 		});
 		
