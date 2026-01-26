@@ -295,9 +295,10 @@
 
 	<script>
 		const addButton = document.getElementById('addBtn');
-
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
+		let selectedId = null;
+		let isSelectingFromWidget = false;
 
 		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt'];
 		const transColumns = {
@@ -456,6 +457,41 @@
 			}
 		}
 
+		function selectRowFromWidget(record) {
+			if (!record) return;
+
+			isSelectingFromWidget = true;
+
+			selectedId = record.id;
+
+			// 🔥 synchro widget → table
+			grist.setSelectedRows([record.id]);
+
+			// rendu widget
+			renderTable([record]);
+
+			const index = allRecords.findIndex(r => r.id === record.id);
+			document.getElementById("navCounter").textContent =
+				`${index + 1} / ${allRecords.length}`;
+
+			// relâche le lock
+			setTimeout(() => { isSelectingFromWidget = false; }, 0);
+		}
+
+		document.getElementById("nextBtn").addEventListener("click", () => {
+			const index = allRecords.findIndex(r => r.id === selectedId);
+			if (index >= 0 && index < allRecords.length - 1) {
+				selectRowFromWidget(allRecords[index + 1]);
+			}
+		});
+
+		document.getElementById("prevBtn").addEventListener("click", () => {
+			const index = allRecords.findIndex(r => r.id === selectedId);
+			if (index > 0) {
+				selectRowFromWidget(allRecords[index - 1]);
+			}
+		});
+
 		grist.onRecords(records => {
 			allRecords = records;
 		});
@@ -464,15 +500,14 @@
 			if (!record) return;
 
 			// Ignore si la sélection vient du widget
-			//if (isSelectingFromWidget) return;
+			if (isSelectingFromWidget) return;
 
 			selectedId = record.id;
 
 			renderTable([record]);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
-			document.getElementById("navCounter").textContent =
-				`${index + 1} / ${allRecords.length}`;
+			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
 		});
 
 		grist.ready({ requiredAccess: 'read table' });
