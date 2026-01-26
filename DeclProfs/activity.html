@@ -322,6 +322,8 @@
 
 			selectedId = record.id;
 
+			alert("selectedId : " + selectedId);
+
 			renderTable([record]);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
