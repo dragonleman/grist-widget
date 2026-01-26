@@ -294,26 +294,12 @@
 -->
 
 	<script>
-		let allRecords = []; // Stockage local des données
-
-		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true });
-
-		// 1. On récupère la liste complète des lignes (s'exécute quand les données changent)
-		window.grist.onRecords((records) => {
-		allRecords = records;
-		console.log("Données chargées :", allRecords.length, "lignes");
+		grist.ready({ requiredAccess: 'read table' });
+		grist.onRecord((record) => {
+			if (record) {
+				alert("Enregistrement reçu :" + record.id);
+			}
 		});
-
-		// 2. On écoute le changement de sélection (s'exécute à CHAQUE clic sur une ligne)
-		window.grist.onRecord((record) => {
-		if (record && allRecords.length > 0) {
-			// On cherche l'index de la ligne cliquée dans la liste complète
-			const selIndex = allRecords.findIndex(r => r.id === record.id);
-			
-			console.log("Nouvelle sélection - Index:", selIndex, "ID:", record.id);
-		}
-		});
-
 	</script>
 
 	<script>
