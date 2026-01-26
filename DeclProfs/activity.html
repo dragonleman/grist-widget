@@ -43,6 +43,7 @@
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
 		let selectedId = null;
+		let isSelectingFromWidget = false;
 		
 		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt']
 		const transColumns = {
@@ -286,53 +287,45 @@
 		});
 
 		function selectRelative(offset) {
-			alert("offset : " + offset);
 			if (!selectedId) return;
 
-			alert("selectedId : " + selectedId);
-
 			const index = allRecords.findIndex(r => r.id === selectedId);
-			alert("index : " + index);
 			if (index === -1) return;
 
 			const target = allRecords[index + offset];
-			alert("target : " + target);
 			if (!target) return;
 
-			selectedId = target.id;
+			// marque que c'est une sélection depuis le widget
+			isSelectingFromWidget = true;
 
+			selectedId = target.id;
 			window.grist.setSelectedRows([target.id]);
 
 			renderTable([target]);
 
 			const newIndex = allRecords.findIndex(r => r.id === target.id);
-			document.getElementById("navCounter").textContent =
-				`${newIndex + 1} / ${allRecords.length}`;
+			document.getElementById("navCounter").textContent = `${newIndex + 1} / ${allRecords.length}`;
+
+			// remettre le flag après un petit délai
+			setTimeout(() => { isSelectingFromWidget = false; }, 0);
 		}
 
-		document.getElementById("prevBtn").addEventListener("click", () => {
-			selectRelative(-1);
-		});
-
-		document.getElementById("nextBtn").addEventListener("click", () => {
-			selectRelative(1);
-		});
+		document.getElementById("prevBtn").addEventListener("click", () => selectRelative(-1));
+		document.getElementById("nextBtn").addEventListener("click", () => selectRelative(1));
 		
 		window.grist.onRecords(records => {
 			allRecords = records;
+			// Sélection initiale si rien n'est sélectionné
+			if (!selectedId && allRecords.length > 0) {
+				selectRowFromWidget(allRecords[0]);
+			}
 		});
 
 		window.grist.onRecord(record => {
-			if (!record) {
-			// 	renderTable([]);
-			// 	document.getElementById("navCounter").textContent = "0 / 0";
-			// 	selectedId = null;
-				return;
-			}
+			if (!record) return;
+			if (isSelectingFromWidget) return;
 
 			selectedId = record.id;
-
-			alert("selectedId : " + selectedId);
 
 			renderTable([record]);
 
