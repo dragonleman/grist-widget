@@ -294,12 +294,12 @@
 -->
 
 	<script>
-		grist.ready({ requiredAccess: 'read table' });
 		grist.onRecord((record) => {
 			if (record) {
 				alert("Enregistrement reçu :" + record.id);
 			}
 		});
+		grist.ready({ requiredAccess: 'read table' });
 	</script>
 
 	<script>
