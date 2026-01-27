@@ -459,13 +459,15 @@
 		}
 
 		addButton.addEventListener('click', async () => {
-			await window.grist.selectedTable.create({
+			const result = await window.grist.selectedTable.create({
 				fields: {
-					Activity: "",
-					Start_date: today,
-					End_date: today,
+				Activity: "",
+				Start_date: today,
+				End_date: today,
 				},
 			});
+
+			window.grist.setCursorPos({ rowId: result.id });
 		});
 
 		function selectRowFromWidget(record) {
