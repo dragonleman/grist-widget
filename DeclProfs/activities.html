@@ -83,7 +83,7 @@
 
 		function onRowClick(record) {
 			if (!record) return;
-			window.grist.setCursorPos([record.id]);
+			window.grist.setCursorPos({ rowId: record.id });
 		}
 
 		function renderTable(records) {
