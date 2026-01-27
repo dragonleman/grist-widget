@@ -322,7 +322,7 @@
 			if ('Access' in rec) {
 				const input = document.createElement('input');
 				input.type = 'text';
-				input.value = rec.Access || '';
+				input.value = rec.Access === "🛑" ? "read only" : "write";
 				input.readOnly = true;
 
 				form.appendChild(
