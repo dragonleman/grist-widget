@@ -607,7 +607,8 @@
 			// grist.setSelectedRows([record.id]);
 			grist.setCursorPos([record.id]);
 
-			renderCard([record]);
+			//renderCard([record]);
+			renderForm(record);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
@@ -637,7 +638,6 @@
 			selectedId = record.id;
 
 			//renderCard([record]);
-
 			renderForm(record);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
