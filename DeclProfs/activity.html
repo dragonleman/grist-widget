@@ -27,8 +27,12 @@
 
 		<div>
 			<table id="table" class="table table-boxed"></table>
+		</div>
 
-			<!--<div id="form" class="form-container"></div>-->
+		<div style="display:flex; gap:10px; margin-bottom:10px;">
+			<button id="prevBtn" class="btn btn-secondary btn-sm ml-2">Previous</button>
+			<span id="navCounter"></span>
+			<button id="nextBtn" class="btn btn-secondary btn-sm ml-2">Next</button>
 		</div>
 	</div>
 
@@ -453,136 +457,7 @@
 				}
 			}
 		}
-/*
-		function renderForm(rec) {
-			alert(rec);
-			const form = document.getElementById('form');
-			form.innerHTML = '';
 
-			if (!rec) {
-				form.textContent = 'No record selected.';
-				return;
-			}
-
-			// Helper
-			const field = (labelText, inputEl) => {
-				const wrapper = document.createElement('div');
-				wrapper.className = 'form-field';
-
-				const label = document.createElement('label');
-				label.textContent = labelText;
-
-				wrapper.appendChild(label);
-				wrapper.appendChild(inputEl);
-				return wrapper;
-			};
-
-			// Name (read-only)
-			if ('Name' in rec) {
-				const input = document.createElement('input');
-				input.value = rec.Name || '';
-				input.readOnly = true;
-				form.appendChild(field(transColumns.Name, input));
-			}
-
-			// Activity
-			if ('Activity' in rec) {
-				const input = document.createElement('input');
-				input.value = rec.Activity || '';
-				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Activity) {
-					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Activity: input.value }
-					});
-				}
-				});
-				form.appendChild(field(transColumns.Activity, input));
-			}
-
-			// Start_date
-			if ('Start_date' in rec) {
-				const input = document.createElement('input');
-				input.type = 'date';
-				input.value = rec.Start_date || '';
-				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Start_date) {
-					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Start_date: input.value }
-					});
-				}
-				});
-				form.appendChild(field(transColumns.Start_date, input));
-			}
-
-			// End_date
-			if ('End_date' in rec) {
-				const input = document.createElement('input');
-				input.type = 'date';
-				input.value = rec.End_date || '';
-				input.style.backgroundColor = rec.ErrorDate || '';
-				input.addEventListener('blur', async () => {
-				if (input.value !== rec.End_date) {
-					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { End_date: input.value }
-					});
-				}
-				});
-				form.appendChild(field(transColumns.End_date, input));
-			}
-
-			// Access (read-only)
-			if ('Access' in rec) {
-				const input = document.createElement('input');
-				input.value = rec.Access || '';
-				input.readOnly = true;
-				form.appendChild(field(transColumns.Access, input));
-			}
-
-			// Comments
-			if ('Comments' in rec) {
-				const input = document.createElement('input');
-				input.value = rec.Comments || '';
-				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Comments) {
-					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Comments: input.value }
-					});
-				}
-				});
-				form.appendChild(field(transColumns.Comments, input));
-			}
-
-			// Comments_admins
-			if ('Comments_admins' in rec) {
-				const input = document.createElement('input');
-				input.value = rec.Comments_admins || '';
-				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Comments_admins) {
-					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Comments_admins: input.value }
-					});
-				}
-				});
-				form.appendChild(field(transColumns.Comments_admins, input));
-			}
-
-			// UpdatedAt (read-only)
-			if ('UpdatedAt' in rec) {
-				const input = document.createElement('input');
-				input.type = 'date';
-				input.value = rec.UpdatedAt
-				? new Date(rec.UpdatedAt).toISOString().substring(0, 10)
-				: '';
-				input.readOnly = true;
-				form.appendChild(field(transColumns.UpdatedAt, input));
-			}
-		}
-*/
 		addButton.addEventListener('click', async () => {
 			const result = await window.grist.selectedTable.create({
 				fields: {
@@ -632,10 +507,7 @@
 
 			selectedId = record.id;
 
-			alert("Here");
-
 			renderCard([record]);
-			//renderForm(record);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
