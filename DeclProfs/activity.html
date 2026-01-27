@@ -28,7 +28,7 @@
 		<div>
 			<table id="table" class="table table-boxed"></table>
 
-			<div id="form" class="form-container"></div>
+			<!--<div id="form" class="form-container"></div>-->
 		</div>
 	</div>
 
@@ -453,7 +453,7 @@
 				}
 			}
 		}
-
+/*
 		function renderForm(rec) {
 			alert(rec);
 			const form = document.getElementById('form');
@@ -582,7 +582,7 @@
 				form.appendChild(field(transColumns.UpdatedAt, input));
 			}
 		}
-
+*/
 		addButton.addEventListener('click', async () => {
 			const result = await window.grist.selectedTable.create({
 				fields: {
