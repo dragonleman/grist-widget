@@ -445,6 +445,8 @@
 				return wrapper;
 			};
 
+			const is_read_only = rec.Access === "🛑" && !("Name" in rec);
+
 			// Name (read-only)
 			if ('Name' in rec) {
 				const input = document.createElement('input');
@@ -466,6 +468,7 @@
 				const input = document.createElement('input');
 				input.type = 'text';
 				input.value = rec.Activity || '';
+				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Activity) {
@@ -492,61 +495,63 @@
 
 				// Start_date (50%)
 				if ('Start_date' in rec) {
-				const col = document.createElement('div');
-				col.className = 'col-6';
+					const col = document.createElement('div');
+					col.className = 'col-6';
 
-				const input = document.createElement('input');
-				input.type = 'date';
-				input.value = rec.Start_date || '';
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.Start_date || '';
+					input.readOnly = is_read_only;
 
-				input.addEventListener('blur', async () => {
-					if (input.value !== rec.Start_date) {
-					await grist.selectedTable.update({
-						id: rec.id,
-						fields: { Start_date: input.value }
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Start_date) {
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: { Start_date: input.value }
+						});
+						}
 					});
-					}
-				});
 
-				col.appendChild(
-					field({
-					labelText: transColumns.Start_date,
-					inputEl: input,
-					id: 'start-date-input'
-					})
-				);
+					col.appendChild(
+						field({
+						labelText: transColumns.Start_date,
+						inputEl: input,
+						id: 'start-date-input'
+						})
+					);
 
-				row.appendChild(col);
+					row.appendChild(col);
 				}
 
 				// End_date (50%)
 				if ('End_date' in rec) {
-				const col = document.createElement('div');
-				col.className = 'col-6';
+					const col = document.createElement('div');
+					col.className = 'col-6';
 
-				const input = document.createElement('input');
-				input.type = 'date';
-				input.value = rec.End_date || '';
-				input.style.backgroundColor = rec.ErrorDate || '';
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.End_date || '';
+					input.style.backgroundColor = rec.ErrorDate || '';
+					input.readOnly = is_read_only;
 
-				input.addEventListener('blur', async () => {
-					if (input.value !== rec.End_date) {
-					await grist.selectedTable.update({
-						id: rec.id,
-						fields: { End_date: input.value }
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.End_date) {
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: { End_date: input.value }
+						});
+						}
 					});
-					}
-				});
 
-				col.appendChild(
-					field({
-					labelText: transColumns.End_date,
-					inputEl: input,
-					id: 'end-date-input'
-					})
-				);
+					col.appendChild(
+						field({
+						labelText: transColumns.End_date,
+						inputEl: input,
+						id: 'end-date-input'
+						})
+					);
 
-				row.appendChild(col);
+					row.appendChild(col);
 				}
 
 				form.appendChild(row);
@@ -573,6 +578,7 @@
 				const input = document.createElement('input');
 				input.type = 'text';
 				input.value = rec.Comments || '';
+				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Comments) {
@@ -597,6 +603,7 @@
 				const input = document.createElement('input');
 				input.type = 'text';
 				input.value = rec.Comments_admins || '';
+				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Comments_admins) {
