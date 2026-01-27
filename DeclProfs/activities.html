@@ -79,12 +79,11 @@
 			UpdatedAt: "Updated at"
 		}
 	  
-		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true });
+		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true, allowSelectBy: true });
 
 		function onRowClick(record) {
-			alert("Coucou");
 			if (!record) return;
-			window.grist.selectedTable?.setSelectedRows([record.id]);
+			window.grist.setCursorPos([record.id]);
 		}
 
 		function renderTable(records) {
