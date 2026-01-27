@@ -634,7 +634,8 @@
 
 			alert("Here");
 
-			renderForm(record); //renderCard([record]);
+			renderCard([record]);
+			//renderForm(record);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
