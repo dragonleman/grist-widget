@@ -228,6 +228,8 @@
 				return wrapper;
 			};
 
+			const is_read_only = rec.Access === "🛑" && !("Name" in rec);
+
 			// Name (read-only)
 			if ('Name' in rec) {
 				const input = document.createElement('input');
@@ -249,6 +251,7 @@
 				const input = document.createElement('input');
 				input.type = 'text';
 				input.value = rec.Activity || '';
+				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Activity) {
@@ -274,6 +277,7 @@
 				const input = document.createElement('input');
 				input.type = 'date';
 				input.value = rec.Start_date || '';
+				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Start_date) {
@@ -298,6 +302,7 @@
 				const input = document.createElement('input');
 				input.type = 'date';
 				input.value = rec.End_date || '';
+				input.readOnly = is_read_only;
 				input.style.backgroundColor = rec.ErrorDate || '';
 
 				input.addEventListener('blur', async () => {
@@ -318,27 +323,28 @@
 				);
 			}
 
-			// Access (read-only)
-			if ('Access' in rec) {
-				const input = document.createElement('input');
-				input.type = 'text';
-				input.value = rec.Access === "🛑" ? "read only" : "write";
-				input.readOnly = true;
+			// // Access (read-only)
+			// if ('Access' in rec) {
+			// 	const input = document.createElement('input');
+			// 	input.type = 'text';
+			// 	input.value = rec.Access === "🛑" ? "read only" : "write";
+			// 	input.readOnly = true;
 
-				form.appendChild(
-				field({
-					labelText: transColumns.Access,
-					inputEl: input,
-					id: 'access-input'
-				})
-				);
-			}
+			// 	form.appendChild(
+			// 	field({
+			// 		labelText: transColumns.Access,
+			// 		inputEl: input,
+			// 		id: 'access-input'
+			// 	})
+			// 	);
+			// }
 
 			// Comments
 			if ('Comments' in rec) {
 				const input = document.createElement('input');
 				input.type = 'text';
 				input.value = rec.Comments || '';
+				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Comments) {
@@ -363,6 +369,7 @@
 				const input = document.createElement('input');
 				input.type = 'text';
 				input.value = rec.Comments_admins || '';
+				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Comments_admins) {
