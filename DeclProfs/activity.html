@@ -474,7 +474,11 @@
 			selectedId = record.id;
 
 			// grist.setSelectedRows([record.id]);
-			grist.setCursorPos([record.id]);
+			//grist.setCursorPos([record.id]);
+			grist.setCursorPos({
+				rowId: ecord.id,
+				sectionId: grist.getSectionId()
+			});
 
 			renderCard([record]);
 
