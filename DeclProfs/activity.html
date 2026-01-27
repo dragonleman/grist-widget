@@ -27,6 +27,7 @@
 
 		<div>
 			<table id="table" class="table table-boxed"></table>
+			<div id="form" class="form-container"></div>
 		</div>
 
 		<div style="display:flex; gap:10px; margin-bottom:10px;">
@@ -314,147 +315,275 @@
 
 		grist.ready({ requiredAccess: 'full', getSelectedRows: true });
 
-		function renderCard(records) {
-			const table = document.getElementById('table');
-			while (table.rows.length > 0) table.deleteRow(0);
+		// function renderCard(records) {
+		// 	const table = document.getElementById('table');
+		// 	while (table.rows.length > 0) table.deleteRow(0);
 
-			if (!records || records.length === 0) {
-				const row = table.insertRow();
-				const cell = row.insertCell();
-				cell.colSpan = 6;
-				cell.textContent = 'No data found.';
-				cell.style.textAlign = 'center';
+		// 	if (!records || records.length === 0) {
+		// 		const row = table.insertRow();
+		// 		const cell = row.insertCell();
+		// 		cell.colSpan = 6;
+		// 		cell.textContent = 'No data found.';
+		// 		cell.style.textAlign = 'center';
+		// 		return;
+		// 	}
+
+		// 	const columnNames = Object.keys(records[0] || {});
+		// 	const header = table.createTHead();
+		// 	const headerRow = header.insertRow();
+
+		// 	for (const col of columnNamesAccepted) {
+		// 		if (columnNames.includes(col)) {
+		// 			const th = document.createElement('th');
+		// 			th.textContent = transColumns[col];
+		// 			headerRow.appendChild(th);
+		// 		}
+		// 	}
+
+		// 	const th = document.createElement('th');
+		// 	th.textContent = 'Actions';
+		// 	headerRow.appendChild(th);
+
+		// 	for (const rec of records) {
+		// 		const row = table.insertRow();
+
+		// 		// Name
+		// 		if (columnNames.includes('Name')) {
+		// 			const cell = row.insertCell();
+		// 			const span = document.createElement('span');
+		// 			span.textContent = rec.Name || '';
+		// 			span.style.border = 'none';
+		// 			cell.appendChild(span);
+		// 		}
+
+		// 		// Activity
+		// 		if (columnNames.includes('Activity')) {
+		// 			const cell = row.insertCell();
+		// 			const input = document.createElement('input');
+		// 			input.value = rec.Activity || '';
+		// 			input.style.width = '100%';
+		// 			input.style.border = 'none';
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Activity) {
+		// 					await window.grist.selectedTable.update({ id: rec.id, fields: { Activity: input.value } });
+		// 				}
+		// 			});
+		// 			cell.appendChild(input);
+		// 		}
+
+		// 		// Start date
+		// 		if (columnNames.includes('Start_date')) {
+		// 			const cell = row.insertCell();
+		// 			const input = document.createElement('input');
+		// 			input.type = 'date';
+		// 			input.value = rec.Start_date || '';
+		// 			input.style.border = 'none';
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Start_date) {
+		// 					await window.grist.selectedTable.update({ id: rec.id, fields: { Start_date: input.value } });
+		// 				}
+		// 			});
+		// 			cell.appendChild(input);
+		// 		}
+
+		// 		// End date
+		// 		if (columnNames.includes('End_date')) {
+		// 			const cell = row.insertCell();
+		// 			const input = document.createElement('input');
+		// 			input.type = 'date';
+		// 			input.value = rec.End_date || '';
+		// 			input.style.border = 'none';
+		// 			input.style.backgroundColor = rec.ErrorDate || '';
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.End_date) {
+		// 					await window.grist.selectedTable.update({ id: rec.id, fields: { End_date: input.value } });
+		// 				}
+		// 			});
+		// 			cell.appendChild(input);
+		// 		}
+
+		// 		// Access
+		// 		if (columnNames.includes('Access')) {
+		// 			const cell = row.insertCell();
+		// 			const span = document.createElement('span');
+		// 			span.textContent = rec.Access || '';
+		// 			span.style.fontSize = '18px';
+		// 			span.style.cursor = 'default';
+		// 			cell.appendChild(span);
+		// 		}
+
+		// 		// Comments
+		// 		if (columnNames.includes('Comments')) {
+		// 			const cell = row.insertCell();
+		// 			const input = document.createElement('input');
+		// 			input.value = rec.Comments || '';
+		// 			input.style.border = 'none';
+		// 			input.style.width = '100%';
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Comments) {
+		// 					await window.grist.selectedTable.update({ id: rec.id, fields: { Comments: input.value } });
+		// 				}
+		// 			});
+		// 			cell.appendChild(input);
+		// 		}
+
+		// 		// Comments admins
+		// 		if (columnNames.includes('Comments_admins')) {
+		// 			const cell = row.insertCell();
+		// 			const input = document.createElement('input');
+		// 			input.value = rec.Comments_admins || '';
+		// 			input.style.border = 'none';
+		// 			input.style.width = '100%';
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Comments_admins) {
+		// 					await window.grist.selectedTable.update({ id: rec.id, fields: { Comments_admins: input.value } });
+		// 				}
+		// 			});
+		// 			cell.appendChild(input);
+		// 		}
+
+		// 		// UpdatedAt
+		// 		if (columnNames.includes('UpdatedAt')) {
+		// 			const cell = row.insertCell();
+		// 			const input = document.createElement('input');
+		// 			input.type = 'date';
+		// 			input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
+		// 			input.readOnly = true;
+		// 			input.disabled = true;
+		// 			input.style.border = 'none';
+		// 			input.style.background = 'transparent';
+		// 			input.style.width = '100%';
+		// 			input.style.pointerEvents = 'none';
+		// 			cell.appendChild(input);
+		// 		}
+		// 	}
+		// }
+
+		function renderForm(rec) {
+			const form = document.getElementById('form');
+			form.innerHTML = '';
+
+			if (!rec) {
+				form.textContent = 'No record selected.';
 				return;
 			}
 
-			const columnNames = Object.keys(records[0] || {});
-			const header = table.createTHead();
-			const headerRow = header.insertRow();
+			// Helper
+			const field = (labelText, inputEl) => {
+				const wrapper = document.createElement('div');
+				wrapper.className = 'form-field';
 
-			for (const col of columnNamesAccepted) {
-				if (columnNames.includes(col)) {
-					const th = document.createElement('th');
-					th.textContent = transColumns[col];
-					headerRow.appendChild(th);
-				}
+				const label = document.createElement('label');
+				label.textContent = labelText;
+
+				wrapper.appendChild(label);
+				wrapper.appendChild(inputEl);
+				return wrapper;
+			};
+
+			// Name (read-only)
+			if ('Name' in rec) {
+				const input = document.createElement('input');
+				input.value = rec.Name || '';
+				input.readOnly = true;
+				form.appendChild(field(transColumns.Name, input));
 			}
 
-			const th = document.createElement('th');
-			th.textContent = 'Actions';
-			headerRow.appendChild(th);
-
-			for (const rec of records) {
-				const row = table.insertRow();
-
-				// Name
-				if (columnNames.includes('Name')) {
-					const cell = row.insertCell();
-					const span = document.createElement('span');
-					span.textContent = rec.Name || '';
-					span.style.border = 'none';
-					cell.appendChild(span);
-				}
-
-				// Activity
-				if (columnNames.includes('Activity')) {
-					const cell = row.insertCell();
-					const input = document.createElement('input');
-					input.value = rec.Activity || '';
-					input.style.width = '100%';
-					input.style.border = 'none';
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Activity) {
-							await window.grist.selectedTable.update({ id: rec.id, fields: { Activity: input.value } });
-						}
+			// Activity
+			if ('Activity' in rec) {
+				const input = document.createElement('input');
+				input.value = rec.Activity || '';
+				input.addEventListener('blur', async () => {
+				if (input.value !== rec.Activity) {
+					await grist.selectedTable.update({
+					id: rec.id,
+					fields: { Activity: input.value }
 					});
-					cell.appendChild(input);
 				}
+				});
+				form.appendChild(field(transColumns.Activity, input));
+			}
 
-				// Start date
-				if (columnNames.includes('Start_date')) {
-					const cell = row.insertCell();
-					const input = document.createElement('input');
-					input.type = 'date';
-					input.value = rec.Start_date || '';
-					input.style.border = 'none';
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Start_date) {
-							await window.grist.selectedTable.update({ id: rec.id, fields: { Start_date: input.value } });
-						}
+			// Start_date
+			if ('Start_date' in rec) {
+				const input = document.createElement('input');
+				input.type = 'date';
+				input.value = rec.Start_date || '';
+				input.addEventListener('blur', async () => {
+				if (input.value !== rec.Start_date) {
+					await grist.selectedTable.update({
+					id: rec.id,
+					fields: { Start_date: input.value }
 					});
-					cell.appendChild(input);
 				}
+				});
+				form.appendChild(field(transColumns.Start_date, input));
+			}
 
-				// End date
-				if (columnNames.includes('End_date')) {
-					const cell = row.insertCell();
-					const input = document.createElement('input');
-					input.type = 'date';
-					input.value = rec.End_date || '';
-					input.style.border = 'none';
-					input.style.backgroundColor = rec.ErrorDate || '';
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.End_date) {
-							await window.grist.selectedTable.update({ id: rec.id, fields: { End_date: input.value } });
-						}
+			// End_date
+			if ('End_date' in rec) {
+				const input = document.createElement('input');
+				input.type = 'date';
+				input.value = rec.End_date || '';
+				input.style.backgroundColor = rec.ErrorDate || '';
+				input.addEventListener('blur', async () => {
+				if (input.value !== rec.End_date) {
+					await grist.selectedTable.update({
+					id: rec.id,
+					fields: { End_date: input.value }
 					});
-					cell.appendChild(input);
 				}
+				});
+				form.appendChild(field(transColumns.End_date, input));
+			}
 
-				// Access
-				if (columnNames.includes('Access')) {
-					const cell = row.insertCell();
-					const span = document.createElement('span');
-					span.textContent = rec.Access || '';
-					span.style.fontSize = '18px';
-					span.style.cursor = 'default';
-					cell.appendChild(span);
-				}
+			// Access (read-only)
+			if ('Access' in rec) {
+				const input = document.createElement('input');
+				input.value = rec.Access || '';
+				input.readOnly = true;
+				form.appendChild(field(transColumns.Access, input));
+			}
 
-				// Comments
-				if (columnNames.includes('Comments')) {
-					const cell = row.insertCell();
-					const input = document.createElement('input');
-					input.value = rec.Comments || '';
-					input.style.border = 'none';
-					input.style.width = '100%';
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Comments) {
-							await window.grist.selectedTable.update({ id: rec.id, fields: { Comments: input.value } });
-						}
+			// Comments
+			if ('Comments' in rec) {
+				const input = document.createElement('input');
+				input.value = rec.Comments || '';
+				input.addEventListener('blur', async () => {
+				if (input.value !== rec.Comments) {
+					await grist.selectedTable.update({
+					id: rec.id,
+					fields: { Comments: input.value }
 					});
-					cell.appendChild(input);
 				}
+				});
+				form.appendChild(field(transColumns.Comments, input));
+			}
 
-				// Comments admins
-				if (columnNames.includes('Comments_admins')) {
-					const cell = row.insertCell();
-					const input = document.createElement('input');
-					input.value = rec.Comments_admins || '';
-					input.style.border = 'none';
-					input.style.width = '100%';
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Comments_admins) {
-							await window.grist.selectedTable.update({ id: rec.id, fields: { Comments_admins: input.value } });
-						}
+			// Comments_admins
+			if ('Comments_admins' in rec) {
+				const input = document.createElement('input');
+				input.value = rec.Comments_admins || '';
+				input.addEventListener('blur', async () => {
+				if (input.value !== rec.Comments_admins) {
+					await grist.selectedTable.update({
+					id: rec.id,
+					fields: { Comments_admins: input.value }
 					});
-					cell.appendChild(input);
 				}
+				});
+				form.appendChild(field(transColumns.Comments_admins, input));
+			}
 
-				// UpdatedAt
-				if (columnNames.includes('UpdatedAt')) {
-					const cell = row.insertCell();
-					const input = document.createElement('input');
-					input.type = 'date';
-					input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
-					input.readOnly = true;
-					input.disabled = true;
-					input.style.border = 'none';
-					input.style.background = 'transparent';
-					input.style.width = '100%';
-					input.style.pointerEvents = 'none';
-					cell.appendChild(input);
-				}
+			// UpdatedAt (read-only)
+			if ('UpdatedAt' in rec) {
+				const input = document.createElement('input');
+				input.type = 'date';
+				input.value = rec.UpdatedAt
+				? new Date(rec.UpdatedAt).toISOString().substring(0, 10)
+				: '';
+				input.readOnly = true;
+				form.appendChild(field(transColumns.UpdatedAt, input));
 			}
 		}
 
@@ -507,7 +636,9 @@
 
 			selectedId = record.id;
 
-			renderCard([record]);
+			//renderCard([record]);
+
+			renderForm(record);
 
 			const index = allRecords.findIndex(r => r.id === record.id);
 			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
