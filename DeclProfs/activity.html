@@ -207,22 +207,6 @@
 				form.appendChild(row);
 			}
 
-			// Access (read-only)
-			if ('Access' in rec) {
-				const input = document.createElement('input');
-				input.type = 'text';
-				input.value = rec.Access || '';
-				input.readOnly = true;
-
-				form.appendChild(
-				field({
-					labelText: transColumns.Access,
-					inputEl: input,
-					id: 'access-input'
-				})
-				);
-			}
-
 			// Comments
 			if ('Comments' in rec) {
 				const input = document.createElement('input');
