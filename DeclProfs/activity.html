@@ -473,7 +473,8 @@
 
 			selectedId = record.id;
 
-			grist.setSelectedRows([record.id]);
+			// grist.setSelectedRows([record.id]);
+			grist.setCursorPos([record.id]);
 
 			renderCard([record]);
 
