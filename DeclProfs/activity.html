@@ -298,7 +298,7 @@
 				if (r.IsSelected && r.id !== selectedId) {
 				actions.push([
 					"UpdateRecord",
-					TABLE_ID,
+					"Activities",
 					r.id,
 					{ IsSelected: false }
 				]);
@@ -307,7 +307,7 @@
 
 			actions.push([
 				"UpdateRecord",
-				TABLE_ID,
+				"Activities",
 				selectedId,
 				{ IsSelected: true }
 			]);
