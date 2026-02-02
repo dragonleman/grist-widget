@@ -290,20 +290,16 @@
 		function selectRowFromWidget(record) {
 			if (!record) return;
 
-			selectedId = record.id;
-
 			const actions = [];
 
-			allRecords.forEach(r => {
-				if (r.IsSelected && r.id !== selectedId) {
-				actions.push([
-					"UpdateRecord",
-					"Activities",
-					r.id,
-					{ IsSelected: false }
-				]);
-				}
-			});
+			actions.push([
+				"UpdateRecord",
+				"Activities",
+				selectedId,
+				{ IsSelected: false }
+			]);
+
+			selectedId = record.id;
 
 			actions.push([
 				"UpdateRecord",
