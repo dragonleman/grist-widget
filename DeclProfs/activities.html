@@ -65,6 +65,7 @@
 
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let allRecords = [];
+		let selectedId = null;
 		
 		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt']
 		const transColumns = {
@@ -83,7 +84,24 @@
 
 		function onRowClick(record) {
 			if (!record) return;
-			window.grist.setCursorPos({ rowId: record.id });
+
+			const actions = [];
+
+			actions.push([
+				"UpdateRecord",
+				"Activities",
+				selectedId,
+				{ IsSelected: false }
+			]);
+
+			selectedId = record.id;
+
+			actions.push([
+				"UpdateRecord",
+				"Activities",
+				selectedId,
+				{ IsSelected: true }
+			]);
 		}
 
 		function renderTable(records) {
@@ -214,10 +232,10 @@
 					commentsInput.style.width = '100%';
 					commentsInput.addEventListener('blur', async () => {
 						if (commentsInput.value !== rec.Comments) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Comments: commentsInput.value }
-						});
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { Comments: commentsInput.value }
+							});
 						}
 					});
 					commentsCell.appendChild(commentsInput);
@@ -232,10 +250,10 @@
 					commentsadminsInput.style.width = '100%';
 					commentsadminsInput.addEventListener('blur', async () => {
 						if (commentsadminsInput.value !== rec.Comments) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Comments_admins: commentsadminsInput.value }
-						});
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { Comments_admins: commentsadminsInput.value }
+							});
 						}
 					});
 					commentsadminsCell.appendChild(commentsadminsInput);
@@ -289,18 +307,13 @@
 
 					const updatedatInput = document.createElement('input');
 					updatedatInput.type = 'date';
-
-					updatedatInput.value = rec.UpdatedAt
-						? new Date(rec.UpdatedAt).toISOString().substring(0, 10)
-						: '';
-
-					updatedatInput.readOnly = true;     // empêche la saisie
-					updatedatInput.disabled = true;     // empêche aussi le date picker
-
+					updatedatInput.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
+					updatedatInput.readOnly = true;
+					updatedatInput.disabled = true;
 					updatedatInput.style.border = 'none';
 					updatedatInput.style.background = 'transparent';
 					updatedatInput.style.width = '100%';
-					updatedatInput.style.pointerEvents = 'none'; // bloque toute interaction
+					updatedatInput.style.pointerEvents = 'none';
 
 					updatedatCell.appendChild(updatedatInput);
 				}
@@ -457,6 +470,12 @@
 			yearInput.value = new Date().getFullYear();
 			allRecords = records;
 			applyFilters();
+		});
+
+		window.grist.onRecord(record => {
+			if (!record) return;
+
+			selectedId = record.id;
 		});
 
 		// Search by Name
