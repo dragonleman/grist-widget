@@ -84,12 +84,12 @@
 				wrapper.appendChild(inputEl);
 
 				if (helpText) {
-				const small = document.createElement('small');
-				small.id = `${id}-help`;
-				small.className = 'form-text text-muted';
-				small.textContent = helpText;
-				inputEl.setAttribute('aria-describedby', small.id);
-				wrapper.appendChild(small);
+					const small = document.createElement('small');
+					small.id = `${id}-help`;
+					small.className = 'form-text text-muted';
+					small.textContent = helpText;
+					inputEl.setAttribute('aria-describedby', small.id);
+					wrapper.appendChild(small);
 				}
 
 				return wrapper;
@@ -105,11 +105,11 @@
 				input.readOnly = true;
 
 				form.appendChild(
-				field({
-					labelText: transColumns.Name,
-					inputEl: input,
-					id: 'name-input'
-				})
+					field({
+						labelText: transColumns.Name,
+						inputEl: input,
+						id: 'name-input'
+					})
 				);
 			}
 
@@ -123,18 +123,18 @@
 				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Activity) {
 					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Activity: input.value }
+						id: rec.id,
+						fields: { Activity: input.value }
 					});
 				}
 				});
 
 				form.appendChild(
-				field({
-					labelText: transColumns.Activity,
-					inputEl: input,
-					id: 'activity-input'
-				})
+					field({
+						labelText: transColumns.Activity,
+						inputEl: input,
+						id: 'activity-input'
+					})
 				);
 			}
 
@@ -155,18 +155,18 @@
 
 					input.addEventListener('blur', async () => {
 						if (input.value !== rec.Start_date) {
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: { Start_date: input.value }
-						});
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { Start_date: input.value }
+							});
 						}
 					});
 
 					col.appendChild(
 						field({
-						labelText: transColumns.Start_date,
-						inputEl: input,
-						id: 'start-date-input'
+							labelText: transColumns.Start_date,
+							inputEl: input,
+							id: 'start-date-input'
 						})
 					);
 
@@ -186,18 +186,18 @@
 
 					input.addEventListener('blur', async () => {
 						if (input.value !== rec.End_date) {
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: { End_date: input.value }
-						});
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { End_date: input.value }
+							});
 						}
 					});
 
 					col.appendChild(
 						field({
-						labelText: transColumns.End_date,
-						inputEl: input,
-						id: 'end-date-input'
+							labelText: transColumns.End_date,
+							inputEl: input,
+							id: 'end-date-input'
 						})
 					);
 
@@ -215,20 +215,20 @@
 				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Comments) {
-					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Comments: input.value }
-					});
-				}
+					if (input.value !== rec.Comments) {
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: { Comments: input.value }
+						});
+					}
 				});
 
 				form.appendChild(
-				field({
-					labelText: transColumns.Comments,
-					inputEl: input,
-					id: 'comments-input'
-				})
+					field({
+						labelText: transColumns.Comments,
+						inputEl: input,
+						id: 'comments-input'
+					})
 				);
 			}
 
@@ -240,20 +240,20 @@
 				input.readOnly = is_read_only;
 
 				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Comments_admins) {
-					await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Comments_admins: input.value }
-					});
-				}
+					if (input.value !== rec.Comments_admins) {
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: { Comments_admins: input.value }
+						});
+					}
 				});
 
 				form.appendChild(
-				field({
-					labelText: transColumns.Comments_admins,
-					inputEl: input,
-					id: 'comments-admins-input'
-				})
+					field({
+						labelText: transColumns.Comments_admins,
+						inputEl: input,
+						id: 'comments-admins-input'
+					})
 				);
 			}
 
@@ -261,17 +261,15 @@
 			if ('UpdatedAt' in rec) {
 				const input = document.createElement('input');
 				input.type = 'date';
-				input.value = rec.UpdatedAt
-				? new Date(rec.UpdatedAt).toISOString().substring(0, 10)
-				: '';
+				input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
 				input.readOnly = true;
 
 				form.appendChild(
-				field({
-					labelText: transColumns.UpdatedAt,
-					inputEl: input,
-					id: 'updated-at-input'
-				})
+					field({
+						labelText: transColumns.UpdatedAt,
+						inputEl: input,
+						id: 'updated-at-input'
+					})
 				);
 			}
 		}
@@ -280,9 +278,9 @@
 		addButton.addEventListener('click', async () => {
 			const result = await window.grist.selectedTable.create({
 				fields: {
-				Activity: "",
-				Start_date: today,
-				End_date: today,
+					Activity: "",
+					Start_date: today,
+					End_date: today,
 				},
 			});
 
@@ -294,7 +292,29 @@
 
 			selectedId = record.id;
 
-			grist.setCursorPos([record.id]);
+			const actions = [];
+
+			allRecords.forEach(r => {
+				if (r.IsSelected && r.id !== selectedId) {
+				actions.push([
+					"UpdateRecord",
+					TABLE_ID,
+					r.id,
+					{ IsSelected: false }
+				]);
+				}
+			});
+
+			actions.push([
+				"UpdateRecord",
+				TABLE_ID,
+				selectedId,
+				{ IsSelected: true }
+			]);
+
+			grist.docApi.applyUserActions(actions);
+
+			grist.setCursorPos({ rowId: record.id });
 
 			renderForm(record);
 

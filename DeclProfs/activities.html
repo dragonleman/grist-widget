@@ -319,13 +319,13 @@
 					`;
 				dupBtn.style.border = 'none';
 				dupBtn.onclick = async () => {
-				await window.grist.selectedTable.create({
-					fields: {
-						Activity: rec.Activity,
-						Start_date: today,
-						End_date: today,
-					},
-				});
+					await window.grist.selectedTable.create({
+						fields: {
+							Activity: rec.Activity,
+							Start_date: today,
+							End_date: today,
+						},
+					});
 				};
 				tdActions.appendChild(dupBtn);
 
