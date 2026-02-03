@@ -101,6 +101,7 @@
 		// =========================
 		grist.onRecords(records => {
 			allRecords = records;
+			alert(records);
 
 			const drafts = records.filter(r => r.Status === "draft");
 			alert(drafts);
