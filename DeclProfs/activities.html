@@ -85,7 +85,7 @@
 		function onRowClick(record) {
 			if (!record) return;
 
-			alert("click on row: ", selectedId);
+			alert("click on row: ", record);
 
 			const actions = [];
 
@@ -476,6 +476,8 @@
 
 		window.grist.onRecord(record => {
 			if (!record) return;
+
+			alert("first record: ", record);
 
 			selectedId = record.id;
 		});
