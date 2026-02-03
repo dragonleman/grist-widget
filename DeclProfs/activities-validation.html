@@ -60,8 +60,8 @@
 			draftList.innerHTML = "";
 
 			if (!drafts.length) {
-			draftList.innerHTML = "<li>Aucun brouillon</li>";
-			return;
+				draftList.innerHTML = "<li>Aucun brouillon</li>";
+				return;
 			}
 
 			drafts.forEach(rec => {
@@ -75,10 +75,10 @@
 
 			input.addEventListener("blur", async () => {
 				if (input.value !== rec.Activity) {
-				await grist.selectedTable.update({
-					id: rec.id,
-					fields: { Activity: input.value }
-				});
+					await grist.selectedTable.update({
+						id: rec.id,
+						fields: { Activity: input.value }
+					});
 				}
 			});
 
@@ -103,6 +103,7 @@
 			allRecords = records;
 
 			const drafts = records.filter(r => r.Status === "draft");
+			alert(drafts);
 			renderDrafts(drafts);
 		});
 
