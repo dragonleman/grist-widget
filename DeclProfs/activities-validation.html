@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Activities Declaration</title>
+  <link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+  <link rel="stylesheet" href="css/declprofs.css">
+	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+</head>
+<body>
+  	<header class="header header-light my-2">
+		<div class="header-light-content">
+			<a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
+			<p class="site-title"><a href="#">Professor outside activities</a></p>
+			<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+		</div>
+  	</header>
+
+	<div class="breadcrumb-container pb-0 mb-0">
+		<nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
+	</div>
+  
+  	<div class="main-container m-4">
+		<div class="toolbar">
+			<button id="addBtn">➕ Ajouter</button>
+			<button id="validateBtn">✅ Valider</button>
+		</div>
+
+		<ul id="draftList"></ul>
+
+		<style>
+			.draft {
+				padding: 6px;
+				margin: 4px 0;
+				background: #f7f7ff;
+				border: 1px dashed #aaa;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+		</style>
+	</div>
+
+	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+
+	<script>
+		const addBtn = document.getElementById("addBtn");
+		const validateBtn = document.getElementById("validateBtn");
+		const draftList = document.getElementById("draftList");
+
+		let allRecords = [];
+		const today = new Date().toISOString().slice(0, 10);
+
+		grist.ready({ requiredAccess: "full" });
+
+		// =========================
+		// RENDER
+		// =========================
+		function renderDrafts(drafts) {
+			draftList.innerHTML = "";
+
+			if (!drafts.length) {
+			draftList.innerHTML = "<li>Aucun brouillon</li>";
+			return;
+			}
+
+			drafts.forEach(rec => {
+			const li = document.createElement("li");
+			li.className = "draft";
+
+			const input = document.createElement("input");
+			input.type = "text";
+			input.value = rec.Activity || "";
+			input.placeholder = "Activity…";
+
+			input.addEventListener("blur", async () => {
+				if (input.value !== rec.Activity) {
+				await grist.selectedTable.update({
+					id: rec.id,
+					fields: { Activity: input.value }
+				});
+				}
+			});
+
+			const delBtn = document.createElement("button");
+			delBtn.textContent = "🗑";
+			delBtn.title = "Supprimer le draft";
+
+			delBtn.onclick = async () => {
+				await grist.selectedTable.destroy([rec.id]);
+			};
+
+			li.appendChild(input);
+			li.appendChild(delBtn);
+			draftList.appendChild(li);
+			});
+		}
+
+		// =========================
+		// DATA LISTENER
+		// =========================
+		grist.onRecords(records => {
+			allRecords = records;
+
+			const drafts = records.filter(r => r.Status === "draft");
+			renderDrafts(drafts);
+		});
+
+		// =========================
+		// ADD DRAFT
+		// =========================
+		addBtn.addEventListener("click", async () => {
+			await grist.selectedTable.create({
+			fields: {
+				Activity: "",
+				Start_date: today,
+				End_date: today,
+				Status: "draft",
+				CreatedBy: grist.user?.email || ""
+			}
+			});
+		});
+
+		// =========================
+		// VALIDATE ALL DRAFTS
+		// =========================
+		validateBtn.addEventListener("click", async () => {
+			const drafts = allRecords.filter(r => r.Status === "draft");
+
+			if (!drafts.length) {
+			alert("Aucun brouillon à valider");
+			return;
+			}
+
+			if (!confirm(`Valider ${drafts.length} brouillon(s) ?`)) return;
+
+			const actions = drafts.map(r => [
+			"UpdateRecord",
+			"Activities",
+			r.id,
+			{ Status: "active" }
+			]);
+
+			await grist.docApi.applyUserActions(actions);
+		});
+	</script>
+
+	<script>
+    	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+    	featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+  	</script>
+</body>
+</html>
+
+
