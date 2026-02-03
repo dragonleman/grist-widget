@@ -85,9 +85,9 @@
 		function onRowClick(record) {
 			if (!record) return;
 
-			alert("click on row:\n" + JSON.stringify(record, null, 2));
-
 			const actions = [];
+
+			alert("first record" + record.id);
 
 			actions.push([
 				"UpdateRecord",
@@ -477,7 +477,7 @@
 		window.grist.onRecord(record => {
 			if (!record) return;
 
-			alert("first record" + JSON.stringify(record, null, 2));
+			alert("first record" + record.id);
 
 			selectedId = record.id;
 		});
