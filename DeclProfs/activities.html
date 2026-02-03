@@ -147,6 +147,7 @@
 			headerRow.appendChild(th);
 			
 		  	for (const rec of records) {
+				alert(rec);
 		    	const row = table.insertRow();
 
 				row.addEventListener("click", () => onRowClick(rec));
