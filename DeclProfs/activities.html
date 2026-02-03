@@ -87,7 +87,7 @@
 
 			const actions = [];
 
-			alert("first record" + record.id);
+			alert("first record" + selectedId);
 
 			actions.push([
 				"UpdateRecord",
@@ -104,6 +104,10 @@
 				selectedId,
 				{ IsSelected: true }
 			]);
+
+			grist.docApi.applyUserActions(actions);
+
+			grist.setCursorPos({ rowId: record.id });
 		}
 
 		function renderTable(records) {
