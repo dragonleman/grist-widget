@@ -27,18 +27,6 @@
 		</div>
 
 		<ul id="draftList"></ul>
-
-		<style>
-			.draft {
-				padding: 6px;
-				margin: 4px 0;
-				background: #f7f7ff;
-				border: 1px dashed #aaa;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}
-		</style>
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
@@ -76,7 +64,6 @@
 			drafts.forEach(rec => {
 				const form = document.createElement('form');
 				form.innerHTML = '';
-				form.className = "draft";
 
 				const field = ({ labelText, inputEl, id, helpText = '' }) => {
 					const wrapper = document.createElement('div');
