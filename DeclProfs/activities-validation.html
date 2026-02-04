@@ -53,9 +53,6 @@
 
 		grist.ready({ requiredAccess: "full" });
 
-		// =========================
-		// RENDER
-		// =========================
 		function renderDrafts(drafts) {
 			draftList.innerHTML = "";
 
@@ -65,40 +62,185 @@
 			}
 
 			drafts.forEach(rec => {
-			const li = document.createElement("li");
-			li.className = "draft";
+				const li = document.createElement("li");
+				li.className = "draft";
 
-			const input = document.createElement("input");
-			input.type = "text";
-			input.value = rec.Activity || "";
-			input.placeholder = "Activity…";
 
-			input.addEventListener("blur", async () => {
+
+
+
+			const field = ({ labelText, inputEl, id, helpText = '' }) => {
+				const wrapper = document.createElement('div');
+				wrapper.className = 'form-group';
+
+				const label = document.createElement('label');
+				label.setAttribute('for', id);
+				label.textContent = labelText;
+
+				inputEl.id = id;
+				inputEl.classList.add('form-control');
+
+				wrapper.appendChild(label);
+				wrapper.appendChild(inputEl);
+
+				if (helpText) {
+					const small = document.createElement('small');
+					small.id = `${id}-help`;
+					small.className = 'form-text text-muted';
+					small.textContent = helpText;
+					inputEl.setAttribute('aria-describedby', small.id);
+					wrapper.appendChild(small);
+				}
+
+				return wrapper;
+			};
+
+			const is_read_only = rec.Access === "🛑" && !("Name" in rec);
+
+			// Name (read-only)
+			if ('Name' in rec) {
+				const input = document.createElement('input');
+				input.type = 'text';
+				input.value = rec.Name || '';
+				input.readOnly = true;
+
+				li.appendChild(
+					field({
+						labelText: transColumns.Name,
+						inputEl: input,
+						id: 'name-input'
+					})
+				);
+			}
+
+			// Activity
+			if ('Activity' in rec) {
+				const input = document.createElement('input');
+				input.type = 'text';
+				input.value = rec.Activity || '';
+				input.readOnly = is_read_only;
+
+				input.addEventListener('blur', async () => {
 				if (input.value !== rec.Activity) {
 					await grist.selectedTable.update({
 						id: rec.id,
 						fields: { Activity: input.value }
 					});
 				}
-			});
+				});
 
-			const delBtn = document.createElement("button");
-			delBtn.textContent = "🗑";
-			delBtn.title = "Supprimer le draft";
+				li.appendChild(
+					field({
+						labelText: transColumns.Activity,
+						inputEl: input,
+						id: 'activity-input'
+					})
+				);
+			}
 
-			delBtn.onclick = async () => {
-				await grist.selectedTable.destroy([rec.id]);
-			};
+			// === Start_date + End_date on same row ===
+			if ('Start_date' in rec || 'End_date' in rec) {
+				const row = document.createElement('div');
+				row.className = 'row';
 
-			li.appendChild(input);
-			li.appendChild(delBtn);
-			draftList.appendChild(li);
+				// Start_date (50%)
+				if ('Start_date' in rec) {
+					const col = document.createElement('div');
+					col.className = 'col-6';
+
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.Start_date || '';
+					input.readOnly = is_read_only;
+
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Start_date) {
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { Start_date: input.value }
+							});
+						}
+					});
+
+					col.appendChild(
+						field({
+							labelText: transColumns.Start_date,
+							inputEl: input,
+							id: 'start-date-input'
+						})
+					);
+
+					row.appendChild(col);
+				}
+
+				// End_date (50%)
+				if ('End_date' in rec) {
+					const col = document.createElement('div');
+					col.className = 'col-6';
+
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.End_date || '';
+					input.style.backgroundColor = rec.ErrorDate || '';
+					input.readOnly = is_read_only;
+
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.End_date) {
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { End_date: input.value }
+							});
+						}
+					});
+
+					col.appendChild(
+						field({
+							labelText: transColumns.End_date,
+							inputEl: input,
+							id: 'end-date-input'
+						})
+					);
+
+					row.appendChild(col);
+				}
+
+				li.appendChild(row);
+
+
+
+
+
+
+
+
+				// const input = document.createElement("input");
+				// input.type = "text";
+				// input.value = rec.Activity || "";
+				// input.placeholder = "Activity…";
+
+				// input.addEventListener("blur", async () => {
+				// 	if (input.value !== rec.Activity) {
+				// 		await grist.selectedTable.update({
+				// 			id: rec.id,
+				// 			fields: { Activity: input.value }
+				// 		});
+				// 	}
+				// });
+
+				// const delBtn = document.createElement("button");
+				// delBtn.textContent = "🗑";
+				// delBtn.title = "Supprimer le draft";
+
+				// delBtn.onclick = async () => {
+				// 	await grist.selectedTable.destroy([rec.id]);
+				// };
+
+				// li.appendChild(input);
+				li.appendChild(delBtn);
+				draftList.appendChild(li);
 			});
 		}
 
-		// =========================
-		// DATA LISTENER
-		// =========================
 		grist.onRecords(records => {
 			allRecords = records;
 
@@ -115,9 +257,6 @@
 			renderDrafts(drafts);
 		});
 
-		// =========================
-		// ADD DRAFT
-		// =========================
 		addBtn.addEventListener("click", async () => {
 			await grist.selectedTable.create({
 			fields: {
@@ -130,9 +269,6 @@
 			});
 		});
 
-		// =========================
-		// VALIDATE ALL DRAFTS
-		// =========================
 		validateBtn.addEventListener("click", async () => {
 			const drafts = allRecords.filter(r => r.Status === "draft");
 
