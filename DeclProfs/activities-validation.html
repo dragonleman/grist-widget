@@ -74,12 +74,9 @@
 			}
 
 			drafts.forEach(rec => {
-				const li = document.createElement("li");
-				li.className = "draft";
-
-
-
-
+				const form = document.getElementById('form');
+				form.innerHTML = '';
+				form.className = "draft";
 
 				const field = ({ labelText, inputEl, id, helpText = '' }) => {
 					const wrapper = document.createElement('div');
@@ -116,7 +113,7 @@
 					input.value = rec.Name || '';
 					input.readOnly = true;
 
-					li.appendChild(
+					form.appendChild(
 						field({
 							labelText: transColumns.Name,
 							inputEl: input,
@@ -141,7 +138,7 @@
 					}
 					});
 
-					li.appendChild(
+					form.appendChild(
 						field({
 							labelText: transColumns.Activity,
 							inputEl: input,
@@ -216,29 +213,74 @@
 						row.appendChild(col);
 					}
 
-					li.appendChild(row);
+					form.appendChild(row);
 				}
 
+				// Comments
+				if ('Comments' in rec) {
+					const input = document.createElement('input');
+					input.type = 'text';
+					input.value = rec.Comments || '';
+					input.readOnly = is_read_only;
 
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Comments) {
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { Comments: input.value }
+							});
+						}
+					});
 
+					form.appendChild(
+						field({
+							labelText: transColumns.Comments,
+							inputEl: input,
+							id: 'comments-input'
+						})
+					);
+				}
 
+				// Comments_admins
+				if ('Comments_admins' in rec) {
+					const input = document.createElement('input');
+					input.type = 'text';
+					input.value = rec.Comments_admins || '';
+					input.readOnly = is_read_only;
 
+					input.addEventListener('blur', async () => {
+						if (input.value !== rec.Comments_admins) {
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { Comments_admins: input.value }
+							});
+						}
+					});
 
+					form.appendChild(
+						field({
+							labelText: transColumns.Comments_admins,
+							inputEl: input,
+							id: 'comments-admins-input'
+						})
+					);
+				}
 
+				// UpdatedAt (read-only)
+				if ('UpdatedAt' in rec) {
+					const input = document.createElement('input');
+					input.type = 'date';
+					input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
+					input.readOnly = true;
 
-				// const input = document.createElement("input");
-				// input.type = "text";
-				// input.value = rec.Activity || "";
-				// input.placeholder = "Activity…";
-
-				// input.addEventListener("blur", async () => {
-				// 	if (input.value !== rec.Activity) {
-				// 		await grist.selectedTable.update({
-				// 			id: rec.id,
-				// 			fields: { Activity: input.value }
-				// 		});
-				// 	}
-				// });
+					form.appendChild(
+						field({
+							labelText: transColumns.UpdatedAt,
+							inputEl: input,
+							id: 'updated-at-input'
+						})
+					);
+				}
 
 				const delBtn = document.createElement("button");
 				delBtn.textContent = "🗑";
@@ -248,8 +290,7 @@
 					await grist.selectedTable.destroy([rec.id]);
 				};
 
-				// li.appendChild(input);
-				li.appendChild(delBtn);
+				form.appendChild(delBtn);
 				draftList.appendChild(li);
 			});
 		}
@@ -286,17 +327,17 @@
 			const drafts = allRecords.filter(r => r.Status === "draft");
 
 			if (!drafts.length) {
-			alert("Aucun brouillon à valider");
-			return;
+				alert("Aucun brouillon à valider");
+				return;
 			}
 
 			if (!confirm(`Valider ${drafts.length} brouillon(s) ?`)) return;
 
 			const actions = drafts.map(r => [
-			"UpdateRecord",
-			"Activities",
-			r.id,
-			{ Status: "active" }
+				"UpdateRecord",
+				"Activities",
+				r.id,
+				{ Status: "active" }
 			]);
 
 			await grist.docApi.applyUserActions(actions);
