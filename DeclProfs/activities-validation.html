@@ -22,7 +22,7 @@
   
   	<div class="main-container m-4">
 		<div class="toolbar">
-			<button id="addBtn" class="btn btn-primary btn-sm">
+			<button id="addBtn" class="btn btn-secondary btn-sm">
 				<svg class="icon" aria-hidden="true">
 					<use xlink:href="#plus"></use>
 				</svg>
@@ -34,8 +34,6 @@
 				</svg>				
 				Validate
 			</button>
-			<!-- <button id="addBtn">➕ Ajouter</button>
-			<button id="validateBtn">✅ Valider</button> -->
 		</div>
 
 		<ul id="draftList"></ul>
@@ -302,16 +300,14 @@
 				}
 
 				const delBtn = document.createElement("button");
-				delBtn.className = "btn btn-primary btn-sm";
-				//delBtn.textContent = "🗑";
-				validateBtn.innerHTML = `
+				delBtn.className = "btn btn-tertiary btn-sm";
+				delBtn.innerHTML = `
 					<svg class="icon" aria-hidden="true">
 						<use xlink:href="#trash"></use>
 					</svg>
 					Delete
 					`;
 				delBtn.title = "Delete the draft";
-
 				delBtn.onclick = async () => {
 					await grist.selectedTable.destroy([rec.id]);
 				};
