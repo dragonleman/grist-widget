@@ -101,10 +101,17 @@
 		// =========================
 		grist.onRecords(records => {
 			allRecords = records;
-			alert(records);
+
+			records.forEach(r => {
+				console.log(
+				"id:", r.id,
+				"| Status:", r.Status,
+				"| type:", typeof r.Status
+				);
+			});
 
 			const drafts = records.filter(r => r.Status === "draft");
-			alert(drafts);
+
 			renderDrafts(drafts);
 		});
 
