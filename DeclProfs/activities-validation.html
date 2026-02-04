@@ -81,143 +81,143 @@
 
 
 
-			const field = ({ labelText, inputEl, id, helpText = '' }) => {
-				const wrapper = document.createElement('div');
-				wrapper.className = 'form-group';
+				const field = ({ labelText, inputEl, id, helpText = '' }) => {
+					const wrapper = document.createElement('div');
+					wrapper.className = 'form-group';
 
-				const label = document.createElement('label');
-				label.setAttribute('for', id);
-				label.textContent = labelText;
+					const label = document.createElement('label');
+					label.setAttribute('for', id);
+					label.textContent = labelText;
 
-				inputEl.id = id;
-				inputEl.classList.add('form-control');
+					inputEl.id = id;
+					inputEl.classList.add('form-control');
 
-				wrapper.appendChild(label);
-				wrapper.appendChild(inputEl);
+					wrapper.appendChild(label);
+					wrapper.appendChild(inputEl);
 
-				if (helpText) {
-					const small = document.createElement('small');
-					small.id = `${id}-help`;
-					small.className = 'form-text text-muted';
-					small.textContent = helpText;
-					inputEl.setAttribute('aria-describedby', small.id);
-					wrapper.appendChild(small);
-				}
+					if (helpText) {
+						const small = document.createElement('small');
+						small.id = `${id}-help`;
+						small.className = 'form-text text-muted';
+						small.textContent = helpText;
+						inputEl.setAttribute('aria-describedby', small.id);
+						wrapper.appendChild(small);
+					}
 
-				return wrapper;
-			};
+					return wrapper;
+				};
 
-			const is_read_only = rec.Access === "🛑" && !("Name" in rec);
+				const is_read_only = rec.Access === "🛑" && !("Name" in rec);
 
-			// Name (read-only)
-			if ('Name' in rec) {
-				const input = document.createElement('input');
-				input.type = 'text';
-				input.value = rec.Name || '';
-				input.readOnly = true;
-
-				li.appendChild(
-					field({
-						labelText: transColumns.Name,
-						inputEl: input,
-						id: 'name-input'
-					})
-				);
-			}
-
-			// Activity
-			if ('Activity' in rec) {
-				const input = document.createElement('input');
-				input.type = 'text';
-				input.value = rec.Activity || '';
-				input.readOnly = is_read_only;
-
-				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Activity) {
-					await grist.selectedTable.update({
-						id: rec.id,
-						fields: { Activity: input.value }
-					});
-				}
-				});
-
-				li.appendChild(
-					field({
-						labelText: transColumns.Activity,
-						inputEl: input,
-						id: 'activity-input'
-					})
-				);
-			}
-
-			// === Start_date + End_date on same row ===
-			if ('Start_date' in rec || 'End_date' in rec) {
-				const row = document.createElement('div');
-				row.className = 'row';
-
-				// Start_date (50%)
-				if ('Start_date' in rec) {
-					const col = document.createElement('div');
-					col.className = 'col-6';
-
+				// Name (read-only)
+				if ('Name' in rec) {
 					const input = document.createElement('input');
-					input.type = 'date';
-					input.value = rec.Start_date || '';
+					input.type = 'text';
+					input.value = rec.Name || '';
+					input.readOnly = true;
+
+					li.appendChild(
+						field({
+							labelText: transColumns.Name,
+							inputEl: input,
+							id: 'name-input'
+						})
+					);
+				}
+
+				// Activity
+				if ('Activity' in rec) {
+					const input = document.createElement('input');
+					input.type = 'text';
+					input.value = rec.Activity || '';
 					input.readOnly = is_read_only;
 
 					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Start_date) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { Start_date: input.value }
-							});
-						}
+					if (input.value !== rec.Activity) {
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: { Activity: input.value }
+						});
+					}
 					});
 
-					col.appendChild(
+					li.appendChild(
 						field({
-							labelText: transColumns.Start_date,
+							labelText: transColumns.Activity,
 							inputEl: input,
-							id: 'start-date-input'
+							id: 'activity-input'
 						})
 					);
-
-					row.appendChild(col);
 				}
 
-				// End_date (50%)
-				if ('End_date' in rec) {
-					const col = document.createElement('div');
-					col.className = 'col-6';
+				// === Start_date + End_date on same row ===
+				if ('Start_date' in rec || 'End_date' in rec) {
+					const row = document.createElement('div');
+					row.className = 'row';
 
-					const input = document.createElement('input');
-					input.type = 'date';
-					input.value = rec.End_date || '';
-					input.style.backgroundColor = rec.ErrorDate || '';
-					input.readOnly = is_read_only;
+					// Start_date (50%)
+					if ('Start_date' in rec) {
+						const col = document.createElement('div');
+						col.className = 'col-6';
 
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.End_date) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { End_date: input.value }
-							});
-						}
-					});
+						const input = document.createElement('input');
+						input.type = 'date';
+						input.value = rec.Start_date || '';
+						input.readOnly = is_read_only;
 
-					col.appendChild(
-						field({
-							labelText: transColumns.End_date,
-							inputEl: input,
-							id: 'end-date-input'
-						})
-					);
+						input.addEventListener('blur', async () => {
+							if (input.value !== rec.Start_date) {
+								await grist.selectedTable.update({
+									id: rec.id,
+									fields: { Start_date: input.value }
+								});
+							}
+						});
 
-					row.appendChild(col);
+						col.appendChild(
+							field({
+								labelText: transColumns.Start_date,
+								inputEl: input,
+								id: 'start-date-input'
+							})
+						);
+
+						row.appendChild(col);
+					}
+
+					// End_date (50%)
+					if ('End_date' in rec) {
+						const col = document.createElement('div');
+						col.className = 'col-6';
+
+						const input = document.createElement('input');
+						input.type = 'date';
+						input.value = rec.End_date || '';
+						input.style.backgroundColor = rec.ErrorDate || '';
+						input.readOnly = is_read_only;
+
+						input.addEventListener('blur', async () => {
+							if (input.value !== rec.End_date) {
+								await grist.selectedTable.update({
+									id: rec.id,
+									fields: { End_date: input.value }
+								});
+							}
+						});
+
+						col.appendChild(
+							field({
+								labelText: transColumns.End_date,
+								inputEl: input,
+								id: 'end-date-input'
+							})
+						);
+
+						row.appendChild(col);
+					}
+
+					li.appendChild(row);
 				}
-
-				li.appendChild(row);
-			}
 
 
 
@@ -240,13 +240,13 @@
 				// 	}
 				// });
 
-				// const delBtn = document.createElement("button");
-				// delBtn.textContent = "🗑";
-				// delBtn.title = "Supprimer le draft";
+				const delBtn = document.createElement("button");
+				delBtn.textContent = "🗑";
+				delBtn.title = "Supprimer le draft";
 
-				// delBtn.onclick = async () => {
-				// 	await grist.selectedTable.destroy([rec.id]);
-				// };
+				delBtn.onclick = async () => {
+					await grist.selectedTable.destroy([rec.id]);
+				};
 
 				// li.appendChild(input);
 				li.appendChild(delBtn);
