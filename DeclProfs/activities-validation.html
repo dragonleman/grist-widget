@@ -29,6 +29,23 @@
 		<ul id="draftList"></ul>
 	</div>
 
+	<style>
+		.draft-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.draft-card {
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			padding: 12px;
+			margin-bottom: 12px;
+			background: #fafafa;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+		}
+	</style>
+
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 
 	<script>
@@ -62,8 +79,11 @@
 			}
 
 			drafts.forEach(rec => {
-				const form = document.createElement('form');
-				form.innerHTML = '';
+				const card = document.createElement("li");
+				card.className = "draft-card";
+
+				const form = document.createElement("form");
+				form.className = "draft-form";
 
 				const field = ({ labelText, inputEl, id, helpText = '' }) => {
 					const wrapper = document.createElement('div');
@@ -278,7 +298,8 @@
 				};
 
 				form.appendChild(delBtn);
-				draftList.appendChild(form);
+				card.appendChild(form);
+				draftList.appendChild(card);
 			});
 		}
 
