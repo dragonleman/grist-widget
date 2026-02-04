@@ -74,7 +74,7 @@
 			}
 
 			drafts.forEach(rec => {
-				const form = document.getElementById('form');
+				const form = document.createElement('form');
 				form.innerHTML = '';
 				form.className = "draft";
 
@@ -291,7 +291,7 @@
 				};
 
 				form.appendChild(delBtn);
-				draftList.appendChild(li);
+				draftList.appendChild(form);
 			});
 		}
 
