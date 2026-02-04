@@ -22,8 +22,20 @@
   
   	<div class="main-container m-4">
 		<div class="toolbar">
-			<button id="addBtn">➕ Ajouter</button>
-			<button id="validateBtn">✅ Valider</button>
+			<button id="addBtn" class="btn btn-primary btn-sm">
+				<svg class="icon" aria-hidden="true">
+					<use xlink:href="#plus"></use>
+				</svg>
+				Add new activity
+			</button>
+			<button id="validateBtn" class="btn btn-primary btn-sm">
+				<svg class="icon" aria-hidden="true">
+					<use xlink:href="#check"></use>
+				</svg>				
+				Validate
+			</button>
+			<!-- <button id="addBtn">➕ Ajouter</button>
+			<button id="validateBtn">✅ Valider</button> -->
 		</div>
 
 		<ul id="draftList"></ul>
@@ -290,8 +302,15 @@
 				}
 
 				const delBtn = document.createElement("button");
-				delBtn.textContent = "🗑";
-				delBtn.title = "Supprimer le draft";
+				delBtn.className = "btn btn-primary btn-sm";
+				//delBtn.textContent = "🗑";
+				validateBtn.innerHTML = `
+					<svg class="icon" aria-hidden="true">
+						<use xlink:href="#trash"></use>
+					</svg>
+					Delete
+					`;
+				delBtn.title = "Delete the draft";
 
 				delBtn.onclick = async () => {
 					await grist.selectedTable.destroy([rec.id]);
@@ -305,17 +324,7 @@
 
 		grist.onRecords(records => {
 			allRecords = records;
-
-			records.forEach(r => {
-				console.log(
-				"id:", r.id,
-				"| Status:", r.Status,
-				"| type:", typeof r.Status
-				);
-			});
-
 			const drafts = records.filter(r => r.Status === "draft");
-
 			renderDrafts(drafts);
 		});
 
