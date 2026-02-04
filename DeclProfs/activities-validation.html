@@ -51,6 +51,18 @@
 		let allRecords = [];
 		const today = new Date().toISOString().slice(0, 10);
 
+		const transColumns = {
+			Name: "Name",
+			Activity: "Activity",
+			Start_date: "Start date",
+			End_date: "End date",
+			Access: "Access",
+			exception: "Exception",
+			Comments: "Comments",
+			Comments_admins: "Comments admins",
+			UpdatedAt: "Updated at"
+		};
+
 		grist.ready({ requiredAccess: "full" });
 
 		function renderDrafts(drafts) {
