@@ -86,8 +86,6 @@
 
 		grist.ready({ requiredAccess: "full" });
 
-		alert("user: " + grist.user);
-
 		function renderDrafts(drafts) {
 			draftList.innerHTML = "";
 
@@ -338,8 +336,7 @@
 					Activity: "",
 					Start_date: today,
 					End_date: today,
-					Status: "draft",
-					CreatedBy: grist.user?.email || ""
+					Status: "draft"
 				}
 			});
 		});
