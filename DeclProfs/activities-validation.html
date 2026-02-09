@@ -86,7 +86,7 @@
 
 		grist.ready({ requiredAccess: "full" });
 
-		alert(grist.user);
+		alert("user: " + grist.user);
 
 		function renderDrafts(drafts) {
 			draftList.innerHTML = "";
@@ -334,13 +334,13 @@
 
 		addBtn.addEventListener("click", async () => {
 			await grist.selectedTable.create({
-			fields: {
-				Activity: "",
-				Start_date: today,
-				End_date: today,
-				Status: "draft",
-				CreatedBy: grist.user?.email || ""
-			}
+				fields: {
+					Activity: "",
+					Start_date: today,
+					End_date: today,
+					Status: "draft",
+					CreatedBy: grist.user?.email || ""
+				}
 			});
 		});
 
