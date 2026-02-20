@@ -67,10 +67,11 @@
 		let allRecords = [];
 		let selectedId = null;
 		
-		const columnNamesAccepted = ['Name', 'Activity', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt']
+		const columnNamesAccepted = ['Name', 'Activity', 'Principal', 'Start_date', 'End_date', 'Access', 'Comments', 'Comments_admins', 'UpdatedAt']
 		const transColumns = {
 			Name: "Name",
 			Activity: "Activity",
+			Principal: "Principal",
 			Start_date: "Start date",
 			End_date: "End date",
 			Access: "Access",
@@ -178,6 +179,24 @@
 						}
 					});
 					activityCell.appendChild(activityInput);
+				}
+		    
+				// Principal
+				if (columnNames.includes('Principal')) {
+					const principalCell = row.insertCell();
+					const principalInput = document.createElement('input');
+					principalInput.value = rec.Activity || '';
+					principalInput.style.border = 'none';
+					principalInput.style.width = '100%';
+					principalInput.addEventListener('blur', async () => {
+						if (principalInput.value !== rec.Principal) {
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { Principal: principalInput.value }
+							});
+						}
+					});
+					principalCell.appendChild(principalInput);
 				}
 
 				// Start date

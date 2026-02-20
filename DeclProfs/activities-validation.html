@@ -170,6 +170,31 @@
 					);
 				}
 
+				// Principal
+				if ('Principal' in rec) {
+					const input = document.createElement('input');
+					input.type = 'text';
+					input.value = rec.Principal || '';
+					input.readOnly = is_read_only;
+
+					input.addEventListener('blur', async () => {
+					if (input.value !== rec.Principal) {
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: { Principal: input.value }
+						});
+					}
+					});
+
+					form.appendChild(
+						field({
+							labelText: transColumns.Activity,
+							inputEl: input,
+							id: 'activity-input'
+						})
+					);
+				}
+
 				// === Start_date + End_date on same row ===
 				if ('Start_date' in rec || 'End_date' in rec) {
 					const row = document.createElement('div');

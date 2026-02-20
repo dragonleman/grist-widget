@@ -47,6 +47,7 @@
 		const transColumns = {
 			Name: "Name",
 			Activity: "Activity",
+			Principal: "Principal",
 			Start_date: "Start date",
 			End_date: "End date",
 			Access: "Access",
@@ -132,6 +133,31 @@
 						labelText: transColumns.Activity,
 						inputEl: input,
 						id: 'activity-input'
+					})
+				);
+			}
+
+			// Principal
+			if ('Principal' in rec) {
+				const input = document.createElement('input');
+				input.type = 'text';
+				input.value = rec.Principal || '';
+				input.readOnly = is_read_only;
+
+				input.addEventListener('blur', async () => {
+					if (input.value !== rec.Principal) {
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: { Principal: input.value }
+						});
+					}
+				});
+
+				form.appendChild(
+					field({
+						labelText: transColumns.Principal,
+						inputEl: input,
+						id: 'principal-input'
 					})
 				);
 			}
