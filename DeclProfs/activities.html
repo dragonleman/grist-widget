@@ -185,7 +185,7 @@
 				if (columnNames.includes('Principal')) {
 					const principalCell = row.insertCell();
 					const principalInput = document.createElement('input');
-					principalInput.value = rec.Activity || '';
+					principalInput.value = rec.Principal || '';
 					principalInput.style.border = 'none';
 					principalInput.style.width = '100%';
 					principalInput.addEventListener('blur', async () => {
