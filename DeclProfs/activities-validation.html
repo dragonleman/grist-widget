@@ -394,49 +394,6 @@
 			});
 		});
 
-		// validateBtn.addEventListener("click", async () => {
-		// 	const drafts = allRecords.filter(r => r.Status === "draft");
-
-		// 	if (!drafts.length) {
-		// 		Swal.fire({
-		// 			icon: "info",
-		// 			title: "No drafts",
-		// 			text: "There are no drafts to validate.",
-		// 			confirmButtonText: "OK"
-		// 		});
-		// 		return;
-		// 	}
-
-		// 	const result = await Swal.fire({
-		// 		icon: "question",
-		// 		title: "Validate drafts?",
-		// 		text: `Validate ${drafts.length} draft(s)?`,
-		// 		showCancelButton: true,
-		// 		confirmButtonText: "Yes, validate",
-		// 		cancelButtonText: "Cancel",
-		// 		confirmButtonColor: "#3085d6"
-		// 	});
-
-		// 	if (!result.isConfirmed) return;
-
-		// 	const actions = drafts.map(r => [
-		// 		"UpdateRecord",
-		// 		"Activities",
-		// 		r.id,
-		// 		{ Status: "active" }
-		// 	]);
-
-		// 	await grist.docApi.applyUserActions(actions);
-
-		// 	Swal.fire({
-		// 		icon: "success",
-		// 		title: "Done",
-		// 		text: `${drafts.length} draft(s) validated.`,
-		// 		timer: 1500,
-		// 		showConfirmButton: false
-		// 	});
-		// });
-
 		validateBtn.addEventListener("click", async () => {
 			const drafts = allRecords.filter(r => r.Status === "draft");
 

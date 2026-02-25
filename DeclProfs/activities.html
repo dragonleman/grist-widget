@@ -57,6 +57,8 @@
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 	<script>
 		const addButton = document.getElementById('addBtn');
 		const downloadAllBtn = document.getElementById('downloadAllBtn');
@@ -353,13 +355,42 @@
 						</svg>
 					`;
 				dupBtn.style.border = 'none';
+				// dupBtn.onclick = async () => {
+				// 	await window.grist.selectedTable.create({
+				// 		fields: {
+				// 			Activity: rec.Activity,
+				// 			Start_date: today,
+				// 			End_date: today,
+				// 		},
+				// 	});
+				// };
 				dupBtn.onclick = async () => {
+					const result = await Swal.fire({
+						icon: 'question',
+						title: 'Dupliquer ?',
+						text: `Dupliquer "${rec.Activity}" ?`,
+						showCancelButton: true,
+						confirmButtonText: 'Oui, dupliquer',
+						cancelButtonText: 'Annuler',
+						confirmButtonColor: '#3085d6',
+						cancelButtonColor: '#6c757d'
+					});
+
+					if (!result.isConfirmed) return;
+
 					await window.grist.selectedTable.create({
 						fields: {
 							Activity: rec.Activity,
 							Start_date: today,
 							End_date: today,
 						},
+					});
+
+					Swal.fire({
+						icon: 'success',
+						title: 'Dupliqué !',
+						timer: 1200,
+						showConfirmButton: false
 					});
 				};
 				tdActions.appendChild(dupBtn);
@@ -374,11 +405,36 @@
 				delBtn.title = "Supprimer";
 				delBtn.style.marginLeft = '5px';
 				delBtn.style.border = 'none';
+				// delBtn.onclick = async () => {
+				// 	const confirmDelete = confirm(`Delete "${rec.Activity}" ?`);
+				// 	if (!confirmDelete) return;
+				// 	await window.grist.selectedTable.destroy([rec.id]);
+				// 	row.remove();
+				// };
 				delBtn.onclick = async () => {
-					const confirmDelete = confirm(`Delete "${rec.Activity}" ?`);
-					if (!confirmDelete) return;
+					const result = await Swal.fire({
+						icon: 'warning',
+						title: 'Supprimer ?',
+						text: `Supprimer "${rec.Activity}" ?`,
+						showCancelButton: true,
+						confirmButtonText: 'Oui, supprimer',
+						cancelButtonText: 'Annuler',
+						confirmButtonColor: '#d33',
+						cancelButtonColor: '#6c757d',
+						reverseButtons: true
+					});
+
+					if (!result.isConfirmed) return;
+
 					await window.grist.selectedTable.destroy([rec.id]);
 					row.remove();
+
+					Swal.fire({
+						icon: 'success',
+						title: 'Supprimé !',
+						timer: 1200,
+						showConfirmButton: false
+					});
 				};
 				tdActions.appendChild(delBtn);
 				
@@ -393,31 +449,66 @@
 				dlBtn.style.marginLeft = '5px';
 				dlBtn.style.border = 'none';
 
-				dlBtn.onclick = () => {
-					// Récupérer les paires clé => valeur
+				// dlBtn.onclick = () => {
+				// 	// Récupérer les paires clé => valeur
+				// 	const keys = Object.keys(rec);
+				// 	const values = keys.map(k => rec[k] ?? "");
+
+				// 	// Construire CSV
+				// 	const csvContent =
+				// 		keys.join(",") + "\n" +
+				// 		values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
+
+				// 	// Créer un blob
+				// 	const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+				// 	// Créer un lien temporaire
+				// 	const link = document.createElement("a");
+				// 	link.href = URL.createObjectURL(blob);
+
+				// 	// Nom du fichier (ex: Activity_123.csv)
+				// 	link.download = `${rec.Activity || "ligne"}_${rec.id}.csv`;
+
+				// 	// Télécharger
+				// 	link.click();
+
+				// 	// Nettoyer l’URL Blob
+				// 	URL.revokeObjectURL(link.href);
+				// };
+				dlBtn.onclick = async () => {
+					const result = await Swal.fire({
+						icon: 'question',
+						title: 'Télécharger CSV ?',
+						text: `Télécharger "${rec.Activity}" en CSV ?`,
+						showCancelButton: true,
+						confirmButtonText: 'Oui, télécharger',
+						cancelButtonText: 'Annuler',
+						confirmButtonColor: '#3085d6',
+						cancelButtonColor: '#6c757d'
+					});
+
+					if (!result.isConfirmed) return;
+
 					const keys = Object.keys(rec);
 					const values = keys.map(k => rec[k] ?? "");
 
-					// Construire CSV
 					const csvContent =
 						keys.join(",") + "\n" +
 						values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
 
-					// Créer un blob
 					const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-					// Créer un lien temporaire
 					const link = document.createElement("a");
 					link.href = URL.createObjectURL(blob);
-
-					// Nom du fichier (ex: Activity_123.csv)
 					link.download = `${rec.Activity || "ligne"}_${rec.id}.csv`;
-
-					// Télécharger
 					link.click();
-
-					// Nettoyer l’URL Blob
 					URL.revokeObjectURL(link.href);
+
+					Swal.fire({
+						icon: 'success',
+						title: 'CSV téléchargé !',
+						timer: 1200,
+						showConfirmButton: false
+					});
 				};
 
 				tdActions.appendChild(dlBtn);
@@ -433,12 +524,38 @@
 					`;
 					emailBtn.title = "Send email";
 					emailBtn.style.border = 'none';
+					// emailBtn.addEventListener('click', async () => {
+					// 	const confirmDelete = confirm(`Send email to "${rec.Name}" ?`);
+					// 	if (!confirmDelete) return;
+					// 		await window.grist.selectedTable.update({
+					// 			id: rec.id,
+					// 			fields: { SendEmail: true }
+					// 		});
+					// });
 					emailBtn.addEventListener('click', async () => {
-					const confirmDelete = confirm(`Send email to "${rec.Name}" ?`);
-					if (!confirmDelete) return;
+						const result = await Swal.fire({
+							icon: 'question',
+							title: 'Envoyer email ?',
+							text: `Envoyer un email à "${rec.Name}" ?`,
+							showCancelButton: true,
+							confirmButtonText: 'Oui, envoyer',
+							cancelButtonText: 'Annuler',
+							confirmButtonColor: '#3085d6',
+							cancelButtonColor: '#6c757d'
+						});
+
+						if (!result.isConfirmed) return;
+
 						await window.grist.selectedTable.update({
 							id: rec.id,
 							fields: { SendEmail: true }
+						});
+
+						Swal.fire({
+							icon: 'success',
+							title: 'Email envoyé !',
+							timer: 1200,
+							showConfirmButton: false
 						});
 					});
 					tdActions.appendChild(emailBtn);
