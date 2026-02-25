@@ -63,6 +63,7 @@
 	</style>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<script>
 		const addBtn = document.getElementById("addBtn");
@@ -371,11 +372,26 @@
 			const drafts = allRecords.filter(r => r.Status === "draft");
 
 			if (!drafts.length) {
-				alert("Aucun brouillon à valider");
+				Swal.fire({
+					icon: "info",
+					title: "No drafts",
+					text: "There are no drafts to validate.",
+					confirmButtonText: "OK"
+				});
 				return;
 			}
 
-			if (!confirm(`Valider ${drafts.length} brouillon(s) ?`)) return;
+			const result = await Swal.fire({
+				icon: "question",
+				title: "Validate drafts?",
+				text: `Validate ${drafts.length} draft(s)?`,
+				showCancelButton: true,
+				confirmButtonText: "Yes, validate",
+				cancelButtonText: "Cancel",
+				confirmButtonColor: "#3085d6"
+			});
+
+			if (!result.isConfirmed) return;
 
 			const actions = drafts.map(r => [
 				"UpdateRecord",
@@ -385,7 +401,35 @@
 			]);
 
 			await grist.docApi.applyUserActions(actions);
+
+			Swal.fire({
+				icon: "success",
+				title: "Done",
+				text: `${drafts.length} draft(s) validated.`,
+				timer: 1500,
+				showConfirmButton: false
+			});
 		});
+
+		// validateBtn.addEventListener("click", async () => {
+		// 	const drafts = allRecords.filter(r => r.Status === "draft");
+
+		// 	if (!drafts.length) {
+		// 		alert("No drafts to validate");
+		// 		return;
+		// 	}
+
+		// 	if (!confirm(`Validate ${drafts.length} draft(s)?`)) return;
+
+		// 	const actions = drafts.map(r => [
+		// 		"UpdateRecord",
+		// 		"Activities",
+		// 		r.id,
+		// 		{ Status: "active" }
+		// 	]);
+
+		// 	await grist.docApi.applyUserActions(actions);
+		// });
 	</script>
 
 	<script>

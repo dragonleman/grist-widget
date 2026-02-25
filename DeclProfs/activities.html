@@ -341,13 +341,12 @@
 					updatedatCell.appendChild(updatedatInput);
 				}
 
-				// Actions (Duplicate + Delete)
+				// Actions (Duplicate, Delete, CSV, Email)
 				const tdActions = row.insertCell();
 
 				// Duplicate
 				const dupBtn = document.createElement('button');
-				dupBtn.title = "Dupliquer";
-				//dupBtn.textContent = '🔁';
+				dupBtn.title = "Dupliquer";;
 				dupBtn.innerHTML = `
 						<svg class="icon" aria-hidden="true">
 							<use xlink:href="#copy"></use>
@@ -376,7 +375,7 @@
 				delBtn.style.marginLeft = '5px';
 				delBtn.style.border = 'none';
 				delBtn.onclick = async () => {
-					const confirmDelete = confirm(`Supprimer "${rec.Activity}" ?`);
+					const confirmDelete = confirm(`Delete "${rec.Activity}" ?`);
 					if (!confirmDelete) return;
 					await window.grist.selectedTable.destroy([rec.id]);
 					row.remove();
