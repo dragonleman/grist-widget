@@ -355,15 +355,6 @@
 						</svg>
 					`;
 				dupBtn.style.border = 'none';
-				// dupBtn.onclick = async () => {
-				// 	await window.grist.selectedTable.create({
-				// 		fields: {
-				// 			Activity: rec.Activity,
-				// 			Start_date: today,
-				// 			End_date: today,
-				// 		},
-				// 	});
-				// };
 				dupBtn.onclick = async () => {
 					const result = await Swal.fire({
 						icon: 'question',
@@ -405,12 +396,6 @@
 				delBtn.title = "Supprimer";
 				delBtn.style.marginLeft = '5px';
 				delBtn.style.border = 'none';
-				// delBtn.onclick = async () => {
-				// 	const confirmDelete = confirm(`Delete "${rec.Activity}" ?`);
-				// 	if (!confirmDelete) return;
-				// 	await window.grist.selectedTable.destroy([rec.id]);
-				// 	row.remove();
-				// };
 				delBtn.onclick = async () => {
 					const result = await Swal.fire({
 						icon: 'warning',
@@ -421,7 +406,6 @@
 						cancelButtonText: 'Annuler',
 						confirmButtonColor: '#d33',
 						cancelButtonColor: '#6c757d',
-						reverseButtons: true
 					});
 
 					if (!result.isConfirmed) return;
@@ -439,43 +423,16 @@
 				tdActions.appendChild(delBtn);
 				
 				// Download CSV
-				const dlBtn = document.createElement('button');
-				dlBtn.innerHTML = `
+				const dwlBtn = document.createElement('button');
+				dwlBtn.innerHTML = `
 						<svg class="icon" aria-hidden="true">
 							<use xlink:href="#download"></use>
 						</svg>
 					`;
-				dlBtn.title = "Télécharger en CSV";
-				dlBtn.style.marginLeft = '5px';
-				dlBtn.style.border = 'none';
-
-				// dlBtn.onclick = () => {
-				// 	// Récupérer les paires clé => valeur
-				// 	const keys = Object.keys(rec);
-				// 	const values = keys.map(k => rec[k] ?? "");
-
-				// 	// Construire CSV
-				// 	const csvContent =
-				// 		keys.join(",") + "\n" +
-				// 		values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
-
-				// 	// Créer un blob
-				// 	const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-				// 	// Créer un lien temporaire
-				// 	const link = document.createElement("a");
-				// 	link.href = URL.createObjectURL(blob);
-
-				// 	// Nom du fichier (ex: Activity_123.csv)
-				// 	link.download = `${rec.Activity || "ligne"}_${rec.id}.csv`;
-
-				// 	// Télécharger
-				// 	link.click();
-
-				// 	// Nettoyer l’URL Blob
-				// 	URL.revokeObjectURL(link.href);
-				// };
-				dlBtn.onclick = async () => {
+				dwlBtn.title = "Télécharger en CSV";
+				dwlBtn.style.marginLeft = '5px';
+				dwlBtn.style.border = 'none';
+				dwlBtn.onclick = async () => {
 					const result = await Swal.fire({
 						icon: 'question',
 						title: 'Télécharger CSV ?',
@@ -511,12 +468,11 @@
 					});
 				};
 
-				tdActions.appendChild(dlBtn);
+				tdActions.appendChild(dwlBtn);
 				
 				if (columnNames.includes('Name')) {
 					// Send email
 					const emailBtn = document.createElement('button');
-					//emailBtn.textContent = '📩';
 					emailBtn.innerHTML = `
 						<svg class="icon" aria-hidden="true">
 							<use xlink:href="#mail"></use>
@@ -524,14 +480,6 @@
 					`;
 					emailBtn.title = "Send email";
 					emailBtn.style.border = 'none';
-					// emailBtn.addEventListener('click', async () => {
-					// 	const confirmDelete = confirm(`Send email to "${rec.Name}" ?`);
-					// 	if (!confirmDelete) return;
-					// 		await window.grist.selectedTable.update({
-					// 			id: rec.id,
-					// 			fields: { SendEmail: true }
-					// 		});
-					// });
 					emailBtn.addEventListener('click', async () => {
 						const result = await Swal.fire({
 							icon: 'question',
@@ -673,7 +621,8 @@
 			URL.revokeObjectURL(link.href);
 		}
 		
-		downloadAllBtn.addEventListener("click", () => {
+		downloadAllBtn.addEventListener("click", async () => {
+
 			const nameQuery = searchInput.value.trim().toLowerCase();
 			const yearQuery = yearInput.value.trim();
 
@@ -681,7 +630,7 @@
 
 			if (nameQuery) {
 				filtered = filtered.filter(rec =>
-				  (rec.Name || "").toLowerCase().includes(nameQuery)
+					(rec.Name || "").toLowerCase().includes(nameQuery)
 				);
 			}
 
@@ -689,18 +638,53 @@
 				const year = parseInt(yearQuery, 10);
 
 				filtered = filtered.filter(rec => {
-				  if (!rec.Start_date) return false;
+					if (!rec.Start_date) return false;
 
-				  const startYear = new Date(rec.Start_date).getFullYear();
-				  const endYear = rec.End_date
-				    ? new Date(rec.End_date).getFullYear()
-				    : Infinity;
+					const startYear = new Date(rec.Start_date).getFullYear();
+					const endYear = rec.End_date
+						? new Date(rec.End_date).getFullYear()
+						: Infinity;
 
-				  return year >= startYear && year <= endYear;
+					return year >= startYear && year <= endYear;
 				});
 			}
 
+			// 🚨 Aucun résultat
+			if (!filtered.length) {
+				await Swal.fire({
+					icon: "info",
+					title: "No results",
+					text: "No records match your filters.",
+					confirmButtonText: "OK"
+				});
+				return;
+			}
+
+			// ❓ Confirmation
+			const result = await Swal.fire({
+				icon: "question",
+				title: "Download CSV?",
+				text: `Download ${filtered.length} record(s) as CSV?`,
+				showCancelButton: true,
+				confirmButtonText: "Yes, download",
+				cancelButtonText: "Cancel",
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#6c757d"
+			});
+
+			if (!result.isConfirmed) return;
+
+			// ⬇ Télécharger
 			downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
+
+			// ✅ Succès
+			Swal.fire({
+				icon: "success",
+				title: "Download started",
+				timer: 1200,
+				showConfirmButton: false
+			});
+
 		});
 	</script>
 	
