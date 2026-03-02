@@ -112,13 +112,6 @@
 		}
 
 		function renderTable(records) {
-
-			function formatDateForInput(value) {
-				if (!value) return '';
-				const d = new Date(value);
-				if (isNaN(d)) return '';
-				return d.toISOString().substring(0, 10);
-			}
 		  
 			let columnNames = []
 			if (records.length > 0) {
@@ -213,7 +206,7 @@
 					const startCell = row.insertCell();
 					const startInput = document.createElement('input');
 					startInput.type = 'date';
-					startInput.value = formatDateForInput(rec.Start_date);  // rec.Start_date || '';
+					startInput.value = rec.Start_date || '';
 					startInput.style.border = 'none';
 					startInput.addEventListener('blur', async () => {
 						if (startInput.value !== rec.Start_date) {
@@ -231,7 +224,7 @@
 					const endCell = row.insertCell();
 					const endInput = document.createElement('input');
 					endInput.type = 'date';
-					endInput.value = formatDateForInput(rec.End_date); // rec.End_date || '';
+					endInput.value = rec.End_date || '';
 					endInput.style.border = 'none';
 					endInput.style.backgroundColor = rec.ErrorDate || '';
 					endInput.addEventListener('blur', async () => {
