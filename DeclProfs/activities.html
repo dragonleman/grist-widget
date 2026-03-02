@@ -112,6 +112,13 @@
 		}
 
 		function renderTable(records) {
+
+			function formatDateForInput(value) {
+				if (!value) return '';
+				const d = new Date(value);
+				if (isNaN(d)) return '';
+				return d.toISOString().substring(0, 10);
+			}
 		  
 			let columnNames = []
 			if (records.length > 0) {
@@ -206,7 +213,7 @@
 					const startCell = row.insertCell();
 					const startInput = document.createElement('input');
 					startInput.type = 'date';
-					startInput.value = rec.Start_date || '';
+					startInput.value = formatDateForInput(rec.Start_date);  // rec.Start_date || '';
 					startInput.style.border = 'none';
 					startInput.addEventListener('blur', async () => {
 						if (startInput.value !== rec.Start_date) {
@@ -224,7 +231,7 @@
 					const endCell = row.insertCell();
 					const endInput = document.createElement('input');
 					endInput.type = 'date';
-					endInput.value = rec.End_date || '';
+					endInput.value = formatDateForInput(rec.End_date); // rec.End_date || '';
 					endInput.style.border = 'none';
 					endInput.style.backgroundColor = rec.ErrorDate || '';
 					endInput.addEventListener('blur', async () => {
@@ -283,48 +290,6 @@
 					});
 					commentsadminsCell.appendChild(commentsadminsInput);
 				}
-
-				/*
-				// Exception
-				if (columnNames.includes('exception')) {
-					const exceptionCell = row.insertCell();
-
-					// Wrapper
-					const wrapper = document.createElement('div');
-					wrapper.className = 'custom-control custom-switch';
-
-					// ID unique par ligne
-					const switchId = `switch-exception-${rec.id}`;
-
-					// Input checkbox
-					const toggle = document.createElement('input');
-					toggle.type = 'checkbox';
-					toggle.className = 'custom-control-input';
-					toggle.id = switchId;
-
-					// Valeur initiale depuis Grist
-					toggle.checked = Boolean(rec.exception);
-
-					// Label
-					const label = document.createElement('label');
-					label.className = 'custom-control-label';
-					label.htmlFor = switchId;
-					label.textContent = '';  // laisser vide si tu ne veux pas de texte
-
-					// Push dans DOM
-					wrapper.appendChild(toggle);
-					wrapper.appendChild(label);
-					exceptionCell.appendChild(wrapper);
-
-					// Mise à jour Grist lorsque l'utilisateur clique
-					toggle.addEventListener('change', async () => {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { exception: toggle.checked }
-						});
-					});
-				}
-				*/
 
 				// Updated at
 				if (columnNames.includes('UpdatedAt')) {
