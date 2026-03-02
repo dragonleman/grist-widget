@@ -30,9 +30,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm">
-                    <p>End date of exception</p>
+                    <!-- <p>End date of exception</p>
                     <div class="datepicker-wrapper">
                         <input id="dateInput" type="date">
+                    </div> -->
+                    <div class="form-group d-flex align-items-center">
+                        <label for="startDateInput" class="mr-2 mb-0">Start date</label>
+                        <input id="startDateInput" type="date" class="form-control">
+                    </div>
+                    <div class="form-group d-flex align-items-center">
+                        <label for="endDateInput" class="mr-2 mb-0">End date</label>
+                        <input id="endDateInput" type="date" class="form-control">
                     </div>
                 </div>
                 <div class="col-sm">
@@ -66,7 +74,8 @@
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script>
-		const dateInput = document.getElementById('dateInput');
+		const startDateInput = document.getElementById('startDateInput');
+        const endDateInput = document.getElementById('endDateInput');
         const excBtn = document.getElementById('exceptionSwitch');
         const sendmailBtn = document.getElementById('sendmailButton');
 
@@ -75,14 +84,26 @@
 		window.grist.onRecords(records => {
             const rec = records[0];
 
-            // End date
-            dateInput.value = rec.End_date || '';
+            // Start date
+            startDateInput.value = rec.Start_date || '';
 
-            dateInput.addEventListener('blur', async () => {
-                if (dateInput.value !== rec.End_date) {
+            startDateInput.addEventListener('blur', async () => {
+                if (startDateInput.value !== rec.Start_date) {
                     await window.grist.selectedTable.update({
                         id: rec.id,
-                        fields: { End_date: dateInput.value }
+                        fields: { Start_date: startDateInput.value }
+                    });
+                }
+            });
+
+            // End date
+            endDateInput.value = rec.End_date || '';
+
+            endDateInput.addEventListener('blur', async () => {
+                if (endDateInput.value !== rec.End_date) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: { End_date: endDateInput.value }
                     });
                 }
             });
