@@ -361,6 +361,8 @@
 		});
 
 		grist.onRecord(record => {
+			console.log("onRecord fired", record);
+			
 			if (!record) return;
 
 			selectedId = record.id;
