@@ -88,11 +88,28 @@
 
 		grist.ready({ requiredAccess: "full" });
 
+		// Fonction pour activer/désactiver le bouton validate
+		function checkDraftsValidity() {
+			const drafts = allRecords.filter(r => r.Status === "draft");
+
+			if (!drafts.length) {
+				validateBtn.disabled = true;
+				return;
+			}
+
+			const allValid = drafts.every(r =>
+				r.Activity && r.Principal && r.Start_date
+			);
+
+			validateBtn.disabled = !allValid;
+		}
+
 		function renderDrafts(drafts) {
 			draftList.innerHTML = "";
 
 			if (!drafts.length) {
 				draftList.innerHTML = "<li>Aucun brouillon</li>";
+				checkDraftsValidity();
 				return;
 			}
 
@@ -156,12 +173,13 @@
 					input.readOnly = is_read_only;
 
 					input.addEventListener('blur', async () => {
-					if (input.value !== rec.Activity) {
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: { Activity: input.value }
-						});
-					}
+						if (input.value !== rec.Activity) {
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { Activity: input.value }
+							});
+						}
+						checkDraftsValidity();
 					});
 
 					form.appendChild(
@@ -181,12 +199,13 @@
 					input.readOnly = is_read_only;
 
 					input.addEventListener('blur', async () => {
-					if (input.value !== rec.Principal) {
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: { Principal: input.value }
-						});
-					}
+						if (input.value !== rec.Principal) {
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: { Principal: input.value }
+							});
+						}
+						checkDraftsValidity();
 					});
 
 					form.appendChild(
@@ -198,12 +217,11 @@
 					);
 				}
 
-				// === Start_date + End_date on same row ===
+				// Start_date + End_date
 				if ('Start_date' in rec || 'End_date' in rec) {
 					const row = document.createElement('div');
 					row.className = 'row';
 
-					// Start_date (50%)
 					if ('Start_date' in rec) {
 						const col = document.createElement('div');
 						col.className = 'col-6';
@@ -220,6 +238,7 @@
 									fields: { Start_date: input.value }
 								});
 							}
+							checkDraftsValidity();
 						});
 
 						col.appendChild(
@@ -233,7 +252,6 @@
 						row.appendChild(col);
 					}
 
-					// End_date (50%)
 					if ('End_date' in rec) {
 						const col = document.createElement('div');
 						col.className = 'col-6';
@@ -341,7 +359,7 @@
 						<use xlink:href="#trash"></use>
 					</svg>
 					Delete
-					`;
+				`;
 				delBtn.title = "Delete the draft";
 
 				const recordId = rec.id;
@@ -375,6 +393,8 @@
 				card.appendChild(form);
 				draftList.appendChild(card);
 			});
+
+			checkDraftsValidity();
 		}
 
 		grist.onRecords(records => {
@@ -407,7 +427,7 @@
 				return;
 			}
 
-			// Vérification custom Start_date / End_date
+			// Vérification Start_date / End_date
 			for (let r of drafts) {
 				const startDate = r.Start_date ? new Date(r.Start_date) : null;
 				const endDate = r.End_date ? new Date(r.End_date) : null;
@@ -418,7 +438,7 @@
 						title: "Missing Start Date",
 						text: `Draft ${r.id}: Start date is required.`,
 					});
-					return; // stop la validation
+					return;
 				}
 
 				if (endDate && startDate > endDate) {
@@ -427,11 +447,10 @@
 						title: "Invalid End Date",
 						text: `Draft ${r.id}: End date must be after Start date.`,
 					});
-					return; // stop la validation
+					return;
 				}
 			}
 
-			// Si tout est ok, demander confirmation
 			const result = await Swal.fire({
 				icon: "question",
 				title: "Validate drafts?",
