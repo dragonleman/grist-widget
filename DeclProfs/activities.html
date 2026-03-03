@@ -85,32 +85,6 @@
 	  
 		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true, allowSelectBy: true });
 
-		function onRowClick(record) {
-			if (!record) return;
-
-			const actions = [];
-
-			actions.push([
-				"UpdateRecord",
-				"Activities",
-				selectedId,
-				{ IsSelected: false }
-			]);
-
-			selectedId = record.id;
-
-			actions.push([
-				"UpdateRecord",
-				"Activities",
-				selectedId,
-				{ IsSelected: true }
-			]);
-
-			grist.docApi.applyUserActions(actions);
-
-			grist.setCursorPos({ rowId: record.id });
-		}
-
 		function renderTable(records) {
 		  
 			let columnNames = []
@@ -153,8 +127,6 @@
 			
 		  	for (const rec of records) {
 		    	const row = table.insertRow();
-
-				//row.addEventListener("click", () => onRowClick(rec));
 		    
 				// Name
 				if (columnNames.includes('Name')) {
