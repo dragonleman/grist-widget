@@ -172,14 +172,31 @@
 					input.value = rec.Activity || '';
 					input.readOnly = is_read_only;
 
+					// input.addEventListener('blur', async () => {
+					// 	if (input.value !== rec.Activity) {
+					// 		await grist.selectedTable.update({
+					// 			id: rec.id,
+					// 			fields: { Activity: input.value }
+					// 		});
+					// 	}
+					// 	checkDraftsValidity();
+					// });
+
 					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Activity) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { Activity: input.value }
-							});
-						}
+						if (input.value === rec.Activity) return;
+
+						// Mise à jour locale temporaire
+						rec.Activity = input.value;
 						checkDraftsValidity();
+
+						try {
+							await grist.selectedTable.update({
+							id: rec.id,
+							fields: { Activity: input.value }
+							});
+						} catch (err) {
+							console.error(err);
+						}
 					});
 
 					form.appendChild(
