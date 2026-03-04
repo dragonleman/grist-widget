@@ -37,6 +37,9 @@
 						<th>Username</th>
 						<th>Email</th>
 						<th>Sciper</th>
+						<th>Unit</th>
+						<th>Status</th>
+						<th>Updated at</th>
 					</tr>
 				</thead>
 			</table>
@@ -71,7 +74,7 @@
 				nameSpan.textContent = rec.Name;
 				nameCell.appendChild(nameSpan);
 					
-					// Username
+				// Username
 				const usernameCell = row.insertCell();
 				const usernameSpan = document.createElement('span');
 				usernameSpan.textContent = rec.Username;
@@ -83,11 +86,29 @@
 				emailSpan.textContent = rec.Email;
 				emailCell.appendChild(emailSpan);
 
-				// UserId
+				// UserId / Sciper
 				const sciperCell = row.insertCell();
 				const sciperSpan = document.createElement('span');
 				sciperSpan.textContent = rec.UserId;
 				sciperCell.appendChild(sciperSpan);
+
+				// Unit
+				const unitCell = row.insertCell();
+				const unitSpan = document.createElement('span');
+				unitSpan.textContent = rec.Unit;
+				unitCell.appendChild(unitSpan);
+
+				// Status
+				const statusCell = row.insertCell();
+				const statusSpan = document.createElement('span');
+				statusSpan.textContent = rec.status;
+				statusCell.appendChild(statusSpan);
+
+				// Updated At
+				const updatedatCell = row.insertCell();
+				const updatedatSpan = document.createElement('span');
+				updatedatSpan.textContent = rec.UpdatedAt;
+				updatedatCell.appendChild(updatedatSpan);
 			}
 		});
 	</script>
