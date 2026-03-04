@@ -90,6 +90,9 @@
 
 		// Fonction pour activer/désactiver le bouton validate
 		function checkDraftsValidity() {
+			// Test
+			return; 
+
 			const drafts = allRecords.filter(r => r.Status === "draft");
 
 			if (!drafts.length) {
@@ -172,31 +175,14 @@
 					input.value = rec.Activity || '';
 					input.readOnly = is_read_only;
 
-					// input.addEventListener('blur', async () => {
-					// 	if (input.value !== rec.Activity) {
-					// 		await grist.selectedTable.update({
-					// 			id: rec.id,
-					// 			fields: { Activity: input.value }
-					// 		});
-					// 	}
-					// 	checkDraftsValidity();
-					// });
-
 					input.addEventListener('blur', async () => {
-						if (input.value === rec.Activity) return;
-
-						// Mise à jour locale temporaire
-						rec.Activity = input.value;
-						checkDraftsValidity();
-
-						try {
+						if (input.value !== rec.Activity) {
 							await grist.selectedTable.update({
-							id: rec.id,
-							fields: { Activity: input.value }
+								id: rec.id,
+								fields: { Activity: input.value }
 							});
-						} catch (err) {
-							console.error(err);
 						}
+						checkDraftsValidity();
 					});
 
 					form.appendChild(
