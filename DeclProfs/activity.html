@@ -316,42 +316,9 @@
 
 			selectedId = record.id;
 
-			// 👉 Déplace le curseur dans Grist
+			// Should move the curson on grist table
 			grist.setCursorPos({ rowId: record.id });
-
-			// Le reste sera géré automatiquement par onRecord()
 		}
-
-		// function selectRowFromWidget(record) {
-		// 	if (!record) return;
-
-		// 	const actions = [];
-
-		// 	actions.push([
-		// 		"UpdateRecord",
-		// 		"Activities",
-		// 		selectedId,
-		// 		{ IsSelected: false }
-		// 	]);
-
-		// 	selectedId = record.id;
-
-		// 	actions.push([
-		// 		"UpdateRecord",
-		// 		"Activities",
-		// 		selectedId,
-		// 		{ IsSelected: true }
-		// 	]);
-
-		// 	grist.docApi.applyUserActions(actions);
-
-		// 	grist.setCursorPos({ rowId: record.id });
-
-		// 	renderForm(record);
-
-		// 	const index = allRecords.findIndex(r => r.id === record.id);
-		// 	document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
-		// }
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
 			const index = allRecords.findIndex(r => r.id === selectedId);
