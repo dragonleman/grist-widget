@@ -77,7 +77,10 @@
 
 		window.grist.ready({ requiredAccess: 'full' });
 
+        alert("Lindo");
+
         async function logUser() {
+            alert("Coucou");
             const info = await grist.docApi.getAccessInfo();
             alert(info.email);
         }
