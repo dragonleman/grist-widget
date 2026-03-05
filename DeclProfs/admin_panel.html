@@ -81,7 +81,7 @@
 
         async function logUser() {
             alert("Coucou");
-            const info = await grist.docApi.getAccessInfo();
+            const info = await grist.getAccessInfo();
             alert(info.email);
         }
 
