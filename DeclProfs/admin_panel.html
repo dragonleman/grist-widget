@@ -77,9 +77,12 @@
 
 		window.grist.ready({ requiredAccess: 'full' });
 
-        const info = await window.grist.docApi.getAccessInfo();
-        const email = info.email;
-        alert(email);
+        async function logUser() {
+            const info = await grist.docApi.getAccessInfo();
+            alert(info.email);
+        }
+
+        logUser();
 
 		window.grist.onRecords(records => {
             const rec = records[0];
