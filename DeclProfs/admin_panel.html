@@ -77,36 +77,6 @@
 
 		window.grist.ready({ requiredAccess: 'full' });
 
-        // console.log(grist);
-        // console.log(window.grist);
-
-        // alert("Lindo");
-
-        // async function logUser() {
-        //     alert("Coucou");
-        //     console.log("Coucou");
-        //     const token = await grist.docApi.getAccessToken();
-        //     alert(token);
-        // }
-
-        // logUser();
-
-        grist.on('options', async () => {
-            console.log("Widget prêt");
-
-            try {
-                const token = await grist.docApi.getAccessToken();
-                console.log("Token:", token);
-                alert(token);
-            } catch (err) {
-                console.error(err);
-            }
-        });
-
-
-
-        
-
 		window.grist.onRecords(records => {
             const rec = records[0];
 
