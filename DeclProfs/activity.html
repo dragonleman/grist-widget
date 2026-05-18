@@ -30,6 +30,8 @@
 		</div>
 
 		<div style="display:flex; gap:10px; margin-bottom:10px;">
+			<button id="validateBtn" class="btn btn-primary btn-sm">Validate</button>
+
 			<button id="prevBtn" class="btn btn-secondary btn-sm ml-2">Previous</button>
 			<span id="navCounter"></span>
 			<button id="nextBtn" class="btn btn-secondary btn-sm ml-2">Next</button>
@@ -41,6 +43,7 @@
 	<script>
 		const addButton = document.getElementById('addBtn');
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+		let pendingChanges = {};
 		let allRecords = [];
 		let selectedId = null;
 
@@ -56,6 +59,10 @@
 			Comments_admins: "Comments admins",
 			UpdatedAt: "Updated at"
 		};
+
+		function trackChange(fieldName, value) {
+			pendingChanges[fieldName] = value;
+		}
 
 		grist.ready({ requiredAccess: 'full', getSelectedRows: true, allowSelectBy: true });
 
@@ -119,13 +126,8 @@
 				input.value = rec.Activity || '';
 				input.readOnly = is_read_only;
 
-				input.addEventListener('blur', async () => {
-				if (input.value !== rec.Activity) {
-					await grist.selectedTable.update({
-						id: rec.id,
-						fields: { Activity: input.value }
-					});
-				}
+				input.addEventListener('input', () => {
+					trackChange('Activity', input.value);
 				});
 
 				form.appendChild(
@@ -144,13 +146,8 @@
 				input.value = rec.Principal || '';
 				input.readOnly = is_read_only;
 
-				input.addEventListener('blur', async () => {
-					if (input.value !== rec.Principal) {
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: { Principal: input.value }
-						});
-					}
+				input.addEventListener('input', () => {
+					trackChange('Principal', input.value);
 				});
 
 				form.appendChild(
@@ -177,13 +174,8 @@
 					input.value = rec.Start_date || '';
 					input.readOnly = is_read_only;
 
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Start_date) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { Start_date: input.value }
-							});
-						}
+					input.addEventListener('input', () => {
+						trackChange('Start_date', input.value);
 					});
 
 					col.appendChild(
@@ -208,13 +200,8 @@
 					input.style.backgroundColor = rec.ErrorDate || '';
 					input.readOnly = is_read_only;
 
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.End_date) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { End_date: input.value }
-							});
-						}
+					input.addEventListener('input', () => {
+						trackChange('End_date', input.value);
 					});
 
 					col.appendChild(
@@ -238,13 +225,8 @@
 				input.value = rec.Comments || '';
 				input.readOnly = is_read_only;
 
-				input.addEventListener('blur', async () => {
-					if (input.value !== rec.Comments) {
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: { Comments: input.value }
-						});
-					}
+				input.addEventListener('input', () => {
+					trackChange('Comments', input.value);
 				});
 
 				form.appendChild(
@@ -263,13 +245,8 @@
 				input.value = rec.Comments_admins || '';
 				input.readOnly = is_read_only;
 
-				input.addEventListener('blur', async () => {
-					if (input.value !== rec.Comments_admins) {
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: { Comments_admins: input.value }
-						});
-					}
+				input.addEventListener('input', () => {
+					trackChange('Comments_admins', input.value);
 				});
 
 				form.appendChild(
@@ -298,6 +275,23 @@
 			}
 		}
 
+
+		document.getElementById('validateBtn').addEventListener('click', async () => {
+			if (!selectedId) return;
+
+			if (Object.keys(pendingChanges).length === 0) {
+				console.log("No changes");
+				return;
+			}
+
+			await grist.selectedTable.update({
+				id: selectedId,
+				fields: pendingChanges
+			});
+
+			// reset
+			pendingChanges = {};
+		});
 
 		addButton.addEventListener('click', async () => {
 			const result = await window.grist.selectedTable.create({
@@ -342,6 +336,8 @@
 			if (!record) return;
 
 			selectedId = record.id;
+
+			pendingChanges = {};
 
 			renderForm(record);
 
