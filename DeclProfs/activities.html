@@ -629,14 +629,14 @@
 
 				await Promise.all(chunk.map(rec =>
 					window.grist.selectedTable.create({
-					fields: {
-						Activity: rec.Activity || "",
-						Principal: rec.Principal || "",
-						Start_date: rec.Start_date || today,
-						Comments: rec.Comments || "",
-						Comments_admins: rec.Comments_admins || "",
-						Status: "draft",
-					}
+						fields: {
+							Activity: rec.Activity || "",
+							Principal: rec.Principal || "",
+							Start_date: rec.Start_date || today,
+							Comments: rec.Comments || "",
+							Comments_admins: rec.Comments_admins || "",
+							Status: "draft",
+						}
 					})
 				));
 			}
