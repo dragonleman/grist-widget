@@ -452,21 +452,21 @@
 				},
 			}) 
 		});
-		
-		function applyFilters() {
+
+		function getFilteredRecords() {
 			const nameQuery = searchInput.value.trim().toLowerCase();
 			const yearQuery = yearInput.value.trim();
 
 			let filtered = allRecords;
 
-			// Filtre par nom
+			// Filter by name
 			if (nameQuery) {
 				filtered = filtered.filter(rec =>
-				  (rec.Name || "").toLowerCase().includes(nameQuery)
+					(rec.Name || "").toLowerCase().includes(nameQuery)
 				);
 			}
 
-			// Filtre par année (exact 4 chiffres)
+			// Filter by year
 			if (yearQuery.length === 4) {
 				const year = parseInt(yearQuery, 10);
 
@@ -482,7 +482,11 @@
 				});
 			}
 
-			renderTable(filtered);
+			return filtered;
+		}
+		
+		function applyFilters() {
+			renderTable(getFilteredRecords());
 		}
 		
 		window.grist.onRecords(records => {
@@ -552,85 +556,9 @@
 
 			URL.revokeObjectURL(link.href);
 		}
-
-		duplicateAllBtn.addEventListener('click', async () => {
-			if (!allRecords || allRecords.length === 0) {
-				await Swal.fire({
-					icon: "info",
-					title: "No data",
-					text: "There are no activities to duplicate."
-				});
-				return;
-			}
-
-			const result = await Swal.fire({
-				icon: "question",
-				title: "Duplicate all activities?",
-				text: `This will create ${allRecords.length} new rows.`,
-				showCancelButton: true,
-				confirmButtonText: "Yes, duplicate all",
-				cancelButtonText: "Cancel",
-				confirmButtonColor: "#f0ad4e",
-				cancelButtonColor: "#6c757d"
-			});
-
-			if (!result.isConfirmed) return;
-
-			const chunkSize = 20;
-
-			for (let i = 0; i < allRecords.length; i += chunkSize) {
-				const chunk = allRecords.slice(i, i + chunkSize);
-
-				await Promise.all(chunk.map(rec =>
-					window.grist.selectedTable.create({
-					fields: {
-						Activity: rec.Activity || "",
-						Principal: rec.Principal || "",
-						Start_date: rec.Start_date || today,
-						End_date: rec.End_date || today,
-						Access: rec.Access || "",
-						Comments: rec.Comments || "",
-						Comments_admins: rec.Comments_admins || ""
-					}
-					})
-				));
-			}
-
-			await Swal.fire({
-				icon: "success",
-				title: "All activities duplicated!",
-				timer: 1200,
-				showConfirmButton: false
-			});
-		});
 		
 		downloadAllBtn.addEventListener("click", async () => {
-
-			const nameQuery = searchInput.value.trim().toLowerCase();
-			const yearQuery = yearInput.value.trim();
-
-			let filtered = allRecords;
-
-			if (nameQuery) {
-				filtered = filtered.filter(rec =>
-					(rec.Name || "").toLowerCase().includes(nameQuery)
-				);
-			}
-
-			if (yearQuery.length === 4) {
-				const year = parseInt(yearQuery, 10);
-
-				filtered = filtered.filter(rec => {
-					if (!rec.Start_date) return false;
-
-					const startYear = new Date(rec.Start_date).getFullYear();
-					const endYear = rec.End_date
-						? new Date(rec.End_date).getFullYear()
-						: Infinity;
-
-					return year >= startYear && year <= endYear;
-				});
-			}
+			const filtered = getFilteredRecords();
 
 			// 🚨 Aucun résultat
 			if (!filtered.length) {
@@ -665,6 +593,60 @@
 				icon: "success",
 				title: "Download started",
 				timer: 1200,
+				showConfirmButton: false
+			});
+		});
+
+		duplicateAllBtn.addEventListener('click', async () => {
+			const filtered = getFilteredRecords();
+
+			if (!filtered || filtered.length === 0) {
+				await Swal.fire({
+					icon: "info",
+					title: "No data",
+					text: "There are no activities to duplicate."
+				});
+				return;
+			}
+
+			const result = await Swal.fire({
+				icon: "question",
+				title: "Duplicate all activities?",
+				text: `This will create ${filtered.length} new rows.`,
+				showCancelButton: true,
+				confirmButtonText: "Yes, duplicate all",
+				cancelButtonText: "Cancel",
+				confirmButtonColor: "#f0ad4e",
+				cancelButtonColor: "#6c757d"
+			});
+
+			if (!result.isConfirmed) return;
+
+			const chunkSize = 20;
+
+			for (let i = 0; i < filtered.length; i += chunkSize) {
+				const chunk = filtered.slice(i, i + chunkSize);
+
+				await Promise.all(chunk.map(rec =>
+					window.grist.selectedTable.create({
+					fields: {
+						Activity: rec.Activity || "",
+						Principal: rec.Principal || "",
+						Start_date: rec.Start_date || today,
+						End_date: rec.End_date || today,
+						Access: rec.Access || "",
+						Comments: rec.Comments || "",
+						Comments_admins: rec.Comments_admins || ""
+					}
+					})
+				));
+			}
+
+			await Swal.fire({
+				icon: "success",
+				title: "Activities duplicated!",
+				text: `${filtered.length} activity(s) duplicated.`,
+				timer: 1500,
 				showConfirmButton: false
 			});
 
