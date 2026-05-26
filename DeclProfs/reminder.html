@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  	<meta charset="utf-8">
+  	<title>Activities Declaration</title>
+  	<link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+	<link rel="stylesheet" href="css/declprofs.css">
+	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+</head>
+<body>
+  	<header class="header header-light my-2">
+		<div class="header-light-content">
+			<a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
+			<p class="site-title"><a href="#">Professor outside activities</a></p>
+			<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+		</div>
+  	</header>
+
+	<div class="breadcrumb-container pb-0 mb-0">
+		<nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
+	</div>
+
+  	<div class="main-container m-4">
+
+		<div class="d-flex justify-content-between align-items-center mb-3">
+
+			<div class="d-flex align-items-center">
+
+				<!-- Search -->
+				<div id="searchDiv" style="position: relative; max-width: 300px; margin-right: 15px;">
+					<input type="text" id="searchInput" placeholder="Search someone..."
+						style="width: 93.5%; padding-left: 30px; box-sizing: border-box;">
+
+					<svg class="icon" aria-hidden="true"
+						style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+						width: 16px; height: 16px; pointer-events: none;">
+						<use xlink:href="#user"></use>
+					</svg>
+				</div>
+
+				<!-- Status filter -->
+				<select id="statusFilter" class="form-control">
+					<option value="All">All</option>
+					<option value="X">X</option>
+					<option value="check">check</option>
+				</select>
+			</div>
+
+			<!-- Send reminder button -->
+			<button id="sendReminderBtn" class="btn btn-primary">
+				Send reminder
+			</button>
+		</div>
+
+		<div>
+			<table id="table_alt" class="table table-boxed">
+				<thead>
+					<tr>
+						<th>
+							<input type="checkbox" id="selectAll">
+						</th>
+						<th>Name</th>
+						<th>Username</th>
+						<th>Email</th>
+						<th>Sciper</th>
+						<th>Unit</th>
+						<th>Status</th>
+						<th>Updated at</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+	<script>
+		window.grist.ready({ requiredAccess: 'read table' });
+
+		let allRecords = [];
+
+		function renderTable(records) {
+
+			const tbody = document.querySelector('#table_alt tbody');
+			tbody.innerHTML = '';
+
+			if (!records || records.length === 0) {
+
+				const row = tbody.insertRow();
+				const cell = row.insertCell();
+
+				cell.colSpan = 8;
+				cell.textContent = 'No data found.';
+				cell.style.textAlign = 'center';
+
+				return;
+			}
+
+			for (const rec of records) {
+
+				const row = tbody.insertRow();
+
+				// Checkbox
+				const checkboxCell = row.insertCell();
+
+				const checkbox = document.createElement('input');
+				checkbox.type = 'checkbox';
+				checkbox.classList.add('row-checkbox');
+				checkbox.dataset.email = rec.Email;
+
+				checkboxCell.appendChild(checkbox);
+
+				// Name
+				row.insertCell().textContent = rec.Name || '';
+
+				// Username
+				row.insertCell().textContent = rec.Username || '';
+
+				// Email
+				row.insertCell().textContent = rec.Email || '';
+
+				// Sciper
+				row.insertCell().textContent = rec.UserId || '';
+
+				// Unit
+				row.insertCell().textContent = rec.Unit || '';
+
+				// Status
+				row.insertCell().textContent = rec.status || '';
+
+				// Updated At
+				row.insertCell().textContent = rec.UpdatedAt || '';
+			}
+		}
+
+		function applyFilters() {
+
+			const searchValue =
+				document.getElementById('searchInput').value.toLowerCase();
+
+			const statusValue =
+				document.getElementById('statusFilter').value;
+
+			const filtered = allRecords.filter(rec => {
+
+				const matchesSearch =
+					(rec.Name || '').toLowerCase().includes(searchValue) ||
+					(rec.Username || '').toLowerCase().includes(searchValue) ||
+					(rec.Email || '').toLowerCase().includes(searchValue);
+
+				const matchesStatus =
+					statusValue === 'All' ||
+					(rec.status || '') === statusValue;
+
+				return matchesSearch && matchesStatus;
+			});
+
+			renderTable(filtered);
+		}
+
+		window.grist.onRecords((records) => {
+			allRecords = records || [];
+			applyFilters();
+		});
+
+		// Search filter
+		document
+			.getElementById('searchInput')
+			.addEventListener('input', applyFilters);
+
+		// Status filter
+		document
+			.getElementById('statusFilter')
+			.addEventListener('change', applyFilters);
+
+		// Select all
+		document
+			.getElementById('selectAll')
+			.addEventListener('change', function () {
+
+				document
+					.querySelectorAll('.row-checkbox')
+					.forEach(cb => cb.checked = this.checked);
+			});
+
+		// Send reminder
+		document
+			.getElementById('sendReminderBtn')
+			.addEventListener('click', () => {
+
+				const selected = [];
+
+				document
+					.querySelectorAll('.row-checkbox:checked')
+					.forEach(cb => {
+
+						selected.push(cb.dataset.email);
+					});
+
+				if (selected.length === 0) {
+
+					alert('No users selected.');
+					return;
+				}
+
+				console.log('Send reminder to:', selected);
+
+				alert(
+					'Reminder sent to:\n\n' +
+					selected.join('\n')
+				);
+
+				// Ici tu peux appeler :
+				// - une API
+				// - un webhook
+				// - une automation Grist
+			});
+	</script>
+
+	<script>
+    	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+    	featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+  	</script>
+</body>
+</html>
+
+
