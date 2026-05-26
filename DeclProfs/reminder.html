@@ -56,9 +56,7 @@
 			<table id="table_alt" class="table table-boxed">
 				<thead>
 					<tr>
-						<th>
-							<input type="checkbox" id="selectAll">
-						</th>
+						<th><input type="checkbox" id="selectAll"></th>
 						<th>Name</th>
 						<th>Username</th>
 						<th>Email</th>
@@ -140,8 +138,6 @@
 
 			const statusValue =
 				document.getElementById('statusFilter').value;
-			
-			alert(statusValue);
 
 			const filtered = allRecords.filter(rec => {
 
@@ -187,7 +183,7 @@
 		// Send reminder
 		document
 			.getElementById('sendReminderBtn')
-			.addEventListener('click', () => {
+			.addEventListener('click', async () => {
 
 				const selected = [];
 
@@ -206,15 +202,22 @@
 
 				console.log('Send reminder to:', selected);
 
-				alert(
-					'Reminder sent to:\n\n' +
-					selected.join('\n')
-				);
+				try {
+					await fetch("https://declprofs-n8n-test.epfl.ch/webhook/test", {
+						method: "POST",
+						headers: {
+						"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+						emails: selected
+						})
+					});
 
-				// Ici tu peux appeler :
-				// - une API
-				// - un webhook
-				// - une automation Grist
+					alert('Reminder sent successfully');
+				} catch (err) {
+				console.error(err);
+				alert('Error sending reminder');
+				}
 			});
 	</script>
 
