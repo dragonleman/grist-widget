@@ -303,16 +303,16 @@
 				},
 			});
 
-			window.grist.setCursorPos({ rowId: result.id });
+			await window.grist.setCursorPos({ rowId: result.id });
 		});
 
-		function selectRowFromWidget(record) {
+		async function selectRowFromWidget(record) {
 			if (!record) return;
 
 			selectedId = record.id;
 
 			// Should move the curson on grist table
-			grist.setCursorPos({ rowId: record.id });
+			await grist.setCursorPos({ rowId: record.id });
 		}
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
