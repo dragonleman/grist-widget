@@ -132,8 +132,11 @@
 				// Status
 				row.insertCell().textContent = rec.status || '';
 
+				// Sent Reminder At
+				row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH') : '';
+
 				// Updated At
-				row.insertCell().textContent = rec.UpdatedAt || '';
+				row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH') : '';
 			}
 		}
 
