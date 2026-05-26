@@ -304,7 +304,6 @@
 			});
 
 			await grist.setCursorPos({ rowId: result.id });
-			await grist.docApi.selectById(result.id);
 		});
 
 		async function selectRowFromWidget(record) {
@@ -314,7 +313,7 @@
 
 			// Should move the curson on grist table
 			await grist.setCursorPos({ rowId: record.id });
-			await grist.docApi.selectById(record.id);
+			grist.setSelectedRows([record.id]);
 		}
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
