@@ -41,8 +41,8 @@
 				<!-- Status filter -->
 				<select id="statusFilter" class="form-control">
 					<option value="All">All</option>
-					<option value="X">X</option>
-					<option value="check">check</option>
+					<option value="X">❌</option>
+					<option value="check">✅</option>
 				</select>
 			</div>
 
@@ -177,7 +177,6 @@
 		document
 			.getElementById('selectAll')
 			.addEventListener('change', function () {
-
 				document
 					.querySelectorAll('.row-checkbox')
 					.forEach(cb => cb.checked = this.checked);
