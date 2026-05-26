@@ -114,8 +114,8 @@
 				checkboxInput.type = 'checkbox';
 				checkboxInput.classList.add('row-checkbox');
 				checkboxInput.checked = !!rec.Select;
-				checkboxInput.addEventListener('blur', async () => {
-					if (checkboxInput.value !== rec.Select) {
+				checkboxInput.addEventListener('change', async () => {
+					if (checkboxInput.checked !== rec.Select) {
 					await window.grist.selectedTable.update({
 						id: rec.id,
 						fields: { Select: checkboxInput.checked }
