@@ -118,7 +118,7 @@
 					if (checkboxInput.value !== rec.Select) {
 					await window.grist.selectedTable.update({
 						id: rec.id,
-						fields: { Select: checkboxInput.value }
+						fields: { Select: checkboxInput.checked }
 					});
 					}
 				});
