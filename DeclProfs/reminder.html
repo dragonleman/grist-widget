@@ -98,28 +98,17 @@
 
 				const row = tbody.insertRow();
 
-				// Checkbox
-				// const checkboxCell = row.insertCell();
-
-				// const checkbox = document.createElement('input');
-				// checkbox.type = 'checkbox';
-				// checkbox.classList.add('row-checkbox');
-				// checkbox.dataset.email = rec.Email;
-
-				// checkboxCell.appendChild(checkbox);
-
-				// Checkbox
+				// Select
 				const checkboxCell = row.insertCell();
 				const checkboxInput = document.createElement('input');
 				checkboxInput.type = 'checkbox';
 				checkboxInput.classList.add('row-checkbox');
-				checkboxInput.checked = !!rec.Select;
+				checkboxInput.checked = !!rec.SelectReminder;
 				checkboxInput.addEventListener('change', async () => {
-					if (checkboxInput.checked !== rec.Select) {
-						alert(checkboxInput.checked);
+					if (checkboxInput.checked !== rec.SelectReminder) {
 						await window.grist.selectedTable.update({
 							id: rec.id,
-							fields: { Select: checkboxInput.checked }
+							fields: { SelectReminder: checkboxInput.checked }
 						});
 					}
 				});
