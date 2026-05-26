@@ -99,14 +99,42 @@
 				const row = tbody.insertRow();
 
 				// Checkbox
+				// const checkboxCell = row.insertCell();
+
+				// const checkbox = document.createElement('input');
+				// checkbox.type = 'checkbox';
+				// checkbox.classList.add('row-checkbox');
+				// checkbox.dataset.email = rec.Email;
+
+				// checkboxCell.appendChild(checkbox);
+
+				// Checkbox
 				const checkboxCell = row.insertCell();
-
-				const checkbox = document.createElement('input');
-				checkbox.type = 'checkbox';
-				checkbox.classList.add('row-checkbox');
-				checkbox.dataset.email = rec.Email;
-
-				checkboxCell.appendChild(checkbox);
+				const checkboxInput = document.createElement('input');
+				checkboxInput.type = 'checkbox';
+				checkboxInput.classList.add('row-checkbox');
+				checkboxInput.checked = !!rec.Select;
+				checkboxInput.addEventListener('blur', async () => {
+					if (checkboxInput.value !== rec.Select) {
+					await window.grist.selectedTable.update({
+						id: rec.id,
+						fields: { Select: checkboxInput.value }
+					});
+					}
+				});
+				// checkboxInput.addEventListener('change', async () => {
+				// 	await window.grist.docApi.applyUserActions([
+				// 		[
+				// 			'UpdateRecord',
+				// 			'table_name',   // ⚠️ remplace par le vrai nom de ta table
+				// 			rec.id,         // ou rec.$id selon ton schema
+				// 			{
+				// 				Select: checkboxInput.checked
+				// 			}
+				// 		]
+				// 	]);
+				// });
+				checkboxCell.appendChild(checkboxInput);
 
 				// Name
 				row.insertCell().textContent = rec.Name || '';
@@ -180,45 +208,45 @@
 					.forEach(cb => cb.checked = this.checked);
 			});
 
-		// Send reminder
-		document
-			.getElementById('sendReminderBtn')
-			.addEventListener('click', async () => {
+		// // Send reminder
+		// document
+		// 	.getElementById('sendReminderBtn')
+		// 	.addEventListener('click', async () => {
 
-				const selected = [];
+		// 		const selected = [];
 
-				document
-					.querySelectorAll('.row-checkbox:checked')
-					.forEach(cb => {
+		// 		document
+		// 			.querySelectorAll('.row-checkbox:checked')
+		// 			.forEach(cb => {
 
-						selected.push(cb.dataset.email);
-					});
+		// 				selected.push(cb.dataset.email);
+		// 			});
 
-				if (selected.length === 0) {
+		// 		if (selected.length === 0) {
 
-					alert('No users selected.');
-					return;
-				}
+		// 			alert('No users selected.');
+		// 			return;
+		// 		}
 
-				console.log('Send reminder to:', selected);
+		// 		console.log('Send reminder to:', selected);
 
-				try {
-					await fetch("https://declprofs-n8n-test.epfl.ch/webhook/test", {
-						method: "POST",
-						headers: {
-						"Content-Type": "application/json"
-						},
-						body: JSON.stringify({
-						emails: selected
-						})
-					});
+		// 		try {
+		// 			await fetch("https://declprofs-n8n-test.epfl.ch/webhook/declprofs-test-sendemails", {
+		// 				method: "POST",
+		// 				headers: {
+		// 				"Content-Type": "application/json"
+		// 				},
+		// 				body: JSON.stringify({
+		// 				emails: selected
+		// 				})
+		// 			});
 
-					alert('Reminder sent successfully');
-				} catch (err) {
-				console.error(err);
-				alert('Error sending reminder');
-				}
-			});
+		// 			alert('Reminder sent successfully');
+		// 		} catch (err) {
+		// 		console.error(err);
+		// 		alert('Error sending reminder');
+		// 		}
+		// 	});
 	</script>
 
 	<script>
