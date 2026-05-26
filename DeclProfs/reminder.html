@@ -115,26 +115,14 @@
 				checkboxInput.classList.add('row-checkbox');
 				checkboxInput.checked = !!rec.Select;
 				checkboxInput.addEventListener('change', async () => {
-					await window.grist.docApi.applyUserActions([
-						[
-							'UpdateRecord',
-							'Users',   // ⚠️ remplace par le vrai nom de ta table
-							rec.id,    // ou rec.$id selon ton schema
-							{
-								Select: checkboxInput.checked
-							}
-						]
-					]);
+					alert(checkboxInput.checked);
+					if (checkboxInput.checked !== rec.Select) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { Select: checkboxInput.checked }
+						});
+					}
 				});
-
-				// checkboxInput.addEventListener('change', async () => {
-				// 	if (checkboxInput.checked !== rec.Select) {
-				// 		await window.grist.selectedTable.update({
-				// 			id: rec.id,
-				// 			fields: { Select: checkboxInput.checked }
-				// 		});
-				// 	}
-				// });
 				checkboxCell.appendChild(checkboxInput);
 
 				// Name
