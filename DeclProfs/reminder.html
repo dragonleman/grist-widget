@@ -63,6 +63,7 @@
 						<th>Sciper</th>
 						<th>Unit</th>
 						<th>Status</th>
+						<th>Sent reminder at</th>
 						<th>Updated at</th>
 					</tr>
 				</thead>
@@ -189,45 +190,39 @@
 					.forEach(cb => cb.checked = this.checked);
 			});
 
-		// // Send reminder
-		// document
-		// 	.getElementById('sendReminderBtn')
-		// 	.addEventListener('click', async () => {
+		// Send reminder
+		document
+			.getElementById('sendReminderBtn')
+			.addEventListener('click', async () => {
 
-		// 		const selected = [];
+					// Premier record avec SelectReminder = true
+					const firstSelected = allRecords.find(
+						rec => rec.SelectReminder === true
+					);
 
-		// 		document
-		// 			.querySelectorAll('.row-checkbox:checked')
-		// 			.forEach(cb => {
+				if (!firstSelected) {
+					alert('No professors selected.');
+					return;
+				}
 
-		// 				selected.push(cb.dataset.email);
-		// 			});
+				console.log('Trigger workflow with:', firstSelected);
 
-		// 		if (selected.length === 0) {
+				try {
 
-		// 			alert('No users selected.');
-		// 			return;
-		// 		}
+				await window.grist.selectedTable.update({
+					id: firstSelected.id,
+					fields: {
+						ValidateBtn: true
+					}
+				});
 
-		// 		console.log('Send reminder to:', selected);
+				alert('Reminder workflow triggered');
 
-		// 		try {
-		// 			await fetch("https://declprofs-n8n-test.epfl.ch/webhook/declprofs-test-sendemails", {
-		// 				method: "POST",
-		// 				headers: {
-		// 				"Content-Type": "application/json"
-		// 				},
-		// 				body: JSON.stringify({
-		// 				emails: selected
-		// 				})
-		// 			});
-
-		// 			alert('Reminder sent successfully');
-		// 		} catch (err) {
-		// 		console.error(err);
-		// 		alert('Error sending reminder');
-		// 		}
-		// 	});
+				} catch (err) {
+					console.error(err);
+					alert('Error triggering workflow');
+				}
+			});
 	</script>
 
 	<script>
