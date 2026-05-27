@@ -463,11 +463,14 @@
 
 			if (!result.isConfirmed) return;
 
-			const actions = drafts.map(r => [
+			const actions = drafts.map((r, index) => [
 				"UpdateRecord",
 				"Activities",
 				r.id,
-				{ Status: "" }
+				{ 	
+					Status: "",
+					...(index === 0 && { ValidationBtn: true })
+				}
 			]);
 
 			await grist.docApi.applyUserActions(actions);
