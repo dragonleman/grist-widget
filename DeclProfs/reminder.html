@@ -73,6 +73,8 @@
 	</div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 	<script>
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -195,32 +197,54 @@
 			.getElementById('sendReminderBtn')
 			.addEventListener('click', async () => {
 
-					// Premier record avec SelectReminder = true
-					const firstSelected = allRecords.find(
-						rec => rec.SelectReminder === true
-					);
+				// Premier record avec SelectReminder = true
+				const firstSelected = allRecords.find(
+					rec => rec.SelectReminder === true
+				);
 
 				if (!firstSelected) {
-					alert('No professors selected.');
+					await Swal.fire({
+						icon: "info",
+						title: "No professors selected",
+						text: "Please select at least one professor.",
+						confirmButtonText: "OK"
+					});
 					return;
 				}
 
-				console.log('Trigger workflow with:', firstSelected);
-
-				try {
-
-				await window.grist.selectedTable.update({
-					id: firstSelected.id,
-					fields: {
-						ValidateBtn: true
-					}
+				const result = await Swal.fire({
+					icon: "question",
+					title: "Send reminders?",
+					text: "Are you sure you want to send reminders to selected professors?",
+					showCancelButton: true,
+					confirmButtonText: "Yes, send reminders",
+					cancelButtonText: "Cancel",
+					confirmButtonColor: "#3085d6"
 				});
 
-				alert('Reminder workflow triggered');
+				if (!result.isConfirmed) return;
 
+				try {
+					await window.grist.selectedTable.update({
+						id: firstSelected.id,
+						fields: {
+							ValidateBtn: true
+						}
+					});
+					await Swal.fire({
+						icon: "success",
+						title: "Send reminders",
+						text: "Reminder emails are being sent.",
+						timer: 1500,
+						showConfirmButton: false
+					});
 				} catch (err) {
 					console.error(err);
-					alert('Error triggering workflow');
+					await Swal.fire({
+						icon: "error",
+						title: "Error",
+						text: "Error triggering workflow."
+					});
 				}
 			});
 	</script>
