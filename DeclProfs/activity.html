@@ -44,10 +44,12 @@
 
 	<script>
 		const addButton = document.getElementById('addBtn');
+		const validateButton = document.getElementById('validateBtn');
 		const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 		let pendingChanges = {};
 		let allRecords = [];
 		let selectedId = null;
+		let isByAPR = false;
 
 		const transColumns = {
 			Name: "Name",
@@ -242,6 +244,7 @@
 
 			// Comments_admins
 			if ('Comments_admins' in rec) {
+				isByAPR = true;
 				const input = document.createElement('input');
 				input.type = 'text';
 				input.value = rec.Comments_admins || '';
@@ -277,25 +280,7 @@
 			}
 		}
 
-
-		// document.getElementById('validateBtn').addEventListener('click', async () => {
-		// 	if (!selectedId) return;
-
-		// 	if (Object.keys(pendingChanges).length === 0) {
-		// 		console.log("No changes");
-		// 		return;
-		// 	}
-
-		// 	await grist.selectedTable.update({
-		// 		id: selectedId,
-		// 		fields: pendingChanges
-		// 	});
-
-		// 	// reset
-		// 	pendingChanges = {};
-		// });
-
-		document.getElementById('validateBtn').addEventListener('click', async () => {
+		validateButton.addEventListener('click', async () => {
 			if (!selectedId) {
 				await Swal.fire({
 					icon: "info",
@@ -330,6 +315,7 @@
 
 			try {
 
+				pendingChanges['Is_by_admin'] = isByAPR;
 				pendingChanges['ValidationBtn'] = true;
 				await grist.selectedTable.update({
 					id: selectedId,
