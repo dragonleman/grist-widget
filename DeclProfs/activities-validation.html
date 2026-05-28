@@ -69,6 +69,7 @@
 		const addBtn = document.getElementById("addBtn");
 		const validateBtn = document.getElementById("validateBtn");
 		const draftList = document.getElementById("draftList");
+		let isByAPR = false;
 
 		let allRecords = [];
 		const today = new Date().toISOString().slice(0, 10);
@@ -312,6 +313,7 @@
 
 				// Comments_admins
 				if ('Comments_admins' in rec) {
+					isByAPR = true;
 					const input = document.createElement('input');
 					input.type = 'text';
 					input.value = rec.Comments_admins || '';
@@ -469,7 +471,11 @@
 				r.id,
 				{ 	
 					Status: "",
-					...(index === 0 && { ValidationBtn: true })
+					...(index === 0 && { 
+						ValidationBtn: true,
+						Is_by_admin: isByAPR,
+						LogAction: 'create'
+					})
 				}
 			]);
 

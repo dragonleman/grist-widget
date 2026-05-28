@@ -316,6 +316,7 @@
 			try {
 
 				pendingChanges['Is_by_admin'] = isByAPR;
+				pendingChanges['LogAction'] = 'update';
 				pendingChanges['ValidationBtn'] = true;
 				await grist.selectedTable.update({
 					id: selectedId,
