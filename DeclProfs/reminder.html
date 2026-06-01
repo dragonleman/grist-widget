@@ -211,32 +211,32 @@
 		window.grist.onRecords((records) => {
 			allRecords = records || [];
 
-			// Récupère toutes les années disponibles
 			const years = new Set();
 
 			for (const rec of allRecords) {
 				const statusMap = parseStatusByYear(rec.StatusByYear);
 
-				Object.keys(statusMap).forEach(year => {
-					years.add(year);
+				Object.keys(statusMap || {}).forEach(year => {
+				years.add(year);
 				});
 			}
 
+			// 🔥 IMPORTANT : fallback année courante si vide
+			const currentYear = new Date().getFullYear().toString();
+			years.add(currentYear);
+
 			const sortedYears = [...years].sort();
 
-			alert(years);
-
-			// si année courante pas dans la liste → fallback dernière année
+			// si année courante pas dans la liste → on la force par défaut
 			if (!sortedYears.includes(selectedYear)) {
-			selectedYear = sortedYears[sortedYears.length - 1];
+				selectedYear = currentYear;
 			}
 
-			yearFilter.innerHTML =
-			sortedYears
+			yearFilter.innerHTML = sortedYears
 				.map(year => {
-					return `<option value="${year}" ${
-						year === selectedYear ? "selected" : ""
-					}>${year}</option>`;
+				return `<option value="${year}" ${
+					year === selectedYear ? "selected" : ""
+				}>${year}</option>`;
 				})
 				.join("");
 
