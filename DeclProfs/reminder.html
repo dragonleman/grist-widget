@@ -128,15 +128,9 @@
 				let status;
 
 				if (selectedYear) {
-					status = statusMap[selectedYear]
-					? "✅ Valid"
-					: "❌ Invalid";
+					status = statusMap[selectedYear] ? "✅" : "❌";
 				} else {
-					status = Object.entries(statusMap)
-					.map(([year, value]) =>
-						`${year}: ${value ? "✅" : "❌"}`
-					)
-					.join(" | ");
+					status = "";
 				}
 
 				const row = tbody.insertRow();
@@ -173,7 +167,7 @@
 				row.insertCell().textContent = rec.Unit || '';
 
 				// Status
-				row.insertCell().textContent = status = statusMap[selectedYear]; //rec.status || '';
+				row.insertCell().textContent = status; //rec.status || '';
 
 				// Sent Reminder At
 				row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
