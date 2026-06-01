@@ -83,6 +83,8 @@
 
 		let allRecords = [];
 
+		let selectedYear = new Date().getFullYear().toString();
+
 		const yearFilter = document.getElementById("yearFilter");
 
 		function parseStatusByYear(str) {
@@ -220,14 +222,23 @@
 				});
 			}
 
-			// Remplit le select by year
+			const sortedYears = [...years].sort();
+
+			// si année courante pas dans la liste → fallback dernière année
+			if (!sortedYears.includes(selectedYear)) {
+			selectedYear = sortedYears[sortedYears.length - 1];
+			}
+
 			yearFilter.innerHTML =
-				[...years]
-				.sort()
-				.map(year =>
-					`<option value="${year}">${year}</option>`
-				)
+			sortedYears
+				.map(year => {
+				return `<option value="${year}" ${
+					year === selectedYear ? "selected" : ""
+				}>${year}</option>`;
+				})
 				.join("");
+
+			yearFilter.value = selectedYear;
 
 			applyFilters();
 		});
@@ -251,8 +262,9 @@
 					.forEach(cb => cb.checked = this.checked);
 			});
 		
-		yearFilter.addEventListener("change", () => {
- 			applyFilters();
+		yearFilter.addEventListener("change", (e) => {
+			selectedYear = e.target.value;
+			applyFilters();
 		});
 
 		// Send reminder
