@@ -44,6 +44,9 @@
 					<option value="❌">❌</option>
 					<option value="✅">✅</option>
 				</select>
+
+				<select id="yearFilter" style="margin-bottom: 10px;">
+				</select>
 			</div>
 
 			<!-- Send reminder button -->
@@ -80,6 +83,17 @@
 
 		let allRecords = [];
 
+		const yearFilter = document.getElementById("yearFilter");
+
+		function parseStatusByYear(str) {
+			try {
+				return JSON.parse(str || "{}");
+			} catch (e) {
+				console.error("Invalid StatusByYear JSON:", str);
+				return {};
+			}
+		}
+
 		function renderTable(records) {
 
 			const tbody = document.querySelector('#table_alt tbody');
@@ -98,6 +112,30 @@
 			}
 
 			for (const rec of records) {
+
+				// Parse le JSON stocké dans Grist
+				const statusMap = parseStatusByYear(rec.StatusByYear);
+
+				// Si une année est sélectionnée,
+				// ignorer les records sans cette année
+				if (selectedYear && !(selectedYear in statusMap)) {
+					continue;
+				}
+
+				// Status affiché
+				let status;
+
+				if (selectedYear) {
+					status = statusMap[selectedYear]
+					? "✅ Valid"
+					: "❌ Invalid";
+				} else {
+					status = Object.entries(statusMap)
+					.map(([year, value]) =>
+						`${year}: ${value ? "✅" : "❌"}`
+					)
+					.join(" | ");
+				}
 
 				const row = tbody.insertRow();
 
@@ -170,6 +208,27 @@
 
 		window.grist.onRecords((records) => {
 			allRecords = records || [];
+
+			// Récupère toutes les années disponibles
+			const years = new Set();
+
+			for (const rec of allRecords) {
+				const statusMap = parseStatusByYear(rec.StatusByYear);
+
+				Object.keys(statusMap).forEach(year => {
+					years.add(year);
+				});
+			}
+
+			// Remplit le select by year
+			yearFilter.innerHTML =
+				[...years]
+				.sort()
+				.map(year =>
+					`<option value="${year}">${year}</option>`
+				)
+				.join("");
+
 			applyFilters();
 		});
 
@@ -191,6 +250,10 @@
 					.querySelectorAll('.row-checkbox')
 					.forEach(cb => cb.checked = this.checked);
 			});
+		
+		yearFilter.addEventListener("change", () => {
+ 			applyFilters();
+		});
 
 		// Send reminder
 		document
