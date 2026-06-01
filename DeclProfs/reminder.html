@@ -173,7 +173,7 @@
 				row.insertCell().textContent = rec.Unit || '';
 
 				// Status
-				row.insertCell().textContent = rec.status || '';
+				row.insertCell().textContent = status = statusMap[selectedYear]; //rec.status || '';
 
 				// Sent Reminder At
 				row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
