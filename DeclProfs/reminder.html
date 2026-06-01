@@ -224,6 +224,8 @@
 
 			const sortedYears = [...years].sort();
 
+			alert(sortedYears);
+
 			// si année courante pas dans la liste → fallback dernière année
 			if (!sortedYears.includes(selectedYear)) {
 			selectedYear = sortedYears[sortedYears.length - 1];
@@ -232,9 +234,9 @@
 			yearFilter.innerHTML =
 			sortedYears
 				.map(year => {
-				return `<option value="${year}" ${
-					year === selectedYear ? "selected" : ""
-				}>${year}</option>`;
+					return `<option value="${year}" ${
+						year === selectedYear ? "selected" : ""
+					}>${year}</option>`;
 				})
 				.join("");
 
