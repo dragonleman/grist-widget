@@ -576,13 +576,7 @@
 		}
 		
 		downloadAllBtn.addEventListener("click", async () => {
-			let filtered = getFilteredRecords();
-
-			filtered = filtered.filter(rec =>
-				rec.End_date !== null &&
-				rec.End_date !== undefined &&
-				rec.End_date !== ""
-			);
+			const filtered = getFilteredRecords();
 
 			if (!filtered.length) {
 				await Swal.fire({
@@ -619,7 +613,13 @@
 		});
 
 		duplicateAllBtn.addEventListener('click', async () => {
-			const filtered = getFilteredRecords();
+			let filtered = getFilteredRecords();
+
+			filtered = filtered.filter(rec =>
+				rec.End_date !== null &&
+				rec.End_date !== undefined &&
+				rec.End_date !== ""
+			);
 
 			if (!filtered || filtered.length === 0) {
 				await Swal.fire({
