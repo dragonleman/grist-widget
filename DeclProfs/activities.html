@@ -576,7 +576,13 @@
 		}
 		
 		downloadAllBtn.addEventListener("click", async () => {
-			const filtered = getFilteredRecords();
+			let filtered = getFilteredRecords();
+
+			filtered = filtered.filter(rec =>
+				rec.End_date !== null &&
+				rec.End_date !== undefined &&
+				rec.End_date !== ""
+			);
 
 			if (!filtered.length) {
 				await Swal.fire({
