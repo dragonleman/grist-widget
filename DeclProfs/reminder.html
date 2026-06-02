@@ -257,6 +257,8 @@
 		selectAll.addEventListener('change', async () => {
 			const checked = selectAll.checked;
 
+			alert()
+
 			// Update visuel immédiat
 			document.querySelectorAll('.row-checkbox').forEach(cb => {
 				cb.checked = checked;
@@ -267,7 +269,7 @@
 			// Update Grist
 			const actions = filtered.map(rec => [
 				"UpdateRecord",
-				"Activities",
+				"Users",
 				rec.id,
 				{
 					SelectReminder: checked
