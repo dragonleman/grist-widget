@@ -192,9 +192,15 @@
 					(rec.Username || '').toLowerCase().includes(searchValue) ||
 					(rec.Email || '').toLowerCase().includes(searchValue);
 
+				const statusMap = parseStatusByYear(rec.StatusByYear);
+
+				const yearStatus = statusMap[selectedYear];
+
+				const displayStatus = yearStatus ? "✅" : "❌";
+
 				const matchesStatus =
 					statusValue === 'All' ||
-					(rec.status || '') === statusValue;
+					displayStatus === statusValue;
 
 				return matchesSearch && matchesStatus;
 			});
