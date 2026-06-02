@@ -182,15 +182,17 @@
 
 			const statusValue = document.getElementById('statusFilter').value;
 
-			const filtered = allRecords.filter(rec => {
+			return allRecords.filter(rec => {
 
 				const matchesSearch = (rec.Name || '').toLowerCase().includes(searchValue);
 
 				const statusMap = parseStatusByYear(rec.StatusByYear);
 
-				const yearStatus = statusMap[selectedYear];
+				if (selectedYear && !(selectedYear in statusMap)) {
+					return false;
+				}
 
-				const displayStatus = yearStatus ? "✅" : "❌";
+				const displayStatus = statusMap[selectedYear] ? "✅" : "❌";
 
 				const matchesStatus =
 					statusValue === 'All' ||
@@ -198,8 +200,6 @@
 
 				return matchesSearch && matchesStatus;
 			});
-			
-			return filtered;
 		}
 
 		function applyFilters() {
@@ -257,8 +257,6 @@
 		selectAll.addEventListener('change', async () => {
 			const checked = selectAll.checked;
 
-			alert()
-
 			// Update visuel immédiat
 			document.querySelectorAll('.row-checkbox').forEach(cb => {
 				cb.checked = checked;
@@ -278,14 +276,6 @@
 
 			await grist.docApi.applyUserActions(actions);
 		});
-
-		// document
-		// 	.getElementById('selectAll')
-		// 	.addEventListener('change', function () {
-		// 		document
-		// 			.querySelectorAll('.row-checkbox')
-		// 			.forEach(cb => cb.checked = this.checked);
-		// 	});
 		
 		yearFilter.addEventListener("change", (e) => {
 			selectedYear = e.target.value;
