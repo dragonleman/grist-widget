@@ -101,22 +101,6 @@
 
 		grist.ready({ requiredAccess: "full" });
 
-		// Fonction pour activer/désactiver le bouton validate
-		function checkDraftsValidity() {
-			const drafts = allRecords.filter(r => r.Status === "draft");
-
-			if (!drafts.length) {
-				validateBtn.disabled = true;
-				return;
-			}
-
-			const allValid = drafts.every(r =>
-				r.Activity && r.Principal && r.Start_date
-			);
-
-			validateBtn.disabled = !allValid;
-		}
-
 		function getFilteredDrafts() {
 			const nameQuery = searchInput.value.trim().toLowerCase();
 
@@ -129,6 +113,22 @@
 			}
 
 			return filtered;
+		}
+
+		// Fonction pour activer/désactiver le bouton validate
+		function checkDraftsValidity() {
+			const drafts = getFilteredDrafts();
+
+			if (!drafts.length) {
+				validateBtn.disabled = true;
+				return;
+			}
+
+			const allValid = drafts.every(r =>
+				r.Activity && r.Principal && r.Start_date
+			);
+
+			validateBtn.disabled = !allValid;
 		}
 
 		function renderDrafts(drafts) {
