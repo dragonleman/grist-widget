@@ -79,13 +79,13 @@
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<script>
-		window.grist.ready({ requiredAccess: 'full' });
+		const selectAll = document.getElementById('selectAll');
+		const yearFilter = document.getElementById("yearFilter");
 
 		let allRecords = [];
-
 		let selectedYear = new Date().getFullYear().toString();
 
-		const yearFilter = document.getElementById("yearFilter");
+		window.grist.ready({ requiredAccess: 'full' });
 
 		function parseStatusByYear(str) {
 			try {
@@ -177,20 +177,14 @@
 			}
 		}
 
-		function applyFilters() {
+		function getFiltered() {
+			const searchValue = document.getElementById('searchInput').value.toLowerCase();
 
-			const searchValue =
-				document.getElementById('searchInput').value.toLowerCase();
-
-			const statusValue =
-				document.getElementById('statusFilter').value;
+			const statusValue = document.getElementById('statusFilter').value;
 
 			const filtered = allRecords.filter(rec => {
 
-				const matchesSearch =
-					(rec.Name || '').toLowerCase().includes(searchValue) ||
-					(rec.Username || '').toLowerCase().includes(searchValue) ||
-					(rec.Email || '').toLowerCase().includes(searchValue);
+				const matchesSearch = (rec.Name || '').toLowerCase().includes(searchValue);
 
 				const statusMap = parseStatusByYear(rec.StatusByYear);
 
@@ -204,8 +198,12 @@
 
 				return matchesSearch && matchesStatus;
 			});
+			
+			return filtered;
+		}
 
-			renderTable(filtered);
+		function applyFilters() {
+			renderTable(getFiltered());
 		}
 
 		window.grist.onRecords((records) => {
@@ -256,13 +254,36 @@
 			.addEventListener('change', applyFilters);
 
 		// Select all
-		document
-			.getElementById('selectAll')
-			.addEventListener('change', function () {
-				document
-					.querySelectorAll('.row-checkbox')
-					.forEach(cb => cb.checked = this.checked);
+		selectAll.addEventListener('change', async () => {
+			const checked = selectAll.checked;
+
+			// Update visuel immédiat
+			document.querySelectorAll('.row-checkbox').forEach(cb => {
+				cb.checked = checked;
 			});
+
+			const filtered = getFiltered();
+
+			// Update Grist
+			const actions = filtered.map(rec => [
+				"UpdateRecord",
+				"Activities",
+				rec.id,
+				{
+					SelectReminder: checked
+				}
+			]);
+
+			await grist.docApi.applyUserActions(actions);
+		});
+
+		// document
+		// 	.getElementById('selectAll')
+		// 	.addEventListener('change', function () {
+		// 		document
+		// 			.querySelectorAll('.row-checkbox')
+		// 			.forEach(cb => cb.checked = this.checked);
+		// 	});
 		
 		yearFilter.addEventListener("change", (e) => {
 			selectedYear = e.target.value;
