@@ -187,7 +187,7 @@
 					startInput.type = 'date';
 					startInput.value = rec.Start_date || '';
 					startInput.style.border = 'none';
-					startInput.addEventListener('blur', async () => {
+					startInput.addEventListener('change', async () => {
 						if (startInput.value !== rec.Start_date) {
 							await window.grist.selectedTable.update({
 								id: rec.id,
@@ -206,7 +206,7 @@
 					endInput.value = rec.End_date || '';
 					endInput.style.border = 'none';
 					endInput.style.backgroundColor = rec.ErrorDate || '';
-					endInput.addEventListener('blur', async () => {
+					endInput.addEventListener('change', async () => {
 						if (endInput.value !== rec.End_date) {
 							await window.grist.selectedTable.update({
 								id: rec.id,
@@ -253,7 +253,7 @@
 					commentsadminsInput.style.border = 'none';
 					commentsadminsInput.style.width = '100%';
 					commentsadminsInput.addEventListener('blur', async () => {
-						if (commentsadminsInput.value !== rec.Comments) {
+						if (commentsadminsInput.value !== rec.Comments_admins) {
 							await window.grist.selectedTable.update({
 								id: rec.id,
 								fields: { Comments_admins: commentsadminsInput.value }
@@ -388,7 +388,7 @@
 
 					const csvContent =
 						keys.join(",") + "\n" +
-						values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
+						values.map(v => `"${sanitizeCSV(v).replace(/"/g, '""')}"`).join(",");
 
 					const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
 					const link = document.createElement("a");
@@ -472,7 +472,7 @@
 			}
 
 			// Filter by year
-			if (yearQuery.length === 4) {
+			if (yearQuery.length === 4 && Number.isInteger(Number(yearQuery))) {
 				const year = parseInt(yearQuery, 10);
 
 				filtered = filtered.filter(rec => {
@@ -495,7 +495,9 @@
 		}
 		
 		window.grist.onRecords(records => {
-			yearInput.value = new Date().getFullYear();
+			if (!yearInput.value) {
+				yearInput.value = new Date().getFullYear();
+			}
 			allRecords = records;
 			applyFilters();
 		});
@@ -517,6 +519,17 @@
 			yearInput.value = val; // garde seulement les chiffres
 			applyFilters();
 		});
+
+		function sanitizeCSV(value) {
+			const str = String(value ?? "");
+
+			// Protection Excel formula injection
+			if (/^[=+\-@]/.test(str)) {
+				return "'" + str;
+			}
+
+			return str;
+		}
 		
 		function downloadCSV(records, filename = "activities.csv") {
 			if (!records || records.length === 0) {
@@ -546,7 +559,7 @@
 			// Rows
 			for (const rec of records) {
 				const row = availableColumns.map(col =>
-				  `"${String(rec[col] ?? "").replace(/"/g, '""')}"`
+				  `"${sanitizeCSV(rec[col]).replace(/"/g, '""')}"`
 				);
 				csvRows.push(row.join(","));
 			}
@@ -565,7 +578,6 @@
 		downloadAllBtn.addEventListener("click", async () => {
 			const filtered = getFilteredRecords();
 
-			// 🚨 Aucun résultat
 			if (!filtered.length) {
 				await Swal.fire({
 					icon: "info",
@@ -576,7 +588,6 @@
 				return;
 			}
 
-			// ❓ Confirmation
 			const result = await Swal.fire({
 				icon: "question",
 				title: "Download CSV?",
@@ -590,10 +601,9 @@
 
 			if (!result.isConfirmed) return;
 
-			// ⬇ Télécharger
+			const yearQuery = yearInput.value.trim();
 			downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
 
-			// ✅ Succès
 			Swal.fire({
 				icon: "success",
 				title: "Download started",
@@ -627,6 +637,18 @@
 
 			if (!result.isConfirmed) return;
 
+			Swal.fire({
+				icon: "info",
+				title: "Duplicating activities...",
+				text: "Please wait",
+				allowOutsideClick: false,
+				allowEscapeKey: false,
+				showConfirmButton: false,
+				didOpen: () => {
+					Swal.showLoading();
+				}
+			});
+
 			const chunkSize = 20;
 
 			for (let i = 0; i < filtered.length; i += chunkSize) {
@@ -637,7 +659,8 @@
 						fields: {
 							Activity: rec.Activity || "",
 							Principal: rec.Principal || "",
-							Start_date: rec.Start_date || today,
+							Start_date: today,
+							End_date: today,
 							Comments: rec.Comments || "",
 							Comments_admins: rec.Comments_admins || "",
 							Status: "draft",
