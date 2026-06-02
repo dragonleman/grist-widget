@@ -423,6 +423,10 @@
 			});
 
 			checkDraftsValidity();
+
+			if (isByAPR) {
+				document.getElementById('searchDiv').style.display = 'block';
+			}
 		}
 
 		function applyFilters() {
