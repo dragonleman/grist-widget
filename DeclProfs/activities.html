@@ -643,6 +643,9 @@
 
 			if (!result.isConfirmed) return;
 
+
+			alert(filtered);
+
 			Swal.fire({
 				icon: "info",
 				title: "Duplicating activities...",
@@ -654,6 +657,8 @@
 					Swal.showLoading();
 				}
 			});
+
+			alert(filtered);
 
 			const chunkSize = 20;
 
