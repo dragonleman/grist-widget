@@ -407,6 +407,17 @@
 
 					if (!result.isConfirmed) return;
 
+					await grist.docApi.applyUserActions([
+						[
+							"UpdateRecord",
+							"Activities",
+							recordId,
+							{
+								ActivityAction: "Delete"
+							}
+						]
+					]);
+
 					await grist.selectedTable.destroy([recordId]);
 
 					await Swal.fire({
@@ -448,7 +459,8 @@
 					Activity: "",
 					Start_date: today,
 					End_date: today,
-					Status: "draft"
+					Status: "draft",
+					ActivityAction: "Add"
 				}
 			});
 		});
@@ -511,7 +523,8 @@
 					...(index === 0 && { 
 						ValidationBtn: true,
 						Is_by_admin: isByAPR,
-						LogAction: 'create'
+						LogAction: 'create',
+						ActivityAction: "Validate"
 					})
 				}
 			]);
