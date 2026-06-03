@@ -454,15 +454,27 @@
 		});
 
 		addBtn.addEventListener("click", async () => {
-			await grist.selectedTable.create({
+			const result = await grist.selectedTable.create({
 				fields: {
 					Activity: "",
 					Start_date: today,
 					End_date: today,
-					Status: "draft",
-					ActivityAction: "Add"
+					Status: "draft"
 				}
 			});
+
+			const recordId = result.id;
+
+			await grist.docApi.applyUserActions([
+				[
+					"UpdateRecord",
+					"Activities",
+					recordId,
+					{
+						ActivityAction: "Add"
+					}
+				]
+			]);
 		});
 
 		validateBtn.addEventListener("click", async () => {
