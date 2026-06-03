@@ -407,17 +407,6 @@
 
 					if (!result.isConfirmed) return;
 
-					await grist.docApi.applyUserActions([
-						[
-							"UpdateRecord",
-							"Activities",
-							recordId,
-							{
-								ActivityAction: "Delete"
-							}
-						]
-					]);
-
 					await grist.selectedTable.destroy([recordId]);
 
 					await Swal.fire({
@@ -454,7 +443,7 @@
 		});
 
 		addBtn.addEventListener("click", async () => {
-			const result = await grist.selectedTable.create({
+			await grist.selectedTable.create({
 				fields: {
 					Activity: "",
 					Start_date: today,
@@ -462,21 +451,6 @@
 					Status: "draft"
 				}
 			});
-
-			alert(result);
-
-			const recordId = result.id;
-
-			await grist.docApi.applyUserActions([
-				[
-					"UpdateRecord",
-					"Activities",
-					recordId,
-					{
-						ActivityAction: "Add"
-					}
-				]
-			]);
 		});
 
 		validateBtn.addEventListener("click", async () => {
@@ -538,7 +512,7 @@
 						ValidationBtn: true,
 						Is_by_admin: isByAPR,
 						LogAction: 'create',
-						ActivityAction: "Validate"
+						ValidationBtn: true
 					})
 				}
 			]);
