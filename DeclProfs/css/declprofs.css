@@ -10,3 +10,7 @@
 	background-color: #ffffff; /* blanc */
 }
 
+.selected-row {
+	background-color: "#e6f2ff";
+}
+
