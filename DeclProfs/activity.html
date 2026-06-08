@@ -363,8 +363,8 @@
 			selectedId = record.id;
 
 			// Should move the curson on grist table
-			await grist.setCursorPos({ rowId: record.id });
-			grist.setSelectedRows([record.id]);
+			// await grist.setCursorPos({ rowId: record.id });
+			// grist.setSelectedRows([record.id]);
 		}
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
