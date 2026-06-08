@@ -91,9 +91,7 @@
 		function highlightSelectedRow() {
 			document.querySelectorAll('#table tbody tr').forEach(tr => {
 				const rowId = Number(tr.dataset.id);
-				alert(rowId);
 				if (rowId === selectedId) {
-					alert(selectedId);
 					tr.classList.add('table-primary');
 				} else {
 					tr.classList.remove('table-primary');
