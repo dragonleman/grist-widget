@@ -177,6 +177,9 @@
 
 					selectedId = rec.id;
 					highlightSelectedRow();
+
+					await grist.setCursorPos({ rowId: selectedId });
+					grist.setSelectedRows([selectedId]);
 				});
 
 				// const isSelected = rec.id === selectedId;
