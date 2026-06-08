@@ -162,19 +162,27 @@
 
 				row.addEventListener('click', async () => {
 					alert(rec.id);
-					const updates = allRecords
-						.filter(r => r.IsSelected)
-						.map(r => ({
-							id: r.id,
-							fields: { IsSelected: false }
-						}));
+					// 1. reset anciennes sélections visibles
+					for (const r of allRecords) {
 
-					updates.push({
+						if (r.IsSelected) {
+
+							await grist.selectedTable.update({
+								id: r.id,
+								fields: {
+									IsSelected: false
+								}
+							});
+						}
+					}
+
+					// 2. sélectionner la nouvelle ligne
+					await grist.selectedTable.update({
 						id: rec.id,
-						fields: { IsSelected: true }
+						fields: {
+							IsSelected: true
+						}
 					});
-
-					await grist.selectedTable.updateRecords(updates);
 
 					selectedId = rec.id;
 					alert(selectedId);
