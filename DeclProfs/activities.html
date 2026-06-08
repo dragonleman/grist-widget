@@ -104,8 +104,7 @@
 		function highlightSelectedRow() {
 			document.querySelectorAll('#table tbody tr').forEach(tr => {
 				const rowId = Number(tr.dataset.id);
-				const rec = allRecords.find(r => r.id === rowId);
-				if (rec?.IsSelected) {
+				if (rowId === selectedId) {
 					tr.classList.add('selected-row');
 				} else {
 					tr.classList.remove('selected-row');
@@ -161,32 +160,22 @@
 				row.dataset.id = rec.id;
 
 				row.addEventListener('click', async () => {
-					alert(rec.id);
-					// 1. reset anciennes sélections visibles
 					for (const r of allRecords) {
-
 						if (r.IsSelected) {
-
 							await grist.selectedTable.update({
 								id: r.id,
-								fields: {
-									IsSelected: false
-								}
+								fields: { IsSelected: false	}
 							});
+							break;
 						}
 					}
 
-					// 2. sélectionner la nouvelle ligne
 					await grist.selectedTable.update({
 						id: rec.id,
-						fields: {
-							IsSelected: true
-						}
+						fields: { IsSelected: true }
 					});
 
 					selectedId = rec.id;
-					alert(selectedId);
-
 					highlightSelectedRow();
 				});
 
