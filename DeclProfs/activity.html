@@ -388,8 +388,8 @@
 		});
 
 		grist.onRecord(record => {
-			alert("record");
-			
+			alert(record.id);
+
 			if (!record) return;
 
 			selectedId = record.id;
