@@ -92,9 +92,9 @@
 			document.querySelectorAll('#table tbody tr').forEach(tr => {
 				const rowId = Number(tr.dataset.id);
 				if (rowId === selectedId) {
-					tr.classList.add('table-primary');
+					tr.classList.add('selected-row');
 				} else {
-					tr.classList.remove('table-primary');
+					tr.classList.remove('selected-row');
 				}
 			});
 		}
