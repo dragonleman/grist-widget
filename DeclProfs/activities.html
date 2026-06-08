@@ -493,30 +493,56 @@
 			renderTable(getFilteredRecords());
 		}
 		
+		// window.grist.onRecords(records => {
+		// 	if (!yearInput.value) {
+		// 		yearInput.value = new Date().getFullYear();
+		// 	}
+
+		// 	const firstRender = allRecords.length === 0;
+
+		// 	allRecords = records;
+
+		// 	if (firstRender) {
+		// 		applyFilters();
+		// 	} else {
+		// 		highlightSelectedRow();
+		// 	}
+
+		// 	// allRecords = records;
+		// 	// applyFilters();
+		// });
+
 		window.grist.onRecords(records => {
+
 			if (!yearInput.value) {
 				yearInput.value = new Date().getFullYear();
 			}
 
-			const firstRender = allRecords.length === 0;
-
 			allRecords = records;
 
-			if (firstRender) {
-				applyFilters();
-			} else {
-				highlightSelectedRow();
+			// Trouve la ligne sélectionnée
+			const selected = records.find(r =>
+				r.IsSelected === true ||
+				r.IsSelected === 1 ||
+				r.IsSelected === "1"
+			);
+
+			if (selected) {
+				selectedId = selected.id;
 			}
 
-			// allRecords = records;
-			// applyFilters();
+			// Re-render complet
+			applyFilters();
+
+			// Highlight après render
+			highlightSelectedRow();
 		});
 
-		window.grist.onRecord(record => {
-			if (!record) return;
+		// window.grist.onRecord(record => {
+		// 	if (!record) return;
 
-			selectedId = record.id;
-		});
+		// 	selectedId = record.id;
+		// });
 
 		// Search by Name
 		searchInput.addEventListener('input', () => {
