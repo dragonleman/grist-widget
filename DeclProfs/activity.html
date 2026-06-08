@@ -392,7 +392,7 @@
 
 			const selected = records.find(r => r.IsSelected);
 
-			if (!selected) return;
+			//if (!selected) return;
 
 			selectedId = selected.id;
 
@@ -407,7 +407,7 @@
 		});
 
 		grist.onRecord(record => {
-			alert(record.id);
+			//alert(record.id);
 
 			if (!record) return;
 

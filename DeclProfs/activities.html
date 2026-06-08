@@ -180,19 +180,6 @@
 					highlightSelectedRow();
 				});
 
-				row.addEventListener('click', async () => {
-					selectedId = rec.id;
-
-					// déplace le curseur Grist
-					await grist.setCursorPos({ rowId: rec.id });
-
-					alert(rec.id);
-
-					grist.setSelectedRows([rec.id]);
-
-					highlightSelectedRow();
-				});
-
 				// const isSelected = rec.id === selectedId;
 				// if (isSelected) {
   				// 	row.style.background = "#e6f2ff";
