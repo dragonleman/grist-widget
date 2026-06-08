@@ -146,6 +146,8 @@
 				row.addEventListener('click', async () => {
 					selectedId = rec.id;
 
+					alert(selectedId);
+
 					// déplace le curseur Grist
 					await grist.setCursorPos({
 						rowId: rec.id
