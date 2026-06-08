@@ -399,7 +399,7 @@
 
 			if (!selected) return;
 
-			alert(`id = ${selected.id}`);
+			//alert(`id = ${selected.id}`);
 
 			selectedId = selected.id;
 
@@ -414,9 +414,9 @@
 		});
 
 		grist.onRecord(record => {
-			//alert(record.id);
-
 			if (!record) return;
+
+			alert(`id = ${record.id}`);
 
 			selectedId = record.id;
 
