@@ -388,9 +388,15 @@
 		// });
 
 		grist.onRecords(records => {
+			alert("Lindo");
 			allRecords = records;
 
-			const selected = records.find(r => r.IsSelected);
+			const selected = records.find(r =>
+				r.IsSelected === true ||
+				r.IsSelected === "true" ||
+				r.IsSelected === 1 ||
+				r.IsSelected === "1"
+			);
 
 			//if (!selected) return;
 
