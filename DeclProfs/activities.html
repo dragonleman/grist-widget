@@ -174,8 +174,8 @@
 				// Activity
 				if (columnNames.includes('Activity')) {
 					const activityCell = row.insertCell();
-					const activityInput = document.createElement('input');
-					activityInput.value = rec.Activity || '';
+					const activityInput = document.createElement('span');
+					activityInput.textContent = rec.Activity || '';
 					activityInput.style.border = 'none';
 					activityInput.style.width = '100%';
 					activityCell.appendChild(activityInput);
@@ -184,8 +184,8 @@
 				// Principal
 				if (columnNames.includes('Principal')) {
 					const principalCell = row.insertCell();
-					const principalInput = document.createElement('input');
-					principalInput.value = rec.Principal || '';
+					const principalInput = document.createElement('span');
+					principalInput.textContent = rec.Principal || '';
 					principalInput.style.border = 'none';
 					principalInput.style.width = '100%';
 					principalCell.appendChild(principalInput);
@@ -194,9 +194,8 @@
 				// Start date
 				if (columnNames.includes('Start_date')) {
 					const startCell = row.insertCell();
-					const startInput = document.createElement('input');
-					startInput.type = 'date';
-					startInput.value = rec.Start_date || '';
+					const startInput = document.createElement('span');
+					startInput.textContent = rec.Start_date || '';
 					startInput.style.border = 'none';
 					startCell.appendChild(startInput);
 				}
@@ -204,9 +203,8 @@
 				// End date
 				if (columnNames.includes('End_date')) {
 					const endCell = row.insertCell();
-					const endInput = document.createElement('input');
-					endInput.type = 'date';
-					endInput.value = rec.End_date || '';
+					const endInput = document.createElement('span');
+					endInput.textContent = rec.End_date || '';
 					endInput.style.border = 'none';
 					endInput.style.backgroundColor = rec.ErrorDate || '';
 					endCell.appendChild(endInput);
@@ -225,8 +223,8 @@
 				// Comments
 				if (columnNames.includes('Comments')) {
 					const commentsCell = row.insertCell();
-					const commentsInput = document.createElement('input');
-					commentsInput.value = rec.Comments || '';
+					const commentsInput = document.createElement('span');
+					commentsInput.textContent = rec.Comments || '';
 					commentsInput.style.border = 'none';
 					commentsInput.style.width = '100%';
 					commentsCell.appendChild(commentsInput);
@@ -235,8 +233,8 @@
 				// Comments admins
 				if (columnNames.includes('Comments_admins')) {
 					const commentsadminsCell = row.insertCell();
-					const commentsadminsInput = document.createElement('input');
-					commentsadminsInput.value = rec.Comments_admins || '';
+					const commentsadminsInput = document.createElement('span');
+					commentsadminsInput.textContent = rec.Comments_admins || '';
 					commentsadminsInput.style.border = 'none';
 					commentsadminsInput.style.width = '100%';
 					commentsadminsCell.appendChild(commentsadminsInput);
@@ -246,11 +244,8 @@
 				if (columnNames.includes('UpdatedAt')) {
 					const updatedatCell = row.insertCell();
 
-					const updatedatInput = document.createElement('input');
-					updatedatInput.type = 'date';
-					updatedatInput.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
-					updatedatInput.readOnly = true;
-					updatedatInput.disabled = true;
+					const updatedatInput = document.createElement('span');
+					updatedatInput.textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
 					updatedatInput.style.border = 'none';
 					updatedatInput.style.background = 'transparent';
 					updatedatInput.style.width = '100%';
