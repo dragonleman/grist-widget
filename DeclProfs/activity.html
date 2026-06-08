@@ -357,15 +357,39 @@
 			await grist.setCursorPos({ rowId: result.id });
 		});
 
+		// async function selectRowFromWidget(record) {
+		// 	if (!record) return;
+
+		// 	selectedId = record.id;
+
+		// 	// Should move the curson on grist table
+		// 	await grist.setCursorPos({ rowId: record.id });
+		// 	grist.setSelectedRows([record.id]);
+		// }
+
 		async function selectRowFromWidget(record) {
+
 			if (!record) return;
 
-			selectedId = record.id;
+			// reset tous les IsSelected
+			for (const r of allRecords) {
 
-			// Should move the curson on grist table
-			await grist.setCursorPos({ rowId: record.id });
-			grist.setSelectedRows([record.id]);
+				if (r.IsSelected == 1 || r.IsSelected === true) {
+
+					await grist.selectedTable.update({
+						id: r.id,
+						fields: { IsSelected: 0 }
+					});
+				}
+			}
+
+			// active le nouveau
+			await grist.selectedTable.update({
+				id: record.id,
+				fields: { IsSelected: 1 }
+			});
 		}
+
 
 		document.getElementById("nextBtn").addEventListener("click", () => {
 			const index = allRecords.findIndex(r => r.id === selectedId);
@@ -381,25 +405,25 @@
 			}
 		});
 
-		// grist.onRecords(records => {
-		// 	allRecords = records;
-		// 	// garder l'ordre exact du tableau
-  		// 	allRecords.sort((a, b) => a.id - b.id);
-		// });
-
-		grist.onRecords(records => {
-			allRecords = records;
-
-			const selected = records.find(r =>
+		function getSelectedRecord(records) {
+			return records.find(r =>
 				r.IsSelected === true ||
 				r.IsSelected === "true" ||
 				r.IsSelected === 1 ||
 				r.IsSelected === "1"
 			);
+		}
 
-			if (!selected) return;
+		grist.onRecords(records => {
+			allRecords = records;
 
-			//alert(`id = ${selected.id}`);
+			const selected = getSelectedRecord(records);
+
+			if (!selected) {
+				document.getElementById('form').innerHTML =
+					'<p>No selected record.</p>';
+				return;
+			}
 
 			selectedId = selected.id;
 
@@ -409,24 +433,23 @@
 
 			const index = records.findIndex(r => r.id === selected.id);
 
-			document.getElementById("navCounter").textContent =
-				`${index + 1} / ${records.length}`;
+			document.getElementById("navCounter").textContent = `${index + 1} / ${records.length}`;
 		});
 
-		grist.onRecord(record => {
-			if (!record) return;
+		// grist.onRecord(record => {
+		// 	if (!record) return;
 
-			alert(`id = ${record.id}`);
+		// 	alert(`id = ${record.id}`);
 
-			selectedId = record.id;
+		// 	selectedId = record.id;
 
-			pendingChanges = {};
+		// 	pendingChanges = {};
 
-			renderForm(record);
+		// 	renderForm(record);
 
-			const index = allRecords.findIndex(r => r.id === record.id);
-			document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
-		});
+		// 	const index = allRecords.findIndex(r => r.id === record.id);
+		// 	document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
+		// });
 	</script>
 
 	<script>
