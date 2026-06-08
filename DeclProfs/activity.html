@@ -381,10 +381,23 @@
 			}
 		});
 
-		grist.onRecords(records => {
-			allRecords = records;
-			// garder l'ordre exact du tableau
-  			allRecords.sort((a, b) => a.id - b.id);
+		// grist.onRecords(records => {
+		// 	allRecords = records;
+		// 	// garder l'ordre exact du tableau
+  		// 	allRecords.sort((a, b) => a.id - b.id);
+		// });
+
+		grist.onRecords((records, mappings) => {
+
+			const current = records.find(r => r.id === selectedId || r.id === mappings?.id);
+
+			alert(current.id);
+
+			if (!current) return;
+
+			console.log("FORM UPDATED", current);
+
+			renderForm(current);
 		});
 
 		grist.onRecord(record => {
