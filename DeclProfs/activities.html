@@ -140,10 +140,10 @@
 			th.textContent = 'Actions';
 			headerRow.appendChild(th);
 
-			table.createTBody();
+			const tbody = table.createTBody();
 			
 		  	for (const rec of records) {
-		    	const row = table.insertRow();
+		    	const row = tbody.insertRow();
 
 				row.addEventListener('click', async () => {
 					selectedId = rec.id;
