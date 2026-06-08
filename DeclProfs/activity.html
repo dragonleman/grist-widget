@@ -387,18 +387,23 @@
   		// 	allRecords.sort((a, b) => a.id - b.id);
 		// });
 
-		grist.onRecords((records, mappings) => {
+		grist.onRecords(records => {
 			allRecords = records;
 
-			const current = records.find(r => r.id === selectedId || r.id === mappings?.id);
+			const selected = records.find(r => r.IsSelected);
 
-			alert(current.id);
+			if (!selected) return;
 
-			if (!current) return;
+			selectedId = selected.id;
 
-			console.log("FORM UPDATED", current);
+			pendingChanges = {};
 
-			renderForm(current);
+			renderForm(selected);
+
+			const index = records.findIndex(r => r.id === selected.id);
+
+			document.getElementById("navCounter").textContent =
+				`${index + 1} / ${records.length}`;
 		});
 
 		grist.onRecord(record => {

@@ -90,10 +90,22 @@
 		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true, allowSelectBy: true });
 
 
+		// function highlightSelectedRow() {
+		// 	document.querySelectorAll('#table tbody tr').forEach(tr => {
+		// 		const rowId = Number(tr.dataset.id);
+		// 		if (rowId === selectedId) {
+		// 			tr.classList.add('selected-row');
+		// 		} else {
+		// 			tr.classList.remove('selected-row');
+		// 		}
+		// 	});
+		// }
+
 		function highlightSelectedRow() {
 			document.querySelectorAll('#table tbody tr').forEach(tr => {
 				const rowId = Number(tr.dataset.id);
-				if (rowId === selectedId) {
+				const rec = allRecords.find(r => r.id === rowId);
+				if (rec?.IsSelected) {
 					tr.classList.add('selected-row');
 				} else {
 					tr.classList.remove('selected-row');
@@ -149,6 +161,26 @@
 				row.dataset.id = rec.id;
 
 				row.addEventListener('click', async () => {
+					const updates = allRecords
+						.filter(r => r.IsSelected)
+						.map(r => ({
+							id: r.id,
+							fields: { IsSelected: false }
+						}));
+
+					updates.push({
+						id: rec.id,
+						fields: { IsSelected: true }
+					});
+
+					await grist.selectedTable.bulkUpdate(updates);
+
+					selectedId = rec.id;
+
+					highlightSelectedRow();
+				});
+
+				row.addEventListener('click', async () => {
 					selectedId = rec.id;
 
 					// déplace le curseur Grist
@@ -156,7 +188,7 @@
 
 					alert(rec.id);
 
-					//grist.setSelectedRows([rec.id]);
+					grist.setSelectedRows([rec.id]);
 
 					highlightSelectedRow();
 				});
