@@ -174,7 +174,7 @@
 						fields: { IsSelected: true }
 					});
 
-					await grist.selectedTable.bulkUpdate(updates);
+					await grist.selectedTable.updateRecords(updates);
 
 					selectedId = rec.id;
 					alert(selectedId);
