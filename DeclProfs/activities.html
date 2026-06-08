@@ -89,6 +89,7 @@
 
 
 		function highlightSelectedRow() {
+			alert("Lindo");
 			document.querySelectorAll('#table tbody tr').forEach(tr => {
 				const rowId = Number(tr.dataset.id);
 				if (rowId === selectedId) {
