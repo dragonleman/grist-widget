@@ -383,6 +383,8 @@
 
 		grist.onRecords(records => {
 			allRecords = records;
+			// garder l'ordre exact du tableau
+  			allRecords.sort((a, b) => a.id - b.id);
 		});
 
 		grist.onRecord(record => {

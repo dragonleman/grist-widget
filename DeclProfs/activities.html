@@ -87,6 +87,19 @@
 	  
 		window.grist.ready({ requiredAccess: 'full', getSelectedRows: true, allowSelectBy: true });
 
+
+		function highlightSelectedRow() {
+			document.querySelectorAll('#table tbody tr').forEach(tr => {
+				const rowId = Number(tr.dataset.id);
+				if (rowId === selectedId) {
+					tr.classList.add('table-primary');
+				} else {
+					tr.classList.remove('table-primary');
+				}
+			});
+		}
+
+
 		function renderTable(records) {
 		  
 			let columnNames = []
@@ -130,10 +143,24 @@
 		  	for (const rec of records) {
 		    	const row = table.insertRow();
 
-				const isSelected = rec.id === selectedId;
-				if (isSelected) {
-  					row.style.background = "#e6f2ff";
-				}
+				row.addEventListener('click', async () => {
+					selectedId = rec.id;
+
+					// déplace le curseur Grist
+					await grist.setCursorPos({
+						rowId: rec.id
+					});
+
+					// optionnel
+					grist.setSelectedRows([rec.id]);
+
+					highlightSelectedRow();
+				});
+
+				// const isSelected = rec.id === selectedId;
+				// if (isSelected) {
+  				// 	row.style.background = "#e6f2ff";
+				// }
 		    
 				// Name
 				if (columnNames.includes('Name')) {
@@ -151,14 +178,6 @@
 					activityInput.value = rec.Activity || '';
 					activityInput.style.border = 'none';
 					activityInput.style.width = '100%';
-					activityInput.addEventListener('blur', async () => {
-						if (activityInput.value !== rec.Activity) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { Activity: activityInput.value }
-						});
-						}
-					});
 					activityCell.appendChild(activityInput);
 				}
 		    
@@ -169,14 +188,6 @@
 					principalInput.value = rec.Principal || '';
 					principalInput.style.border = 'none';
 					principalInput.style.width = '100%';
-					principalInput.addEventListener('blur', async () => {
-						if (principalInput.value !== rec.Principal) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { Principal: principalInput.value }
-							});
-						}
-					});
 					principalCell.appendChild(principalInput);
 				}
 
@@ -187,14 +198,6 @@
 					startInput.type = 'date';
 					startInput.value = rec.Start_date || '';
 					startInput.style.border = 'none';
-					startInput.addEventListener('change', async () => {
-						if (startInput.value !== rec.Start_date) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { Start_date: startInput.value }
-							});
-						}
-					});
 					startCell.appendChild(startInput);
 				}
 
@@ -206,14 +209,6 @@
 					endInput.value = rec.End_date || '';
 					endInput.style.border = 'none';
 					endInput.style.backgroundColor = rec.ErrorDate || '';
-					endInput.addEventListener('change', async () => {
-						if (endInput.value !== rec.End_date) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { End_date: endInput.value }
-							});
-						}
-					});
 					endCell.appendChild(endInput);
 				}
 
@@ -234,14 +229,6 @@
 					commentsInput.value = rec.Comments || '';
 					commentsInput.style.border = 'none';
 					commentsInput.style.width = '100%';
-					commentsInput.addEventListener('blur', async () => {
-						if (commentsInput.value !== rec.Comments) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { Comments: commentsInput.value }
-							});
-						}
-					});
 					commentsCell.appendChild(commentsInput);
 				}
 				
@@ -252,14 +239,6 @@
 					commentsadminsInput.value = rec.Comments_admins || '';
 					commentsadminsInput.style.border = 'none';
 					commentsadminsInput.style.width = '100%';
-					commentsadminsInput.addEventListener('blur', async () => {
-						if (commentsadminsInput.value !== rec.Comments_admins) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { Comments_admins: commentsadminsInput.value }
-							});
-						}
-					});
 					commentsadminsCell.appendChild(commentsadminsInput);
 				}
 
