@@ -161,6 +161,7 @@
 				row.dataset.id = rec.id;
 
 				row.addEventListener('click', async () => {
+					alert(rec.id);
 					const updates = allRecords
 						.filter(r => r.IsSelected)
 						.map(r => ({
@@ -176,6 +177,7 @@
 					await grist.selectedTable.bulkUpdate(updates);
 
 					selectedId = rec.id;
+					alert(selectedId);
 
 					highlightSelectedRow();
 				});
