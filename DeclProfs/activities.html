@@ -146,14 +146,13 @@
 			
 		  	for (const rec of records) {
 		    	const row = tbody.insertRow();
+				row.dataset.id = rec.id;
 
 				row.addEventListener('click', async () => {
 					selectedId = rec.id;
 
 					// déplace le curseur Grist
-					await grist.setCursorPos({
-						rowId: rec.id
-					});
+					await grist.setCursorPos({ rowId: rec.id });
 
 					// optionnel
 					grist.setSelectedRows([rec.id]);
