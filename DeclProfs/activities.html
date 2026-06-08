@@ -92,6 +92,7 @@
 			document.querySelectorAll('#table tbody tr').forEach(tr => {
 				const rowId = Number(tr.dataset.id);
 				if (rowId === selectedId) {
+					alert(selectedId);
 					tr.classList.add('table-primary');
 				} else {
 					tr.classList.remove('table-primary');
@@ -147,8 +148,6 @@
 
 				row.addEventListener('click', async () => {
 					selectedId = rec.id;
-
-					alert(selectedId);
 
 					// déplace le curseur Grist
 					await grist.setCursorPos({
