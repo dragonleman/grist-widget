@@ -387,18 +387,19 @@
   		// 	allRecords.sort((a, b) => a.id - b.id);
 		// });
 
-		// grist.onRecords((records, mappings) => {
+		grist.onRecords((records, mappings) => {
+			allRecords = records;
 
-		// 	const current = records.find(r => r.id === selectedId || r.id === mappings?.id);
+			const current = records.find(r => r.id === selectedId || r.id === mappings?.id);
 
-		// 	alert(current.id);
+			alert(current.id);
 
-		// 	if (!current) return;
+			if (!current) return;
 
-		// 	console.log("FORM UPDATED", current);
+			console.log("FORM UPDATED", current);
 
-		// 	renderForm(current);
-		// });
+			renderForm(current);
+		});
 
 		grist.onRecord(record => {
 			alert(record.id);
