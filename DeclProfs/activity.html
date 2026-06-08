@@ -357,16 +357,6 @@
 			await grist.setCursorPos({ rowId: result.id });
 		});
 
-		// async function selectRowFromWidget(record) {
-		// 	if (!record) return;
-
-		// 	selectedId = record.id;
-
-		// 	// Should move the curson on grist table
-		// 	await grist.setCursorPos({ rowId: record.id });
-		// 	grist.setSelectedRows([record.id]);
-		// }
-
 		async function selectRowFromWidget(record) {
 
 			if (!record) return;
@@ -436,20 +426,6 @@
 			document.getElementById("navCounter").textContent = `${index + 1} / ${records.length}`;
 		});
 
-		// grist.onRecord(record => {
-		// 	if (!record) return;
-
-		// 	alert(`id = ${record.id}`);
-
-		// 	selectedId = record.id;
-
-		// 	pendingChanges = {};
-
-		// 	renderForm(record);
-
-		// 	const index = allRecords.findIndex(r => r.id === record.id);
-		// 	document.getElementById("navCounter").textContent = `${index + 1} / ${allRecords.length}`;
-		// });
 	</script>
 
 	<script>
