@@ -328,6 +328,8 @@
 
 		const form = document.getElementById('form');
 
+        let isReadOnly = false;
+
 		form.innerHTML = '';
 
 		const rec = filteredRecords.find(r => r.id === selectedId);
@@ -336,6 +338,12 @@
 			form.innerHTML = '<p>No selected record</p>';
 			return;
 		}
+
+        // ACCESS (Readonly or not ?)
+
+        if  ('Access' in rec) {
+            isReadOnly = rec.Access === '🛑';
+        }
 
         // NAME (read-only)
 
@@ -376,12 +384,16 @@
 
 			input.value = rec[field] || '';
 
-			input.addEventListener('input', () => {
-				trackChange(
-					field,
-					input.value
-				);
-			});
+            if (isReadOnly) {
+                input.readOnly = true;
+            } else {
+                input.addEventListener('input', () => {
+                    trackChange(
+                        field,
+                        input.value
+                    );
+                });
+            }			
 
 			form.appendChild(
 				formField(
@@ -401,12 +413,16 @@
 
 		startInput.value = rec.Start_date || '';
 
-		startInput.addEventListener('input', () => {
-			trackChange(
-				'Start_date',
-				startInput.value
-			);
-		});
+        if (isReadOnly) {
+            startInput.readOnly = true;
+        } else {
+            startInput.addEventListener('input', () => {
+                trackChange(
+                    'Start_date',
+                    startInput.value
+                );
+            });
+        }
 
 		form.appendChild(
 			formField(
@@ -425,12 +441,16 @@
 
 		endInput.value = rec.End_date || '';
 
-		endInput.addEventListener('input', () => {
-			trackChange(
-				'End_date',
-				endInput.value
-			);
-		});
+        if (isReadOnly) {
+            endInput.readOnly = true;
+        } else {
+            endInput.addEventListener('input', () => {
+                trackChange(
+                    'End_date',
+                    endInput.value
+                );
+            });
+        }
 
 		form.appendChild(
 			formField(
