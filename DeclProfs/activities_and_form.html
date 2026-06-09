@@ -104,7 +104,7 @@
 		<!-- LEFT -->
 		<div class="left-panel">
 
-			<div class="mb-2">
+			<div id="searchDiv" class="mb-2" style="display: none">
 				<input type="text"
 					   id="searchInput"
 					   class="form-control"
@@ -159,6 +159,7 @@
 	let filteredRecords = [];
 	let selectedId = null;
 	let pendingChanges = {};
+    let isByAPR = false;
 
 	const table = document.getElementById('table');
 
@@ -248,6 +249,11 @@
             'Start_date',
             'End_date'
         ].filter(col => columnNames.includes(col));
+
+        if (visibleColumns.includes('Name')) {
+            document.getElementById('searchDiv').style.display = 'block';
+            isByAPR = true;
+        }
 
         // Fill th
 		visibleColumns.forEach(col => {
@@ -475,6 +481,10 @@
 				});
 				return;
 			}
+
+            pendingChanges['Is_by_admin'] = isByAPR;
+            pendingChanges['LogAction'] = 'update';
+            pendingChanges['ValidationBtn'] = true;
 
 			await grist.selectedTable.update({
 				id: selectedId,
