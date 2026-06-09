@@ -599,6 +599,8 @@
             col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
         );
 
+        alert(availableColumns);
+
         const csvRows = [];
 
         csvRows.push(
@@ -624,39 +626,6 @@
 
         URL.revokeObjectURL(link.href);
     }
-
-    // function downloadCSV(records, filename = "activities.csv") {
-    //     const availableColumns = acceptedColumns.filter(col =>
-    //         col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
-    //     );
-
-    //     const csvRows = [];
-
-    //     // Header (with translated names if available)
-    //     csvRows.push(
-    //         availableColumns
-    //             .map(col => `"${transColumns?.[col] || col}"`)
-    //             .join(",")
-    //     );
-
-    //     // Rows
-    //     for (const rec of records) {
-    //         const row = availableColumns.map(col =>
-    //             `"${sanitizeCSV(rec[col]).replace(/"/g, '""')}"`
-    //         );
-    //         csvRows.push(row.join(","));
-    //     }
-
-    //     const csvContent = csvRows.join("\n");
-    //     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
-    //     const link = document.createElement("a");
-    //     link.href = URL.createObjectURL(blob);
-    //     link.download = filename;
-    //     link.click();
-
-    //     URL.revokeObjectURL(link.href);
-    // }
     
     // DOWNLAD ALL CSV
     document.getElementById('downloadAllBtn').addEventListener("click", async () => {
