@@ -67,7 +67,7 @@
 			<table id="table_alt" class="table table-boxed">
 				<thead>
 					<tr>
-						<th><input type="checkbox" id="selectAll"></th>
+						<th id="reminderCheckbox" style="display: none"><input type="checkbox" id="selectAll"></th>
 						<th>Name</th>
 						<th>Username</th>
 						<th>Email</th>
@@ -249,6 +249,7 @@
 				document.getElementById('searchDiv').style.display = 'block';
 				document.getElementById('statusDiv').style.display = 'block';
 				document.getElementById('sendDiv').style.display = 'block';
+				document.getElementById('reminderCheckbox').style.display = 'table-cell';
 				isAdmin = true;
 			}
 
