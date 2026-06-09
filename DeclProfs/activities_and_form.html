@@ -599,7 +599,8 @@
             col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
         );
 
-        alert(availableColumns);
+        console.log("acceptedColumns", acceptedColumns);
+        console.log("availableColumns", availableColumns);
 
         const csvRows = [];
 
