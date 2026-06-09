@@ -166,7 +166,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-
 	const today = new Date().toISOString().slice(0, 10);
 
 	let allRecords = [];
@@ -176,6 +175,17 @@
     let isByAPR = false;
 
 	const table = document.getElementById('table');
+
+    const acceptedColumns = [
+        'ActivityStat',
+        'Name',
+        'Activity',
+        'Principal',
+        'Start_date',
+        'End_date',
+        'Comments',
+        'Comments_admins'
+    ]
 
 	const transColumns = {
         ActivityStat: "Status",
@@ -257,16 +267,7 @@
         const columnNames = Object.keys(filteredRecords[0]);
         console.log("Available columns :", columnNames);
 
-        const visibleColumns = [
-            'ActivityStat',
-            'Name',
-            'Activity',
-            'Principal',
-            'Start_date',
-            'End_date',
-            'Comments',
-            'Comments_admins'
-        ].filter(col => columnNames.includes(col));
+        let visibleColumns = acceptedColumns.filter(col => columnNames.includes(col));
 
         if (visibleColumns.includes('Name')) {
             document.getElementById('searchDiv').style.display = 'block';
@@ -567,20 +568,9 @@
     }
     
     function downloadCSV(records, filename = "activities.csv") {
-        if (!records || records.length === 0) {
-            alert("No data to export");
-            return;
-        }
-
-        // Avaialable columns
-        const availableColumns = visibleColumns.filter(col =>
-            records.some(r => r[col] !== undefined)
+        const availableColumns = acceptedColumns.filter(col =>
+            col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
         );
-
-        if (availableColumns.length === 0) {
-            alert("No valid columns to export");
-            return;
-        }
 
         const csvRows = [];
 
