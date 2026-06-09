@@ -122,6 +122,16 @@
 					   placeholder="YYYY">
 			</div>
 
+            <div class="d-flex justify-content-end mb-2 gap-2">
+                <button id="duplicateAllBtn" class="btn btn-warning btn-sm">
+                    Duplicate all
+                </button>
+
+                <button id="downloadAllBtn" class="btn btn-secondary btn-sm ml-2">
+                    Download CSV
+                </button>
+            </div>
+
 			<div class="table-container">
 				<table id="table" class="table table-boxed table-hover"></table>
 			</div>
@@ -324,39 +334,46 @@
                 </svg>
             `;
 
-            dupBtn.addEventListener('click', async (e) => {
+            dupBtn.disabled = isReadOnly;
 
-                e.stopPropagation();
+            if (isReadOnly) {
+                dupBtn.style.opacity = '0.4';
+                dupBtn.style.cursor = 'not-allowed';
+            } else {
+                dupBtn.addEventListener('click', async (e) => {
 
-                const result = await Swal.fire({
-                    icon: 'question',
-                    title: 'Duplicate ?',
-                    text: `Duplicate "${rec.Activity}" ?`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'Cancel'
+                    e.stopPropagation();
+
+                    const result = await Swal.fire({
+                        icon: 'question',
+                        title: 'Duplicate ?',
+                        text: `Duplicate "${rec.Activity}" ?`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'Cancel'
+                    });
+
+                    if (!result.isConfirmed) return;
+
+                    await grist.selectedTable.create({
+                        fields: {
+                            Activity: rec.Activity || '',
+                            Principal: rec.Principal || '',
+                            Start_date: today,
+                            End_date: today,
+                            Comments: rec.Comments || '',
+                            Comments_admins: rec.Comments_admins || ''
+                        }
+                    });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Duplicated',
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
                 });
-
-                if (!result.isConfirmed) return;
-
-                await grist.selectedTable.create({
-                    fields: {
-                        Activity: rec.Activity || '',
-                        Principal: rec.Principal || '',
-                        Start_date: today,
-                        End_date: today,
-                        Comments: rec.Comments || '',
-                        Comments_admins: rec.Comments_admins || ''
-                    }
-                });
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Duplicated',
-                    timer: 1200,
-                    showConfirmButton: false
-                });
-            });
+            }
 
             tdActions.appendChild(dupBtn);
 
@@ -376,30 +393,37 @@
                 </svg>
             `;
 
-            delBtn.addEventListener('click', async (e) => {
+            delBtn.disabled = isReadOnly;
 
-                e.stopPropagation();
+            if (isReadOnly) {
+                delBtn.style.opacity = '0.4';
+                delBtn.style.cursor = 'not-allowed';
+            } else {
+                delBtn.addEventListener('click', async (e) => {
 
-                const result = await Swal.fire({
-                    icon: 'warning',
-                    title: 'Delete ?',
-                    text: `Delete "${rec.Activity}" ?`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'Cancel'
+                    e.stopPropagation();
+
+                    const result = await Swal.fire({
+                        icon: 'warning',
+                        title: 'Delete ?',
+                        text: `Delete "${rec.Activity}" ?`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'Cancel'
+                    });
+
+                    if (!result.isConfirmed) return;
+
+                    await grist.selectedTable.destroy([rec.id]);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
                 });
-
-                if (!result.isConfirmed) return;
-
-                await grist.selectedTable.destroy([rec.id]);
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Deleted',
-                    timer: 1200,
-                    showConfirmButton: false
-                });
-            });
+            }
 
             tdActions.appendChild(delBtn);
 
@@ -419,33 +443,40 @@
                 </svg>
             `;
 
-            csvBtn.addEventListener('click', async (e) => {
+            csvBtn.disabled = isReadOnly;
 
-                e.stopPropagation();
+            if (isReadOnly) {
+                csvBtn.style.opacity = '0.4';
+                csvBtn.style.cursor = 'not-allowed';
+            } else {
+                csvBtn.addEventListener('click', async (e) => {
 
-                const keys = Object.keys(rec);
+                    e.stopPropagation();
 
-                const values = keys.map(k => rec[k] ?? '');
+                    const keys = Object.keys(rec);
 
-                const csvContent =
-                    keys.join(',') + '\n' +
-                    values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+                    const values = keys.map(k => rec[k] ?? '');
 
-                const blob = new Blob(
-                    [csvContent],
-                    { type: 'text/csv;charset=utf-8;' }
-                );
+                    const csvContent =
+                        keys.join(',') + '\n' +
+                        values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
 
-                const link = document.createElement('a');
+                    const blob = new Blob(
+                        [csvContent],
+                        { type: 'text/csv;charset=utf-8;' }
+                    );
 
-                link.href = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
 
-                link.download = `${rec.Activity || 'activity'}_${rec.id}.csv`;
+                    link.href = URL.createObjectURL(blob);
 
-                link.click();
+                    link.download = `${rec.Activity || 'activity'}_${rec.id}.csv`;
 
-                URL.revokeObjectURL(link.href);
-            });
+                    link.click();
+
+                    URL.revokeObjectURL(link.href);
+                });
+            }
 
             tdActions.appendChild(csvBtn);
 
@@ -467,6 +498,12 @@
             //         </svg>
             //     `;
 
+            // emailBtn.disabled = isReadOnly;
+
+            // if (isReadOnly) {
+            //     emailBtn.style.opacity = '0.4';
+            //     emailBtn.style.cursor = 'not-allowed';
+            // } else {
             //     emailBtn.addEventListener('click', async (e) => {
 
             //         e.stopPropagation();
@@ -496,12 +533,180 @@
             //             showConfirmButton: false
             //         });
             //     });
+            // }
 
             //     tdActions.appendChild(emailBtn);
             // }
 
 		});
 	}
+
+    function sanitizeCSV(value) {
+        const str = String(value ?? "");
+
+        // Protection Excel formula injection
+        if (/^[=+\-@]/.test(str)) {
+            return "'" + str;
+        }
+
+        return str;
+    }
+    
+    function downloadCSV(records, filename = "activities.csv") {
+        if (!records || records.length === 0) {
+            alert("No data to export");
+            return;
+        }
+
+        // Colonnes réellement présentes
+        const availableColumns = columnNamesAccepted.filter(col =>
+            records.some(r => r[col] !== undefined)
+        );
+
+        if (availableColumns.length === 0) {
+            alert("No valid columns to export");
+            return;
+        }
+
+        const csvRows = [];
+
+        // Header (avec noms traduits si dispo)
+        csvRows.push(
+            availableColumns
+                .map(col => `"${transColumns?.[col] || col}"`)
+                .join(",")
+        );
+
+        // Rows
+        for (const rec of records) {
+            const row = availableColumns.map(col =>
+                `"${sanitizeCSV(rec[col]).replace(/"/g, '""')}"`
+            );
+            csvRows.push(row.join(","));
+        }
+
+        const csvContent = csvRows.join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+    }
+    
+    // DOWNLAD ALL CSV
+    document.getElementById('downloadAllBtn').addEventListener("click", async () => {
+        const filtered = getFilteredRecords();
+
+        if (!filtered.length) {
+            await Swal.fire({
+                icon: "info",
+                title: "No results",
+                text: "No records match your filters.",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: "Download CSV?",
+            text: `Download ${filtered.length} record(s) as CSV?`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, download",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#6c757d"
+        });
+
+        if (!result.isConfirmed) return;
+
+        const yearQuery = yearInput.value.trim();
+        downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
+
+        Swal.fire({
+            icon: "success",
+            title: "Download started",
+            timer: 1200,
+            showConfirmButton: false
+        });
+    });
+
+    // DUPLICATE ALL
+    document.getElementById('duplicateAllBtn'.addEventListener('click', async () => {
+        let filtered = getFilteredRecords();
+
+        filtered = filtered.filter(rec =>
+            rec.End_date !== null &&
+            rec.End_date !== undefined &&
+            rec.End_date !== ""
+        );
+
+        if (!filtered || filtered.length === 0) {
+            await Swal.fire({
+                icon: "info",
+                title: "No data",
+                text: "There are no activities to duplicate."
+            });
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: "Duplicate all activities?",
+            text: `This will create ${filtered.length} new rows.`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, duplicate all",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#f0ad4e",
+            cancelButtonColor: "#6c757d"
+        });
+
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            icon: "info",
+            title: "Duplicating activities...",
+            text: "Please wait",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        const chunkSize = 20;
+
+        for (let i = 0; i < filtered.length; i += chunkSize) {
+            const chunk = filtered.slice(i, i + chunkSize);
+
+            await Promise.all(chunk.map(rec =>
+                window.grist.selectedTable.create({
+                    fields: {
+                        Activity: rec.Activity || "",
+                        Principal: rec.Principal || "",
+                        Start_date: today,
+                        End_date: today,
+                        Comments: rec.Comments || "",
+                        Comments_admins: rec.Comments_admins || "",
+                        Status: "draft",
+                    }
+                })
+            ));
+        }
+
+        await Swal.fire({
+            icon: "success",
+            title: "Activities duplicated!",
+            text: `${filtered.length} activity(s) duplicated.`,
+            timer: 1500,
+            showConfirmButton: false
+        });
+
+    });
 
 	// =====================================================
 	// FORM
