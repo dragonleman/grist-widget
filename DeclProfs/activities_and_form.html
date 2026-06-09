@@ -265,7 +265,6 @@
 
         // Get available columns
         const columnNames = Object.keys(filteredRecords[0]);
-        console.log("Available columns :", columnNames);
 
         let visibleColumns = acceptedColumns.filter(col => columnNames.includes(col));
 
@@ -598,9 +597,6 @@
         const availableColumns = acceptedColumns.filter(col =>
             col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
         );
-
-        console.log("acceptedColumns", acceptedColumns);
-        console.log("availableColumns", availableColumns);
 
         const csvRows = [];
 

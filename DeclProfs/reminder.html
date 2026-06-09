@@ -26,7 +26,7 @@
 			<div class="d-flex justify-content-between align-items-start">
 
 				<div>
-					<div class="mb-2" style="max-width: 300px; position: relative;">
+					<div id="searchDiv" class="mb-2" style="max-width: 300px; position: relative; display: none;">
 						<input type="text" id="searchInput" placeholder="Search someone..."
 						style="width: 100%; padding-left: 30px; box-sizing: border-box;">
 
@@ -37,7 +37,7 @@
 						</svg>
 					</div>
 
-					<div class="d-flex align-items-center">
+					<div id="statusDiv" class="d-flex align-items-center" style="display: none">
 						<div style="max-width: 150px;">
 							<select id="statusFilter" class="form-control">
 								<option value="All">All</option>
@@ -53,7 +53,7 @@
 					</div>
 				</div>
 
-				<div>
+				<div id="sendDiv" style="display: none">
 					<button id="sendReminderBtn" class="btn btn-primary">
 						Send reminder
 					</button>
@@ -123,7 +123,6 @@
 
 			for (const rec of records) {
 
-				// Parse le JSON stocké dans Grist
 				const statusMap = parseStatusByYear(rec.StatusByYear);
 
 				// Si une année est sélectionnée,
@@ -221,32 +220,33 @@
 
 			for (const rec of allRecords) {
 				const statusMap = parseStatusByYear(rec.StatusByYear);
-
 				Object.keys(statusMap || {}).forEach(year => {
-				years.add(year);
+					years.add(year);
 				});
 			}
 
-			// 🔥 IMPORTANT : fallback année courante si vide
 			const currentYear = new Date().getFullYear().toString();
 			years.add(currentYear);
 
 			const sortedYears = [...years].sort();
 
-			// si année courante pas dans la liste → on la force par défaut
 			if (!sortedYears.includes(selectedYear)) {
 				selectedYear = currentYear;
 			}
 
 			yearFilter.innerHTML = sortedYears
 				.map(year => {
-				return `<option value="${year}" ${
-					year === selectedYear ? "selected" : ""
-				}>${year}</option>`;
+					return `<option value="${year}" ${year === selectedYear ? "selected" : ""}>${year}</option>`;
 				})
 				.join("");
 
 			yearFilter.value = selectedYear;
+
+			if (allRecords.length > 1) {
+				document.getElementById('searchDiv').style.display = 'block';
+				document.getElementById('statusDiv').style.display = 'block';
+				document.getElementById('sendDiv').style.display = 'block';
+			}
 
 			applyFilters();
 		});
