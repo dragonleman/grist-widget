@@ -270,6 +270,10 @@
             hr.appendChild(th);
 		});
 
+        const thActions = document.createElement('th');
+        thActions.textContent = 'Actions';
+        hr.appendChild(thActions);
+
         // Fill tbody
 		const tbody = table.createTBody();
 
@@ -297,6 +301,205 @@
                 const td = tr.insertCell();
                 td.textContent = rec[col] || '';
             });
+
+            // =====================================================
+            // ACTIONS COLUMN
+            // =====================================================
+
+            const tdActions = tr.insertCell();
+
+            // --------------------
+            // DUPLICATE
+            // --------------------
+
+            const dupBtn = document.createElement('button');
+
+            dupBtn.className = 'btn btn-sm btn-light';
+
+            dupBtn.title = 'Duplicate';
+
+            dupBtn.innerHTML = `
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#copy"></use>
+                </svg>
+            `;
+
+            dupBtn.addEventListener('click', async (e) => {
+
+                e.stopPropagation();
+
+                const result = await Swal.fire({
+                    icon: 'question',
+                    title: 'Duplicate ?',
+                    text: `Duplicate "${rec.Activity}" ?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (!result.isConfirmed) return;
+
+                await grist.selectedTable.create({
+                    fields: {
+                        Activity: rec.Activity || '',
+                        Principal: rec.Principal || '',
+                        Start_date: today,
+                        End_date: today,
+                        Comments: rec.Comments || '',
+                        Comments_admins: rec.Comments_admins || ''
+                    }
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Duplicated',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+            });
+
+            tdActions.appendChild(dupBtn);
+
+            // --------------------
+            // DELETE
+            // --------------------
+
+            const delBtn = document.createElement('button');
+
+            delBtn.className = 'btn btn-sm btn-light ml-1';
+
+            delBtn.title = 'Delete';
+
+            delBtn.innerHTML = `
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#delete"></use>
+                </svg>
+            `;
+
+            delBtn.addEventListener('click', async (e) => {
+
+                e.stopPropagation();
+
+                const result = await Swal.fire({
+                    icon: 'warning',
+                    title: 'Delete ?',
+                    text: `Delete "${rec.Activity}" ?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (!result.isConfirmed) return;
+
+                await grist.selectedTable.destroy([rec.id]);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+            });
+
+            tdActions.appendChild(delBtn);
+
+            // --------------------
+            // DOWNLOAD CSV
+            // --------------------
+
+            const csvBtn = document.createElement('button');
+
+            csvBtn.className = 'btn btn-sm btn-light ml-1';
+
+            csvBtn.title = 'Download CSV';
+
+            csvBtn.innerHTML = `
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#download"></use>
+                </svg>
+            `;
+
+            csvBtn.addEventListener('click', async (e) => {
+
+                e.stopPropagation();
+
+                const keys = Object.keys(rec);
+
+                const values = keys.map(k => rec[k] ?? '');
+
+                const csvContent =
+                    keys.join(',') + '\n' +
+                    values.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+
+                const blob = new Blob(
+                    [csvContent],
+                    { type: 'text/csv;charset=utf-8;' }
+                );
+
+                const link = document.createElement('a');
+
+                link.href = URL.createObjectURL(blob);
+
+                link.download = `${rec.Activity || 'activity'}_${rec.id}.csv`;
+
+                link.click();
+
+                URL.revokeObjectURL(link.href);
+            });
+
+            tdActions.appendChild(csvBtn);
+
+            // --------------------
+            // EMAIL
+            // --------------------
+
+            // if ('Name' in rec) {
+
+            //     const emailBtn = document.createElement('button');
+
+            //     emailBtn.className = 'btn btn-sm btn-light ml-1';
+
+            //     emailBtn.title = 'Send email';
+
+            //     emailBtn.innerHTML = `
+            //         <svg class="icon" aria-hidden="true">
+            //             <use xlink:href="#mail"></use>
+            //         </svg>
+            //     `;
+
+            //     emailBtn.addEventListener('click', async (e) => {
+
+            //         e.stopPropagation();
+
+            //         const result = await Swal.fire({
+            //             icon: 'question',
+            //             title: 'Send email ?',
+            //             text: `Send email to "${rec.Name}" ?`,
+            //             showCancelButton: true,
+            //             confirmButtonText: 'Yes',
+            //             cancelButtonText: 'Cancel'
+            //         });
+
+            //         if (!result.isConfirmed) return;
+
+            //         await grist.selectedTable.update({
+            //             id: rec.id,
+            //             fields: {
+            //                 SendEmail: true
+            //             }
+            //         });
+
+            //         Swal.fire({
+            //             icon: 'success',
+            //             title: 'Email sent',
+            //             timer: 1200,
+            //             showConfirmButton: false
+            //         });
+            //     });
+
+            //     tdActions.appendChild(emailBtn);
+            // }
+
 		});
 	}
 
