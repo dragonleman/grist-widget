@@ -63,6 +63,10 @@
 			margin-top: 16px;
 		}
 
+        .readonly-row {
+            opacity: 0.5;
+            filter: grayscale(0.6);
+        }
 	</style>
 </head>
 
@@ -164,6 +168,7 @@
 	const table = document.getElementById('table');
 
 	const transColumns = {
+        ActivityStat: "Status",
 		Name: "Name",
 		Activity: "Activity",
 		Principal: "Principal",
@@ -243,6 +248,7 @@
         console.log("Available columns :", columnNames);
 
         const visibleColumns = [
+            'ActivityStat',
             'Name',
             'Activity',
             'Principal',
@@ -271,6 +277,11 @@
 			const tr = tbody.insertRow();
 
 			tr.dataset.id = rec.id;
+
+            const isReadOnly = rec.Access === '🛑';
+            if (isReadOnly) {
+                tr.classList.add('readonly-row');
+            }
 
 			if (rec.id === selectedId) {
 				tr.classList.add('selected-row');
