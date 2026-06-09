@@ -119,9 +119,7 @@
 			</div>
 
 			<div class="table-container">
-				<table id="table"
-					   class="table table-boxed table-hover">
-				</table>
+				<table id="table" class="table table-boxed table-hover"></table>
 			</div>
 
 		</div>
@@ -129,28 +127,20 @@
 		<!-- RIGHT -->
 		<div class="right-panel">
 
-			<div id="form"
-				 class="form-container">
-			</div>
+			<div id="form"  class="form-container"></div>
 
 			<div class="nav-bar">
-
 				<div>
-					<button id="prevBtn"
-							class="btn btn-secondary btn-sm">
+					<button id="prevBtn" class="btn btn-secondary btn-sm">
 						Previous
 					</button>
 
-					<span id="navCounter"
-						  class="mx-2">
-					</span>
+					<span id="navCounter" class="mx-2"></span>
 
-					<button id="nextBtn"
-							class="btn btn-secondary btn-sm">
-						Next
+					<button id="nextBtn" class="btn btn-secondary btn-sm">
+                        Next
 					</button>
 				</div>
-
 			</div>
 
 		</div>
@@ -183,9 +173,7 @@
 		UpdatedAt: "Updated at"
 	};
 
-	grist.ready({
-		requiredAccess: 'full'
-	});
+	grist.ready({ requiredAccess: 'full' });
 
 	// =====================================================
 	// FILTERS
@@ -223,13 +211,8 @@
 
 				if (!rec.Start_date) return false;
 
-				const startYear =
-					new Date(rec.Start_date).getFullYear();
-
-				const endYear =
-					rec.End_date
-						? new Date(rec.End_date).getFullYear()
-						: Infinity;
+				const startYear = new Date(rec.Start_date).getFullYear();
+				const endYear = rec.End_date ? new Date(rec.End_date).getFullYear()	: Infinity;
 
 				return y >= startYear && y <= endYear;
 			});
@@ -247,36 +230,36 @@
 		table.innerHTML = '';
 
 		if (!filteredRecords.length) {
-
-			table.innerHTML =
-				'<tr><td>No records found</td></tr>';
-
+			table.innerHTML = '<tr><td>No records found</td></tr>';
 			return;
 		}
 
 		const thead = table.createTHead();
 		const hr = thead.insertRow();
 
-		[
-			'Name',
-			'Activity',
-			'Principal',
-			'Start_date',
-			'End_date'
-		].forEach(col => {
+        // Get available columns
+        const columnNames = Object.keys(filteredRecords[0]);
+        console.log("Available columns :", columnNames);
 
-			const th = document.createElement('th');
+        const visibleColumns = [
+            'Name',
+            'Activity',
+            'Principal',
+            'Start_date',
+            'End_date'
+        ].filter(col => columnNames.includes(col));
 
-			th.textContent =
-				transColumns[col] || col;
-
-			hr.appendChild(th);
+        // Fill th
+		visibleColumns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = transColumns[col] || col;
+            hr.appendChild(th);
 		});
 
+        // Fill tbody
 		const tbody = table.createTBody();
 
 		filteredRecords.forEach(rec => {
-
 			const tr = tbody.insertRow();
 
 			tr.dataset.id = rec.id;
@@ -286,24 +269,13 @@
 			}
 
 			tr.addEventListener('click', () => {
-
 				selectedId = rec.id;
-
 				pendingChanges = {};
-
 				renderAll();
 			});
 
-			[
-				rec.Name,
-				rec.Activity,
-				rec.Principal,
-				rec.Start_date,
-				rec.End_date
-			].forEach(val => {
-
+			visibleColumns.forEach(val => {
 				const td = tr.insertCell();
-
 				td.textContent = val || '';
 			});
 		});
@@ -335,23 +307,40 @@
 
 	function renderForm() {
 
-		const form =
-			document.getElementById('form');
+		const form = document.getElementById('form');
 
 		form.innerHTML = '';
 
-		const rec =
-			filteredRecords.find(
-				r => r.id === selectedId
-			);
+		const rec = filteredRecords.find(r => r.id === selectedId);
 
 		if (!rec) {
-
-			form.innerHTML =
-				'<p>No selected record</p>';
-
+			form.innerHTML = '<p>No selected record</p>';
 			return;
 		}
+
+        // NAME (read-only)
+
+        if ('Name' in rec) {
+
+            const input = document.createElement('input');
+
+            input.type = 'text';
+
+            input.className = 'form-control';
+
+            input.value = rec.Name || '';
+
+            input.readOnly = true;
+
+            form.appendChild(
+                formField(
+                    transColumns.Name,
+                    input
+                )
+            );
+        }
+
+        // INPUT FIELDS
 
 		[
 			'Activity',
@@ -362,15 +351,13 @@
 
 			if (!(field in rec)) return;
 
-			const input =
-				document.createElement('input');
+			const input = document.createElement('input');
 
 			input.className = 'form-control';
 
 			input.value = rec[field] || '';
 
 			input.addEventListener('input', () => {
-
 				trackChange(
 					field,
 					input.value
@@ -387,18 +374,15 @@
 
 		// START DATE
 
-		const startInput =
-			document.createElement('input');
+		const startInput = document.createElement('input');
 
 		startInput.type = 'date';
 
 		startInput.className = 'form-control';
 
-		startInput.value =
-			rec.Start_date || '';
+		startInput.value = rec.Start_date || '';
 
 		startInput.addEventListener('input', () => {
-
 			trackChange(
 				'Start_date',
 				startInput.value
@@ -414,18 +398,15 @@
 
 		// END DATE
 
-		const endInput =
-			document.createElement('input');
+		const endInput = document.createElement('input');
 
 		endInput.type = 'date';
 
 		endInput.className = 'form-control';
 
-		endInput.value =
-			rec.End_date || '';
+		endInput.value = rec.End_date || '';
 
 		endInput.addEventListener('input', () => {
-
 			trackChange(
 				'End_date',
 				endInput.value
@@ -445,33 +426,21 @@
 	// =====================================================
 
 	function updateNav() {
-
-		const index =
-			filteredRecords.findIndex(
-				r => r.id === selectedId
-			);
+		const index = filteredRecords.findIndex(r => r.id === selectedId);
 
 		document.getElementById('navCounter')
-			.textContent =
-				`${index + 1} / ${filteredRecords.length}`;
+			.textContent = `${index + 1} / ${filteredRecords.length}`;
 	}
 
 	document
 		.getElementById('nextBtn')
 		.addEventListener('click', () => {
 
-			const index =
-				filteredRecords.findIndex(
-					r => r.id === selectedId
-				);
+			const index = filteredRecords.findIndex(r => r.id === selectedId);
 
 			if (index < filteredRecords.length - 1) {
-
-				selectedId =
-					filteredRecords[index + 1].id;
-
+				selectedId = filteredRecords[index + 1].id;
 				pendingChanges = {};
-
 				renderAll();
 			}
 		});
@@ -480,18 +449,11 @@
 		.getElementById('prevBtn')
 		.addEventListener('click', () => {
 
-			const index =
-				filteredRecords.findIndex(
-					r => r.id === selectedId
-				);
+			const index = filteredRecords.findIndex(r => r.id === selectedId);
 
 			if (index > 0) {
-
-				selectedId =
-					filteredRecords[index - 1].id;
-
+				selectedId = filteredRecords[index - 1].id;
 				pendingChanges = {};
-
 				renderAll();
 			}
 		});
@@ -507,12 +469,10 @@
 			if (!selectedId) return;
 
 			if (!Object.keys(pendingChanges).length) {
-
 				await Swal.fire({
 					icon: 'info',
 					title: 'No changes'
 				});
-
 				return;
 			}
 
@@ -549,27 +509,14 @@
 
 	function renderAll() {
 
-		filteredRecords =
-			getFilteredRecords();
+		filteredRecords = getFilteredRecords();
 
-		if (
-			!selectedId &&
-			filteredRecords.length
-		) {
-			selectedId =
-				filteredRecords[0].id;
+		if (!selectedId && filteredRecords.length) {
+			selectedId = filteredRecords[0].id;
 		}
 
-		if (
-			selectedId &&
-			!filteredRecords.some(
-				r => r.id === selectedId
-			)
-		) {
-			selectedId =
-				filteredRecords.length
-					? filteredRecords[0].id
-					: null;
+		if (selectedId && !filteredRecords.some(r => r.id === selectedId)) {
+			selectedId = filteredRecords.length	? filteredRecords[0].id	: null;
 		}
 
 		renderTable();
@@ -582,20 +529,15 @@
 	// =====================================================
 
 	grist.onRecords(records => {
-
 		allRecords = records;
-
 		renderAll();
 	});
 
 </script>
 
 <script>
-	svgPath =
-		'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
-
-	featherSvgPath =
-		'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+	featherSvgPath ='https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
 </script>
 
 </body>
