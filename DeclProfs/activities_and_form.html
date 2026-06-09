@@ -274,10 +274,10 @@
 				renderAll();
 			});
 
-			visibleColumns.forEach(val => {
-				const td = tr.insertCell();
-				td.textContent = val || '';
-			});
+			visibleColumns.forEach(col => {
+                const td = tr.insertCell();
+                td.textContent = rec[col] || '';
+            });
 		});
 	}
 
