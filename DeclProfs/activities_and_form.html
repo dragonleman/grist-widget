@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Activities Declaration</title>
+
+	<link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+
+	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+
+	<style>
+
+		body {
+			overflow-x: hidden;
+		}
+
+		.layout {
+			display: flex;
+			gap: 24px;
+			align-items: flex-start;
+		}
+
+		.left-panel {
+			width: 48%;
+			min-width: 48%;
+		}
+
+		.right-panel {
+			width: 52%;
+			min-width: 52%;
+			position: sticky;
+			top: 10px;
+		}
+
+		.selected-row {
+			background-color: #e6f2ff !important;
+		}
+
+		.table-container {
+			max-height: 70vh;
+			overflow-y: auto;
+			border: 1px solid #ddd;
+		}
+
+		.form-container {
+			border: 1px solid #ddd;
+			padding: 16px;
+			border-radius: 6px;
+			background: #fff;
+		}
+
+		.actions-bar {
+			display: flex;
+			gap: 10px;
+			justify-content: flex-end;
+			margin-bottom: 16px;
+		}
+
+		.nav-bar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 16px;
+		}
+
+	</style>
+</head>
+
+<body>
+
+<div class="main-container m-4">
+
+	<div class="actions-bar">
+		<button id="addBtn" class="btn btn-primary btn-sm">
+			Add new activity
+		</button>
+
+		<button id="validateBtn" class="btn btn-success btn-sm">
+			Validate
+		</button>
+	</div>
+
+	<div class="layout">
+
+		<!-- LEFT -->
+		<div class="left-panel">
+
+			<div class="mb-2">
+				<input type="text"
+					   id="searchInput"
+					   class="form-control"
+					   placeholder="Search someone...">
+			</div>
+
+			<div class="mb-3">
+				<input type="text"
+					   id="yearInput"
+					   class="form-control"
+					   placeholder="YYYY">
+			</div>
+
+			<div class="table-container">
+				<table id="table"
+					   class="table table-boxed table-hover">
+				</table>
+			</div>
+
+		</div>
+
+		<!-- RIGHT -->
+		<div class="right-panel">
+
+			<div id="form"
+				 class="form-container">
+			</div>
+
+			<div class="nav-bar">
+
+				<div>
+					<button id="prevBtn"
+							class="btn btn-secondary btn-sm">
+						Previous
+					</button>
+
+					<span id="navCounter"
+						  class="mx-2">
+					</span>
+
+					<button id="nextBtn"
+							class="btn btn-secondary btn-sm">
+						Next
+					</button>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+	const today = new Date().toISOString().slice(0, 10);
+
+	let allRecords = [];
+	let filteredRecords = [];
+	let selectedId = null;
+	let pendingChanges = {};
+
+	const table = document.getElementById('table');
+
+	const transColumns = {
+		Name: "Name",
+		Activity: "Activity",
+		Principal: "Principal",
+		Start_date: "Start date",
+		End_date: "End date",
+		Comments: "Comments",
+		Comments_admins: "Comments admins",
+		UpdatedAt: "Updated at"
+	};
+
+	grist.ready({
+		requiredAccess: 'full'
+	});
+
+	// =====================================================
+	// FILTERS
+	// =====================================================
+
+	function getFilteredRecords() {
+
+		const search =
+			document.getElementById('searchInput')
+				.value
+				.trim()
+				.toLowerCase();
+
+		const year =
+			document.getElementById('yearInput')
+				.value
+				.trim();
+
+		let filtered = [...allRecords];
+
+		if (search) {
+
+			filtered = filtered.filter(r =>
+				(r.Name || '')
+					.toLowerCase()
+					.includes(search)
+			);
+		}
+
+		if (year.length === 4) {
+
+			const y = parseInt(year);
+
+			filtered = filtered.filter(rec => {
+
+				if (!rec.Start_date) return false;
+
+				const startYear =
+					new Date(rec.Start_date).getFullYear();
+
+				const endYear =
+					rec.End_date
+						? new Date(rec.End_date).getFullYear()
+						: Infinity;
+
+				return y >= startYear && y <= endYear;
+			});
+		}
+
+		return filtered;
+	}
+
+	// =====================================================
+	// RENDER TABLE
+	// =====================================================
+
+	function renderTable() {
+
+		table.innerHTML = '';
+
+		if (!filteredRecords.length) {
+
+			table.innerHTML =
+				'<tr><td>No records found</td></tr>';
+
+			return;
+		}
+
+		const thead = table.createTHead();
+		const hr = thead.insertRow();
+
+		[
+			'Name',
+			'Activity',
+			'Principal',
+			'Start_date',
+			'End_date'
+		].forEach(col => {
+
+			const th = document.createElement('th');
+
+			th.textContent =
+				transColumns[col] || col;
+
+			hr.appendChild(th);
+		});
+
+		const tbody = table.createTBody();
+
+		filteredRecords.forEach(rec => {
+
+			const tr = tbody.insertRow();
+
+			tr.dataset.id = rec.id;
+
+			if (rec.id === selectedId) {
+				tr.classList.add('selected-row');
+			}
+
+			tr.addEventListener('click', () => {
+
+				selectedId = rec.id;
+
+				pendingChanges = {};
+
+				renderAll();
+			});
+
+			[
+				rec.Name,
+				rec.Activity,
+				rec.Principal,
+				rec.Start_date,
+				rec.End_date
+			].forEach(val => {
+
+				const td = tr.insertCell();
+
+				td.textContent = val || '';
+			});
+		});
+	}
+
+	// =====================================================
+	// FORM
+	// =====================================================
+
+	function trackChange(field, value) {
+		pendingChanges[field] = value;
+	}
+
+	function formField(label, input) {
+
+		const wrapper = document.createElement('div');
+
+		wrapper.className = 'form-group';
+
+		const lab = document.createElement('label');
+
+		lab.textContent = label;
+
+		wrapper.appendChild(lab);
+		wrapper.appendChild(input);
+
+		return wrapper;
+	}
+
+	function renderForm() {
+
+		const form =
+			document.getElementById('form');
+
+		form.innerHTML = '';
+
+		const rec =
+			filteredRecords.find(
+				r => r.id === selectedId
+			);
+
+		if (!rec) {
+
+			form.innerHTML =
+				'<p>No selected record</p>';
+
+			return;
+		}
+
+		[
+			'Activity',
+			'Principal',
+			'Comments',
+			'Comments_admins'
+		].forEach(field => {
+
+			if (!(field in rec)) return;
+
+			const input =
+				document.createElement('input');
+
+			input.className = 'form-control';
+
+			input.value = rec[field] || '';
+
+			input.addEventListener('input', () => {
+
+				trackChange(
+					field,
+					input.value
+				);
+			});
+
+			form.appendChild(
+				formField(
+					transColumns[field],
+					input
+				)
+			);
+		});
+
+		// START DATE
+
+		const startInput =
+			document.createElement('input');
+
+		startInput.type = 'date';
+
+		startInput.className = 'form-control';
+
+		startInput.value =
+			rec.Start_date || '';
+
+		startInput.addEventListener('input', () => {
+
+			trackChange(
+				'Start_date',
+				startInput.value
+			);
+		});
+
+		form.appendChild(
+			formField(
+				'Start date',
+				startInput
+			)
+		);
+
+		// END DATE
+
+		const endInput =
+			document.createElement('input');
+
+		endInput.type = 'date';
+
+		endInput.className = 'form-control';
+
+		endInput.value =
+			rec.End_date || '';
+
+		endInput.addEventListener('input', () => {
+
+			trackChange(
+				'End_date',
+				endInput.value
+			);
+		});
+
+		form.appendChild(
+			formField(
+				'End date',
+				endInput
+			)
+		);
+	}
+
+	// =====================================================
+	// NAVIGATION
+	// =====================================================
+
+	function updateNav() {
+
+		const index =
+			filteredRecords.findIndex(
+				r => r.id === selectedId
+			);
+
+		document.getElementById('navCounter')
+			.textContent =
+				`${index + 1} / ${filteredRecords.length}`;
+	}
+
+	document
+		.getElementById('nextBtn')
+		.addEventListener('click', () => {
+
+			const index =
+				filteredRecords.findIndex(
+					r => r.id === selectedId
+				);
+
+			if (index < filteredRecords.length - 1) {
+
+				selectedId =
+					filteredRecords[index + 1].id;
+
+				pendingChanges = {};
+
+				renderAll();
+			}
+		});
+
+	document
+		.getElementById('prevBtn')
+		.addEventListener('click', () => {
+
+			const index =
+				filteredRecords.findIndex(
+					r => r.id === selectedId
+				);
+
+			if (index > 0) {
+
+				selectedId =
+					filteredRecords[index - 1].id;
+
+				pendingChanges = {};
+
+				renderAll();
+			}
+		});
+
+	// =====================================================
+	// SAVE
+	// =====================================================
+
+	document
+		.getElementById('validateBtn')
+		.addEventListener('click', async () => {
+
+			if (!selectedId) return;
+
+			if (!Object.keys(pendingChanges).length) {
+
+				await Swal.fire({
+					icon: 'info',
+					title: 'No changes'
+				});
+
+				return;
+			}
+
+			await grist.selectedTable.update({
+				id: selectedId,
+				fields: pendingChanges
+			});
+
+			pendingChanges = {};
+
+			await Swal.fire({
+				icon: 'success',
+				title: 'Saved',
+				timer: 1200,
+				showConfirmButton: false
+			});
+		});
+
+	// =====================================================
+	// ADD
+	// =====================================================
+
+	document
+		.getElementById('addBtn')
+		.addEventListener('click', async () => {
+
+			await grist.selectedTable.create({
+
+				fields: {
+					Activity: '',
+					Start_date: today,
+					End_date: today
+				}
+			});
+		});
+
+	// =====================================================
+	// FILTER EVENTS
+	// =====================================================
+
+	document
+		.getElementById('searchInput')
+		.addEventListener('input', renderAll);
+
+	document
+		.getElementById('yearInput')
+		.addEventListener('input', renderAll);
+
+	// =====================================================
+	// MAIN RENDER
+	// =====================================================
+
+	function renderAll() {
+
+		filteredRecords =
+			getFilteredRecords();
+
+		if (
+			!selectedId &&
+			filteredRecords.length
+		) {
+			selectedId =
+				filteredRecords[0].id;
+		}
+
+		if (
+			selectedId &&
+			!filteredRecords.some(
+				r => r.id === selectedId
+			)
+		) {
+			selectedId =
+				filteredRecords.length
+					? filteredRecords[0].id
+					: null;
+		}
+
+		renderTable();
+		renderForm();
+		updateNav();
+	}
+
+	// =====================================================
+	// GRIST
+	// =====================================================
+
+	grist.onRecords(records => {
+
+		allRecords = records;
+
+		renderAll();
+	});
+
+</script>
+
+<script>
+	svgPath =
+		'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+
+	featherSvgPath =
+		'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+</script>
+
+</body>
+</html>
+```
