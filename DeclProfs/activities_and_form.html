@@ -572,8 +572,8 @@
             return;
         }
 
-        // Colonnes réellement présentes
-        const availableColumns = columnNamesAccepted.filter(col =>
+        // Avaialable columns
+        const availableColumns = visibleColumns.filter(col =>
             records.some(r => r[col] !== undefined)
         );
 
@@ -584,7 +584,7 @@
 
         const csvRows = [];
 
-        // Header (avec noms traduits si dispo)
+        // Header (with translated names if available)
         csvRows.push(
             availableColumns
                 .map(col => `"${transColumns?.[col] || col}"`)
