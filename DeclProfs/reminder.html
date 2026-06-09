@@ -37,7 +37,6 @@
 						</svg>
 					</div>
 
-
 					<div class="d-flex align-items-center">
 						<div id="statusDiv" style="max-width: 150px; display: none;">
 							<select id="statusFilter" class="form-control">
@@ -93,6 +92,7 @@
 
 		let allRecords = [];
 		let selectedYear = new Date().getFullYear().toString();
+		let isAdmin = false;
 
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -144,20 +144,22 @@
 				const row = tbody.insertRow();
 
 				// SelectReminder
-				const checkboxCell = row.insertCell();
-				const checkboxInput = document.createElement('input');
-				checkboxInput.type = 'checkbox';
-				checkboxInput.classList.add('row-checkbox');
-				checkboxInput.checked = !!rec.SelectReminder;
-				checkboxInput.addEventListener('change', async () => {
-					if (checkboxInput.checked !== rec.SelectReminder) {
-						await window.grist.selectedTable.update({
-							id: rec.id,
-							fields: { SelectReminder: checkboxInput.checked }
-						});
-					}
-				});
-				checkboxCell.appendChild(checkboxInput);
+				if (isAdmin) {
+					const checkboxCell = row.insertCell();
+					const checkboxInput = document.createElement('input');
+					checkboxInput.type = 'checkbox';
+					checkboxInput.classList.add('row-checkbox');
+					checkboxInput.checked = !!rec.SelectReminder;
+					checkboxInput.addEventListener('change', async () => {
+						if (checkboxInput.checked !== rec.SelectReminder) {
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { SelectReminder: checkboxInput.checked }
+							});
+						}
+					});
+					checkboxCell.appendChild(checkboxInput);
+				}
 
 				// Name
 				row.insertCell().textContent = rec.Name || '';
@@ -247,6 +249,7 @@
 				document.getElementById('searchDiv').style.display = 'block';
 				document.getElementById('statusDiv').style.display = 'block';
 				document.getElementById('sendDiv').style.display = 'block';
+				isAdmin = true;
 			}
 
 			applyFilters();
