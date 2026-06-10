@@ -28,12 +28,12 @@
 				<div>
 					<div id="searchDiv" class="mb-2" style="max-width: 300px; position: relative; display: none;">
 						<input type="text" id="searchInput" placeholder="Search someone..."
-						style="width: 100%; padding-left: 30px; box-sizing: border-box;">
+							style="width: 100%; padding-left: 30px; box-sizing: border-box;">
 
 						<svg class="icon" aria-hidden="true"
-						style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
-						width: 16px; height: 16px; pointer-events: none;">
-						<use xlink:href="#user"></use>
+							style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+							width: 16px; height: 16px; pointer-events: none;">
+							<use xlink:href="#user"></use>
 						</svg>
 					</div>
 
@@ -59,6 +59,12 @@
 					</button>
 				</div>
 
+			</div>
+
+			<div class="d-flex justify-content-between align-items-start">
+				<p><strong>Number of submitted - <span id="totalSubmitted"></span>.</strong></p>
+				<p><strong>Number of wrong sbmissions - <span id="totalWrong"></span>.</strong></p>
+				<p><strong>Number of missings - <span id="totalMissings"></span>.</strong></p>
 			</div>
 
 		</div>
@@ -122,21 +128,34 @@
 				return;
 			}
 
+			let totalSubmitted = 0;		// number of users have submitted activity (valid, wrong, drafts)
+			let totalValid = 0;			// number of users have valid activities 
+			let totalMissing = 0;		// number of users that have not yet submitted activities
+
 			for (const rec of records) {
 
 				const statusMap = parseStatusByYear(rec.StatusByYear);
 
-				// Si une année est sélectionnée,
-				// ignorer les records sans cette année
+				// Ignore empty records of selected year
 				if (selectedYear && !(selectedYear in statusMap)) {
 					continue;
 				}
 
-				// Status affiché
+				// Status
 				let status;
 
 				if (selectedYear) {
-					status = statusMap[selectedYear] ? "✅" : "❌";
+					status = (statusMap[selectedYear].totalActivities === statusMap[selectedYear].totalValid) && (statusMap[selectedYear].totalActivities > 0) ? "✅" : "❌";
+
+					if (statusMap[selectedYear].totalActivities === 0) {
+						totalMissing++;
+					} else {
+						totalSubmitted++
+						if (status === "✅") {
+							totalValid++;
+						} 
+					}
+
 				} else {
 					status = "";
 				}
@@ -177,7 +196,7 @@
 				row.insertCell().textContent = rec.Unit || '';
 
 				// Status
-				row.insertCell().textContent = status; //rec.status || '';
+				row.insertCell().textContent = status;
 
 				// Sent Reminder At
 				row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
@@ -185,6 +204,10 @@
 				// Updated At
 				row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
 			}
+
+			document.getElementById("totalSubmitted").textContent = totalSubmitted;
+			document.getElementById("totalWrong").textContent = totalSubmitted - totalValid;
+			document.getElementById("totalMissings").textContent = totalMissing;
 		}
 
 		function getFiltered() {

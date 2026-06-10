@@ -86,7 +86,7 @@
 
 <div class="main-container m-4">
     <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <p><strong>Professors' annual disclosure - 2026.</strong></p>
+        <p><strong>Professors' annual disclosure - <span id="currentYear"></span>.</strong></p>
         <p>According to the «Directive concerning the management of conflicts of interest within the context of activities or public duties engaged in outside the working sphere» dated December 1st, 2005 (LEX 4.1.1), professors shall disclose activities at regular intervals, whenever a new activity is taken up or in the event of any change.</p>
         <p>Activities that have to be included in the disclosure are described at articles 1.a, 7 and 8 of LEX 4.1.1. Data will be filed and treated confidentially, subject to the Freedom of Information Act (FoIA, RS 152.3).</p>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -166,6 +166,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
 	const today = new Date().toISOString().slice(0, 10);
 
 	let allRecords = [];
