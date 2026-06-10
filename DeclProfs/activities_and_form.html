@@ -310,6 +310,13 @@
 			visibleColumns.forEach(col => {
                 const td = tr.insertCell();
                 let value = rec[col] || '';
+                if (col === 'ActivityStat') {
+                    if (rec[col]) {
+                        value = "✅";
+                    } else {
+                        value = "❌"; 
+                    }
+                }
                 if (col === 'ActivityStat' && rec.Status === 'draft') {
                     value += ' 📝';
                 }
