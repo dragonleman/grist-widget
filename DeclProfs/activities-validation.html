@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Activities Declaration</title>
-  <link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
-  <link rel="stylesheet" href="css/declprofs.css">
+	<meta charset="utf-8">
+	<title>Activities Declaration</title>
+	<link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+	<link rel="stylesheet" href="css/declprofs.css">
 	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+
+	<style>
+		.draft-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.draft-card {
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			padding: 12px;
+			margin-bottom: 12px;
+			background: #fafafa;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+		}
+	</style>
 </head>
 <body>
   	<header class="header header-light my-2">
@@ -20,7 +37,7 @@
 		<nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
 	</div>
   
-  	<div class="main-container m-4">
+  	<!-- <div class="main-container m-4">
 		<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
 			<input type="text" id="searchInput" placeholder="Search someone..." style="padding-left: 30px; box-sizing: border-box;">
 			<svg class="icon" aria-hidden="true" 
@@ -53,24 +70,58 @@
 				Validate
 			</button>
 		</div>
+	</div> -->
+
+	<div class="main-container m-4">
+
+		<!-- TOP BAR -->
+		<div class="d-flex justify-content-between align-items-center mb-3">
+
+			<!-- SEARCH -->
+			<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
+				<input type="text" id="searchInput" placeholder="Search someone..." class="form-control">
+				<svg class="icon" aria-hidden="true"
+					style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px;">
+					<use xlink:href="#user"></use>
+				</svg>
+			</div>
+
+			<!-- ADD BUTTON -->
+			<button id="addBtn" class="btn btn-secondary btn-sm">
+				<svg class="icon" aria-hidden="true">
+					<use xlink:href="#plus"></use>
+				</svg>
+				Add new activity
+			</button>
+
+		</div>
+
+		<!-- LIST CONTAINER -->
+		<div class="card p-3 mb-3">
+			<ul id="draftList" class="draft-list"></ul>
+		</div>
+
+		<!-- INFO + VALIDATION FOOTER -->
+		<div class="card p-3">
+
+			<div class="alert alert-info mb-3" role="alert">
+				<p class="mb-0">
+					With my submission, I certify that this list of activities is complete and accurate and declare not to have devoted to them more than the equivalent of 1 day per week for a full time position.
+				</p>
+			</div>
+
+			<div class="d-flex justify-content-end">
+				<button id="validateBtn" class="btn btn-success btn-sm">
+					<svg class="icon" aria-hidden="true">
+						<use xlink:href="#check"></use>
+					</svg>
+					Validate
+				</button>
+			</div>
+
+		</div>
+
 	</div>
-
-	<style>
-		.draft-list {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-		}
-
-		.draft-card {
-			border: 1px solid #ddd;
-			border-radius: 6px;
-			padding: 12px;
-			margin-bottom: 12px;
-			background: #fafafa;
-			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-		}
-	</style>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
