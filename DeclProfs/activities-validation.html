@@ -198,6 +198,8 @@
 		}
 
 		function renderDrafts(drafts) {
+			alert("renderDrafts1");
+
 			draftList.innerHTML = "";
 			isByAPR = false;
 
@@ -210,6 +212,8 @@
 				checkDraftsValidity();
 				return;
 			}
+
+			alert("renderDrafts2");
 
 			drafts.forEach(rec => {
 
@@ -340,6 +344,8 @@
 					input.addEventListener('blur', async () => {
 
 						if (input.value === rec[fieldName]) return;
+
+						alert("Activity blur");
 
 						await saveField(
 							rec,
@@ -485,8 +491,7 @@
 
 			checkDraftsValidity();
 
-			document.getElementById("searchDiv").style.display =
-				isByAPR ? "block" : "none";
+			document.getElementById("searchDiv").style.display = isByAPR ? "block" : "none";
 		}
 
 
