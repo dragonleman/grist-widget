@@ -49,6 +49,11 @@
 		.draft-form .form-group {
 			margin-bottom: 12px;
 		}
+
+		#searchInput {
+            padding-left: 34px !important;
+            height: 40px;
+        }
 	</style>
 </head>
 <body>
@@ -196,7 +201,15 @@
 			return filtered;
 		}
 
-		// Fonction pour activer/désactiver le bouton validate
+		function isDraftValid(rec) {
+			return !!(
+				rec.Activity?.trim() &&
+				rec.Principal?.trim() &&
+				rec.Start_date
+			);
+		}
+
+		// Activate/Deactivate 'Validate' button
 		function checkDraftsValidity() {
 			const drafts = getFilteredDrafts();
 
@@ -205,310 +218,40 @@
 				return;
 			}
 
-			const allValid = drafts.every(r =>
-				r.Activity && r.Principal && r.Start_date
-			);
+			const allValid = drafts.every(r => isDraftValid(r));
 
 			validateBtn.disabled = !allValid;
 		}
 
-		// function renderDrafts(drafts) {
-		// 	draftList.innerHTML = "";
+	
 
-		// 	if (!drafts.length) {
-		// 		draftList.innerHTML = "<li>No drafts</li>";
-		// 		checkDraftsValidity();
-		// 		return;
-		// 	}
+		function updateCardHeader(rec, titleEl) {
+			const valid = isDraftValid(rec);
 
-		// 	drafts.forEach(rec => {
-		// 		const card = document.createElement("li");
-		// 		card.className = "draft-card";
+			titleEl.innerHTML = `
+				<strong>${rec.Activity || "New activity"}</strong>
+				<span class="badge badge-${valid ? 'success' : 'danger'} ml-2">
+					${valid ? 'Complete' : 'Incomplete'}
+				</span>
+			`;
+			
+			// titleEl.innerHTML = `
+			// 	<strong>${rec.Activity || "New activity"}</strong>
+			// 	${isDraftValid(rec) ? '✅' : '❌'}
+			// `;
+		}
 
-		// 		const form = document.createElement("form");
-		// 		form.className = "draft-form";
+		async function saveField(rec, field, value, titleEl) {
+			await grist.selectedTable.update({
+				id: rec.id,
+				fields: { [field]: value }
+			});
 
-		// 		const field = ({ labelText, inputEl, id, helpText = '' }) => {
-		// 			const wrapper = document.createElement('div');
-		// 			wrapper.className = 'form-group';
+			rec[field] = value;
 
-		// 			const label = document.createElement('label');
-		// 			label.setAttribute('for', id);
-		// 			label.textContent = labelText;
-
-		// 			inputEl.id = id;
-		// 			inputEl.name = id;
-		// 			inputEl.classList.add('form-control');
-
-		// 			wrapper.appendChild(label);
-		// 			wrapper.appendChild(inputEl);
-
-		// 			if (helpText) {
-		// 				const small = document.createElement('small');
-		// 				small.id = `${id}-help`;
-		// 				small.className = 'form-text text-muted';
-		// 				small.textContent = helpText;
-		// 				inputEl.setAttribute('aria-describedby', small.id);
-		// 				wrapper.appendChild(small);
-		// 			}
-
-		// 			return wrapper;
-		// 		};
-
-		// 		const is_read_only = rec.Access === "🛑" && !("Name" in rec);
-
-		// 		// Name (read-only)
-		// 		if ('Name' in rec) {
-		// 			const input = document.createElement('input');
-		// 			input.type = 'text';
-		// 			input.value = rec.Name || '';
-		// 			input.readOnly = true;
-
-		// 			form.appendChild(
-		// 				field({
-		// 					labelText: transColumns.Name,
-		// 					inputEl: input,
-		// 					id: `name-input-${rec.id}`
-		// 				})
-		// 			);
-		// 		}
-
-		// 		// Activity
-		// 		if ('Activity' in rec) {
-		// 			const input = document.createElement('input');
-		// 			input.type = 'text';
-		// 			input.value = rec.Activity || '';
-		// 			input.readOnly = is_read_only;
-
-		// 			input.addEventListener('blur', async () => {
-		// 				if (input.value !== rec.Activity) {
-		// 					await grist.selectedTable.update({
-		// 						id: rec.id,
-		// 						fields: { Activity: input.value }
-		// 					});
-		// 				}
-		// 				checkDraftsValidity();
-		// 			});
-
-		// 			form.appendChild(
-		// 				field({
-		// 					labelText: transColumns.Activity,
-		// 					inputEl: input,
-		// 					id: `activity-input-${rec.id}`
-		// 				})
-		// 			);
-		// 		}
-
-		// 		// Principal
-		// 		if ('Principal' in rec) {
-		// 			const input = document.createElement('input');
-		// 			input.type = 'text';
-		// 			input.value = rec.Principal || '';
-		// 			input.readOnly = is_read_only;
-
-		// 			input.addEventListener('blur', async () => {
-		// 				if (input.value !== rec.Principal) {
-		// 					await grist.selectedTable.update({
-		// 						id: rec.id,
-		// 						fields: { Principal: input.value }
-		// 					});
-		// 				}
-		// 				checkDraftsValidity();
-		// 			});
-
-		// 			form.appendChild(
-		// 				field({
-		// 					labelText: transColumns.Principal,
-		// 					inputEl: input,
-		// 					id: `principal-input-${rec.id}`
-		// 				})
-		// 			);
-		// 		}
-
-		// 		// Start_date + End_date
-		// 		if ('Start_date' in rec || 'End_date' in rec) {
-		// 			const row = document.createElement('div');
-		// 			row.className = 'row';
-
-		// 			if ('Start_date' in rec) {
-		// 				const col = document.createElement('div');
-		// 				col.className = 'col-6';
-
-		// 				const input = document.createElement('input');
-		// 				input.type = 'date';
-		// 				input.value = rec.Start_date || '';
-		// 				input.readOnly = is_read_only;
-
-		// 				input.addEventListener('blur', async () => {
-		// 					if (input.value !== rec.Start_date) {
-		// 						await grist.selectedTable.update({
-		// 							id: rec.id,
-		// 							fields: { Start_date: input.value }
-		// 						});
-		// 					}
-		// 					checkDraftsValidity();
-		// 				});
-
-		// 				col.appendChild(
-		// 					field({
-		// 						labelText: transColumns.Start_date,
-		// 						inputEl: input,
-		// 						id: `start-date-input-${rec.id}`
-		// 					})
-		// 				);
-
-		// 				row.appendChild(col);
-		// 			}
-
-		// 			if ('End_date' in rec) {
-		// 				const col = document.createElement('div');
-		// 				col.className = 'col-6';
-
-		// 				const input = document.createElement('input');
-		// 				input.type = 'date';
-		// 				input.value = rec.End_date || '';
-		// 				input.style.backgroundColor = rec.ErrorDate || '';
-		// 				input.readOnly = is_read_only;
-
-		// 				input.addEventListener('blur', async () => {
-		// 					if (input.value !== rec.End_date) {
-		// 						await grist.selectedTable.update({
-		// 							id: rec.id,
-		// 							fields: { End_date: input.value }
-		// 						});
-		// 					}
-		// 				});
-
-		// 				col.appendChild(
-		// 					field({
-		// 						labelText: transColumns.End_date,
-		// 						inputEl: input,
-		// 						id: `end-date-input-${rec.id}`
-		// 					})
-		// 				);
-
-		// 				row.appendChild(col);
-		// 			}
-
-		// 			form.appendChild(row);
-		// 		}
-
-		// 		// Comments
-		// 		if ('Comments' in rec) {
-		// 			const input = document.createElement('input');
-		// 			input.type = 'text';
-		// 			input.value = rec.Comments || '';
-		// 			input.readOnly = is_read_only;
-
-		// 			input.addEventListener('blur', async () => {
-		// 				if (input.value !== rec.Comments) {
-		// 					await grist.selectedTable.update({
-		// 						id: rec.id,
-		// 						fields: { Comments: input.value }
-		// 					});
-		// 				}
-		// 			});
-
-		// 			form.appendChild(
-		// 				field({
-		// 					labelText: transColumns.Comments,
-		// 					inputEl: input,
-		// 					id: `comments-input-${rec.id}`
-		// 				})
-		// 			);
-		// 		}
-
-		// 		// Comments_admins
-		// 		if ('Comments_admins' in rec) {
-		// 			isByAPR = true;
-		// 			const input = document.createElement('input');
-		// 			input.type = 'text';
-		// 			input.value = rec.Comments_admins || '';
-		// 			input.readOnly = is_read_only;
-
-		// 			input.addEventListener('blur', async () => {
-		// 				if (input.value !== rec.Comments_admins) {
-		// 					await grist.selectedTable.update({
-		// 						id: rec.id,
-		// 						fields: { Comments_admins: input.value }
-		// 					});
-		// 				}
-		// 			});
-
-		// 			form.appendChild(
-		// 				field({
-		// 					labelText: transColumns.Comments_admins,
-		// 					inputEl: input,
-		// 					id: `comments-admins-input-${rec.id}`
-		// 				})
-		// 			);
-		// 		}
-
-		// 		// UpdatedAt (read-only)
-		// 		if ('UpdatedAt' in rec) {
-		// 			const input = document.createElement('input');
-		// 			input.type = 'date';
-		// 			input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
-		// 			input.readOnly = true;
-
-		// 			form.appendChild(
-		// 				field({
-		// 					labelText: transColumns.UpdatedAt,
-		// 					inputEl: input,
-		// 					id: `updated-at-input-${rec.id}`
-		// 				})
-		// 			);
-		// 		}
-
-		// 		const delBtn = document.createElement("button");
-		// 		delBtn.type = "button";
-		// 		delBtn.className = "btn btn-tertiary btn-sm";
-		// 		delBtn.innerHTML = `
-		// 			<svg class="icon" aria-hidden="true">
-		// 				<use xlink:href="#trash"></use>
-		// 			</svg>
-		// 			Delete
-		// 		`;
-		// 		delBtn.title = "Delete the draft";
-
-		// 		const recordId = rec.id;
-
-		// 		delBtn.addEventListener("click", async () => {
-		// 			const result = await Swal.fire({
-		// 				icon: "warning",
-		// 				title: "Delete draft?",
-		// 				text: "Are you sure you want to delete this draft?",
-		// 				showCancelButton: true,
-		// 				confirmButtonText: "Yes, delete it",
-		// 				cancelButtonText: "Cancel",
-		// 				confirmButtonColor: "#d33",
-		// 				cancelButtonColor: "#6c757d",
-		// 				reverseButtons: true
-		// 			});
-
-		// 			if (!result.isConfirmed) return;
-
-		// 			await grist.selectedTable.destroy([recordId]);
-
-		// 			await Swal.fire({
-		// 				icon: "success",
-		// 				title: "Deleted",
-		// 				timer: 1200,
-		// 				showConfirmButton: false
-		// 			});
-		// 		});
-
-		// 		form.appendChild(delBtn);
-		// 		card.appendChild(form);
-		// 		draftList.appendChild(card);
-		// 	});
-
-		// 	checkDraftsValidity();
-
-		// 	if (isByAPR) {
-		// 		document.getElementById('searchDiv').style.display = 'block';
-		// 	}
-		// }
+			updateCardHeader(rec, titleEl);
+			checkDraftsValidity();
+		}
 
 		function renderDrafts(drafts) {
 			draftList.innerHTML = "";
@@ -544,7 +287,7 @@
 
 				title.innerHTML = `
 					<strong>${rec.Activity || "New activity"}</strong>
-					${rec.Status === "draft" ? " 📝" : ""}
+					${isDraftValid(rec) ? '✅' : '❌'}
 				`;
 
 				const meta = document.createElement("div");
@@ -573,25 +316,35 @@
 					labelText,
 					inputEl,
 					id,
-					helpText = ''
+					helpText = '',
+					required = false
 				}) => {
 
-					const wrapper = document.createElement("div");
-					wrapper.className = "form-group";
+					const wrapper = document.createElement('div');
+					wrapper.className = 'form-group';
 
-					const label = document.createElement("label");
-					label.textContent = labelText;
-					label.setAttribute("for", id);
+					const label = document.createElement('label');
+					label.setAttribute('for', id);
+
+					label.innerHTML = required
+						? `${labelText} <span class="text-danger">*</span>`
+						: labelText;
 
 					inputEl.id = id;
-					inputEl.classList.add("form-control");
+					inputEl.name = id;
+					inputEl.classList.add('form-control');
+
+					if (required) {
+						inputEl.required = true;
+					}
 
 					wrapper.appendChild(label);
 					wrapper.appendChild(inputEl);
 
 					if (helpText) {
-						const small = document.createElement("small");
-						small.className = "form-text text-muted";
+						const small = document.createElement('small');
+						small.id = `${id}-help`;
+						small.className = 'form-text text-muted';
 						small.textContent = helpText;
 						wrapper.appendChild(small);
 					}
@@ -643,25 +396,38 @@
 					input.value = rec[fieldName] || "";
 					input.readOnly = isReadOnly;
 
-					input.addEventListener("blur", async () => {
+					// input.addEventListener("blur", async () => {
+
+					// 	if (input.value === rec[fieldName]) return;
+
+					// 	await grist.selectedTable.update({
+					// 		id: rec.id,
+					// 		fields: {
+					// 			[fieldName]: input.value
+					// 		}
+					// 	});
+
+					// 	checkDraftsValidity();
+					// });
+
+					input.addEventListener('blur', async () => {
 
 						if (input.value === rec[fieldName]) return;
 
-						await grist.selectedTable.update({
-							id: rec.id,
-							fields: {
-								[fieldName]: input.value
-							}
-						});
-
-						checkDraftsValidity();
+						await saveField(
+							rec,
+							fieldName,
+							input.value,
+							title
+						);
 					});
 
 					form.appendChild(
 						field({
 							labelText: transColumns[fieldName],
 							inputEl: input,
-							id: `${fieldName}-${rec.id}`
+							id: `${fieldName}-${rec.id}`,
+							required: ['Activity', 'Principal'].includes(fieldName)
 						})
 					);
 				});
@@ -705,25 +471,26 @@
 								rec.ErrorDate;
 						}
 
-						input.addEventListener("blur", async () => {
+						// input.addEventListener("blur", async () => {
 
-							if (input.value === rec[cfg.key]) return;
+						// 	if (input.value === rec[cfg.key]) return;
 
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: {
-									[cfg.key]: input.value
-								}
-							});
+						// 	await grist.selectedTable.update({
+						// 		id: rec.id,
+						// 		fields: {
+						// 			[cfg.key]: input.value
+						// 		}
+						// 	});
 
-							checkDraftsValidity();
-						});
+						// 	checkDraftsValidity();
+						// });
 
 						col.appendChild(
 							field({
 								labelText: cfg.label,
 								inputEl: input,
-								id: `${cfg.key}-${rec.id}`
+								id: `${cfg.key}-${rec.id}`,
+    							required: cfg.key === 'Start_date'
 							})
 						);
 
