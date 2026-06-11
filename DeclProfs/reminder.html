@@ -347,13 +347,6 @@
 			// Updated At
 			row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
 		}
-
-		const stats = computeYearStats(allRecords);
-
-		document.getElementById("totalAll").textContent = stats.totalAll;
-		document.getElementById("totalSubmitted").textContent = stats.totalSubmitted;
-		document.getElementById("totalWrong").textContent = stats.totalSubmitted - stats.totalValid;
-		document.getElementById("totalMissings").textContent = stats.totalMissing;
 	}
 
 
@@ -413,6 +406,13 @@
 
 	function applyFilters() {
 		renderTable(getFiltered());
+
+		const stats = computeYearStats(allRecords);
+
+		document.getElementById("totalAll").textContent = stats.totalAll;
+		document.getElementById("totalSubmitted").textContent = stats.totalSubmitted;
+		document.getElementById("totalWrong").textContent = stats.totalSubmitted - stats.totalValid;
+		document.getElementById("totalMissings").textContent = stats.totalMissing;
 	}
 
 	window.grist.onRecords((records) => {
