@@ -108,18 +108,42 @@
 		<!-- LEFT -->
 		<div class="left-panel">
 
-			<div id="searchDiv" class="mb-2" style="display: none">
+			<div id="searchDiv" class="mb-2" style="position: relative; display: none">
 				<input type="text"
 					   id="searchInput"
 					   class="form-control"
 					   placeholder="Search someone...">
+                <svg class="icon"
+                        aria-hidden="true"
+                        style="position: absolute;
+                            left: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            width: 16px;
+                            height: 16px;
+                            pointer-events: none;">
+                    <use xlink:href="#user"></use>
+                </svg>
 			</div>
 
-			<div class="mb-3">
+			<div class="mb-3" style="position: relative; width: 140px;">
 				<input type="text"
 					   id="yearInput"
 					   class="form-control"
-					   placeholder="YYYY">
+					   placeholder="YYYY"
+					   inputmode="numeric"
+					   maxlength="4">
+                <svg class="icon"
+                    aria-hidden="true"
+                    style="position: absolute;
+                            left: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            width: 16px;
+                            height: 16px;
+                            pointer-events: none;">
+                    <use xlink:href="#calendar"></use>
+                </svg>
 			</div>
 
             <div class="d-flex justify-content-end mb-2 gap-2">
