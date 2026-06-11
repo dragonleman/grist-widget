@@ -120,6 +120,7 @@
 		const today = new Date().toISOString().slice(0, 10);
 
 		let isByAPR = false;
+		let initialized = false;
 		let allRecords = [];
 
 		const transColumns = {
@@ -497,7 +498,11 @@
 
 		grist.onRecords(records => {
 			allRecords = records;
-			//applyFilters();
+
+			if (!initialized) {
+				applyFilters(); // premier rendu uniquement
+				initialized = true;
+			}
 		});
 
 		searchInput.addEventListener("input", () => {
