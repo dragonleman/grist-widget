@@ -178,17 +178,17 @@
 		function updateCardHeader(rec, titleEl) {
 			const valid = isDraftValid(rec);
 
-			// titleEl.innerHTML = `
-			// 	<strong>${rec.Activity || "New activity"}</strong>
-			// 	<span class="badge badge-${valid ? 'success' : 'danger'} ml-2">
-			// 		${valid ? 'Complete' : 'Incomplete'}
-			// 	</span>
-			// `;
-			
 			titleEl.innerHTML = `
 				<strong>${rec.Activity || "New activity"}</strong>
-				${isDraftValid(rec) ? '✅' : '❌'}
+				<span class="badge badge-${valid ? 'success' : 'danger'} ml-2">
+					${valid ? 'Complete' : 'Incomplete'}
+				</span>
 			`;
+			
+			// titleEl.innerHTML = `
+			// 	<strong>${rec.Activity || "New activity"}</strong>
+			// 	${isDraftValid(rec) ? '✅' : '❌'}
+			// `;
 		}
 
 		async function saveField(rec, field, value, titleEl) {
