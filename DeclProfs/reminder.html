@@ -216,7 +216,7 @@
 
 <script>
 	const selectAll = document.getElementById('selectAll');
-	//const yearInput = document.getElementById("yearInput");
+	const yearInput = document.getElementById("yearInput");
 
 	let allRecords = [];
 	let selectedYear = new Date().getFullYear().toString();
@@ -417,7 +417,7 @@
 			selectedYear = currentYear;
 		}
 
-		//yearInput.value = selectedYear;
+		yearInput.value = selectedYear;
 
 		if (allRecords.length > 1) {
 			document.getElementById('searchDiv').style.display = 'block';
@@ -474,7 +474,7 @@
 		await grist.docApi.applyUserActions(actions);
 	});
 	
-	document.getElementById("yearInput").addEventListener("input", (e) => {
+	yearInput.addEventListener("input", (e) => {
 
 		alert("Couou");
 
