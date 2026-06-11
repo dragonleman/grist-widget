@@ -130,11 +130,20 @@
                     </svg>
                 </div>
 
-                <div class="d-flex filters-row align-items-center">
+                <!-- <div class="d-flex filters-row align-items-center">
                     <div style="width: 140px;">
                         <select id="yearFilter" class="form-control"></select>
                     </div>
-                </div>
+                </div> -->
+
+				<div style="width: 140px;">
+					<input type="text"
+						id="yearInput"
+						class="form-control"
+						placeholder="YYYY"
+						inputmode="numeric"
+						maxlength="4">
+				</div>
             </div>
 
             <div id="sendDiv" style="display: none;">
@@ -207,7 +216,7 @@
 
 <script>
 	const selectAll = document.getElementById('selectAll');
-	const yearFilter = document.getElementById("yearFilter");
+	const yearInput = document.getElementById("yearInput");
 
 	let allRecords = [];
 	let selectedYear = new Date().getFullYear().toString();
@@ -408,13 +417,7 @@
 			selectedYear = currentYear;
 		}
 
-		yearFilter.innerHTML = sortedYears
-			.map(year => {
-				return `<option value="${year}" ${year === selectedYear ? "selected" : ""}>${year}</option>`;
-			})
-			.join("");
-
-		yearFilter.value = selectedYear;
+		yearInput.value = selectedYear;
 
 		if (allRecords.length > 1) {
 			document.getElementById('searchDiv').style.display = 'block';
@@ -476,15 +479,13 @@
 		await grist.docApi.applyUserActions(actions);
 	});
 	
-	// yearFilter.addEventListener("change", (e) => {
-	// 	alert("Coucou");
-	// 	selectedYear = e.target.value;
-	// 	applyFilters();
-	// });
+	yearInput.addEventListener("input", (e) => {
 
-	document.addEventListener("change", (e) => {
-		if (e.target && e.target.id === "yearFilter") {
-			selectedYear = e.target.value;
+		const value = e.target.value.trim();
+
+		if (
+			Number.isInteger(year) && year.toString().length === 4) {
+			selectedYear = String(year);
 			applyFilters();
 		}
 	});
