@@ -210,29 +210,6 @@
 
 	const table = document.getElementById('table');
 
-    const acceptedColumns = [
-        'ActivityStat',
-        'Name',
-        'Activity',
-        'Principal',
-        'Start_date',
-        'End_date',
-        'Comments',
-        'Comments_admins'
-    ]
-
-	const transColumns = {
-        ActivityStat: "Status",
-		Name: "Name",
-		Activity: "Activity",
-		Principal: "Principal",
-		Start_date: "Start date",
-		End_date: "End date",
-		Comments: "Comments",
-		Comments_admins: "Comments admins",
-		UpdatedAt: "Updated at"
-	};
-
     const columns = [
         { key: 'Name', label: 'Name', readonly: true },
 
@@ -312,11 +289,9 @@
         // Get available columns
         const columnNames = Object.keys(filteredRecords[0]);
 
-        //let visibleColumns = acceptedColumns.filter(col => columnNames.includes(col));
-
         let visibleColumns = columns.filter(c => columnNames.includes(c.key));
 
-        if (visibleColumns.includes('Name')) {
+        if (visibleColumns.some(col => col.key === 'Name')) {
             document.getElementById('searchDiv').style.display = 'block';
             isByAPR = true;
         }
@@ -325,7 +300,6 @@
 		visibleColumns.forEach(col => {
             const th = document.createElement('th');
             th.textContent = col.label;
-            //th.textContent = transColumns[col] || col;
             hr.appendChild(th);
 		});
 
@@ -642,38 +616,7 @@
 
         return str;
     }
-    
-    // function downloadCSV(records, filename = "activities.csv") {
-    //     const availableColumns = acceptedColumns.filter(col =>
-    //         col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
-    //     );
-
-    //     const csvRows = [];
-
-    //     csvRows.push(
-    //         availableColumns
-    //             .map(col => `"${transColumns?.[col] || col}"`)
-    //             .join(",")
-    //     );
-
-    //     for (const rec of records) {
-    //         const row = availableColumns.map(col =>
-    //             `"${sanitizeCSV(rec[col]).replace(/"/g, '""')}"`
-    //         );
-    //         csvRows.push(row.join(","));
-    //     }
-
-    //     const csvContent = csvRows.join("\n");
-
-    //     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    //     const link = document.createElement("a");
-    //     link.href = URL.createObjectURL(blob);
-    //     link.download = filename;
-    //     link.click();
-
-    //     URL.revokeObjectURL(link.href);
-    // }
-
+   
     function downloadCSV(records, filename = "activities.csv") {
 
         const exportColumns = columns.filter(col =>
@@ -850,142 +793,6 @@
 
 		return wrapper;
 	}
-
-	// function renderForm() {
-
-	// 	const form = document.getElementById('form');
-
-    //     let isReadOnly = false;
-
-	// 	form.innerHTML = '';
-
-	// 	const rec = filteredRecords.find(r => r.id === selectedId);
-
-	// 	if (!rec) {
-	// 		form.innerHTML = '<p>No selected record</p>';
-	// 		return;
-	// 	}
-
-    //     // ACCESS (Readonly or not ?)
-
-    //     if  ('Access' in rec) {
-    //         isReadOnly = rec.Access === '🛑';
-    //     }
-
-    //     // NAME (read-only)
-
-    //     if ('Name' in rec) {
-
-    //         const input = document.createElement('input');
-
-    //         input.type = 'text';
-
-    //         input.className = 'form-control';
-
-    //         input.value = rec.Name || '';
-
-    //         input.readOnly = true;
-
-    //         form.appendChild(
-    //             formField(
-    //                 transColumns.Name,
-    //                 input
-    //             )
-    //         );
-    //     }
-
-    //     // INPUT FIELDS
-
-	// 	[
-	// 		'Activity',
-	// 		'Principal',
-	// 		'Comments',
-	// 		'Comments_admins'
-	// 	].forEach(field => {
-
-	// 		if (!(field in rec)) return;
-
-	// 		const input = document.createElement('input');
-
-	// 		input.className = 'form-control';
-
-	// 		input.value = rec[field] || '';
-
-    //         if (isReadOnly) {
-    //             input.readOnly = true;
-    //         } else {
-    //             input.addEventListener('input', () => {
-    //                 trackChange(
-    //                     field,
-    //                     input.value
-    //                 );
-    //             });
-    //         }			
-
-	// 		form.appendChild(
-	// 			formField(
-	// 				transColumns[field],
-	// 				input
-	// 			)
-	// 		);
-	// 	});
-
-	// 	// START DATE
-
-	// 	const startInput = document.createElement('input');
-
-	// 	startInput.type = 'date';
-
-	// 	startInput.className = 'form-control';
-
-	// 	startInput.value = rec.Start_date || '';
-
-    //     if (isReadOnly) {
-    //         startInput.readOnly = true;
-    //     } else {
-    //         startInput.addEventListener('input', () => {
-    //             trackChange(
-    //                 'Start_date',
-    //                 startInput.value
-    //             );
-    //         });
-    //     }
-
-	// 	form.appendChild(
-	// 		formField(
-	// 			'Start date',
-	// 			startInput
-	// 		)
-	// 	);
-
-	// 	// END DATE
-
-	// 	const endInput = document.createElement('input');
-
-	// 	endInput.type = 'date';
-
-	// 	endInput.className = 'form-control';
-
-	// 	endInput.value = rec.End_date || '';
-
-    //     if (isReadOnly) {
-    //         endInput.readOnly = true;
-    //     } else {
-    //         endInput.addEventListener('input', () => {
-    //             trackChange(
-    //                 'End_date',
-    //                 endInput.value
-    //             );
-    //         });
-    //     }
-
-	// 	form.appendChild(
-	// 		formField(
-	// 			'End date',
-	// 			endInput
-	// 		)
-	// 	);
-	// }
 
     function renderForm() {
         const form = document.getElementById('form');
@@ -1168,4 +975,3 @@
 
 </body>
 </html>
-```

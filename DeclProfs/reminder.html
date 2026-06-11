@@ -227,16 +227,17 @@
 	let selectedFilter = "all";
 	let isAdmin = false;
 
-	const acceptedColumns = [
-        'ActivityStat',
-        'Name',
-        'Activity',
-        'Principal',
-        'Start_date',
-        'End_date',
-        'Comments',
-        'Comments_admins'
-    ]
+    const columns = [
+        { key: 'Name', label: 'Name', readonly: true },
+
+        { key: 'Activity', label: 'Activity' },
+        { key: 'Principal', label: 'Principal' },
+        { key: 'Comments', label: 'Comments' },
+        { key: 'Comments_admins', label: 'Comments admins' },
+
+        { key: 'Start_date', label: 'Start date' },
+        { key: 'End_date', label: 'End date' }
+    ];
 
 	window.grist.ready({ requiredAccess: 'full' });
 
@@ -515,22 +516,32 @@
 	});
 
     function downloadCSV(records, filename = "activities.csv") {
-        const availableColumns = acceptedColumns.filter(col =>
-            col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
+
+        const exportColumns = columns.filter(col =>
+            col.key !== 'ActivityStat' &&
+            records.some(r => r[col.key] !== undefined)
         );
 
         const csvRows = [];
 
+        // HEADER
         csvRows.push(
-            availableColumns
-                .map(col => `"${transColumns?.[col] || col}"`)
+            exportColumns
+                .map(col => `"${col.label}"`)
                 .join(",")
         );
 
+        // ROWS
         for (const rec of records) {
-            const row = availableColumns.map(col =>
-                `"${sanitizeCSV(rec[col]).replace(/"/g, '""')}"`
-            );
+
+            const row = exportColumns.map(col => {
+                let value = rec[col.key];
+
+                value = sanitizeCSV(value ?? '');
+
+                return `"${String(value).replace(/"/g, '""')}"`;
+            });
+
             csvRows.push(row.join(","));
         }
 
@@ -648,5 +659,3 @@
 
 </body>
 </html>
-
-
