@@ -149,10 +149,10 @@
 
             <div id="tooldDiv" style="display: none;" class="d-flex align-items-center justify-content-end">
 				<div class="btn-group" role="group">
-					<button id="downloadAllBtn" class="btn btn-primary">
+					<button id="downloadAllBtn" class="btn btn-secondary btn-sm">
 						Download CSV
 					</button>
-					<button id="sendReminderBtn" class="btn btn-primary">
+					<button id="sendReminderBtn" class="btn btn-secondary btn-sm">
 						Send reminder
 					</button>
 				</div>
@@ -502,6 +502,37 @@
 			applyFilters();
 		}
 	});
+
+    function downloadCSV(records, filename = "activities.csv") {
+        const availableColumns = acceptedColumns.filter(col =>
+            col !== 'ActivityStat' && records.some(r => r[col] !== undefined)
+        );
+
+        const csvRows = [];
+
+        csvRows.push(
+            availableColumns
+                .map(col => `"${transColumns?.[col] || col}"`)
+                .join(",")
+        );
+
+        for (const rec of records) {
+            const row = availableColumns.map(col =>
+                `"${sanitizeCSV(rec[col]).replace(/"/g, '""')}"`
+            );
+            csvRows.push(row.join(","));
+        }
+
+        const csvContent = csvRows.join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+    }
 
     // Download all CSV
     document.getElementById('downloadAllBtn').addEventListener("click", async () => {
