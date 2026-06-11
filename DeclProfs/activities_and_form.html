@@ -963,6 +963,7 @@
 
 	grist.onRecords(records => {
 		allRecords = records;
+        document.getElementById('yearInput').value = new Date().getFullYear().toString();
 		renderAll();
 	});
 

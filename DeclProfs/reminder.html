@@ -431,6 +431,7 @@
 	window.grist.onRecords((records) => {
 		allRecords = records || [];
 
+		// Find all available years in records
 		const years = new Set();
 
 		for (const rec of allRecords) {
@@ -449,6 +450,7 @@
 			selectedYear = currentYear;
 		}
 
+		// display selectedYear
 		yearInput.value = selectedYear;
 
 		if (allRecords.length > 1) {
