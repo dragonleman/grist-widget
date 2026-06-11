@@ -216,7 +216,7 @@
 
 <script>
 	const selectAll = document.getElementById('selectAll');
-	const yearInput = document.getElementById("yearInput");
+	//const yearInput = document.getElementById("yearInput");
 
 	let allRecords = [];
 	let selectedYear = new Date().getFullYear().toString();
@@ -479,7 +479,7 @@
 		await grist.docApi.applyUserActions(actions);
 	});
 	
-	yearInput.addEventListener("input", (e) => {
+	document.getElementById("yearInput").addEventListener("input", (e) => {
 
 		alert("Couou");
 
