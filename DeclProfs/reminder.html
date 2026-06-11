@@ -450,11 +450,6 @@
 		.getElementById('searchInput')
 		.addEventListener('input', applyFilters);
 
-	// Status filter
-	document
-		.getElementById('statusFilter')
-		.addEventListener('change', applyFilters);
-
 	// Select all
 	selectAll.addEventListener('change', async () => {
 		const checked = selectAll.checked;
@@ -485,8 +480,8 @@
 
 		const year = e.target.value.trim();
 
-		if (Number.isInteger(year) && year.toString().length === 4) {
-			selectedYear = String(year);
+		if (/^\d{4}$/.test(year)) {
+			selectedYear = year;
 			applyFilters();
 		}
 	});
