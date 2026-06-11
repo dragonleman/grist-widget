@@ -237,6 +237,37 @@
 		}
 	}
 
+	function computeYearStats(records) {
+		const stats = {
+			totalAll: 0,
+			totalSubmitted: 0,
+			totalValid: 0,
+			totalMissing: 0
+		};
+
+		for (const rec of records) {
+			const statusMap = parseStatusByYear(rec.StatusByYear);
+
+			if (!selectedYear || !(selectedYear in statusMap)) continue;
+
+			const yearData = statusMap[selectedYear];
+			if (!yearData) continue;
+
+			stats.totalAll++;
+
+			if (yearData.totalActivities === 0) {
+				stats.totalMissing++;
+			} else {
+				stats.totalSubmitted++;
+				if (yearData.totalActivities === yearData.totalValid) {
+					stats.totalValid++;
+				}
+			}
+		}
+
+		return stats;
+	}
+
 	function renderTable(records) {
 
 		const tbody = document.querySelector('#table_alt tbody');
@@ -254,11 +285,6 @@
 			return;
 		}
 
-		let totalAll = 0;			// number of users
-		let totalSubmitted = 0;		// number of users have submitted activity (valid, wrong, drafts)
-		let totalValid = 0;			// number of users have valid activities 
-		let totalMissing = 0;		// number of users that have not yet submitted activities
-
 		for (const rec of records) {
 
 			const statusMap = parseStatusByYear(rec.StatusByYear);
@@ -273,18 +299,6 @@
 
 			if (selectedYear) {
 				status = (statusMap[selectedYear].totalActivities === statusMap[selectedYear].totalValid) && (statusMap[selectedYear].totalActivities > 0) ? "✅" : "❌";
-
-				totalAll++;
-
-				if (statusMap[selectedYear].totalActivities === 0) {
-					totalMissing++;
-				} else {
-					totalSubmitted++
-					if (status === "✅") {
-						totalValid++;
-					} 
-				}
-
 			} else {
 				status = "";
 			}
@@ -334,10 +348,12 @@
 			row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
 		}
 
-		document.getElementById("totalAll").textContent = totalAll;
-		document.getElementById("totalSubmitted").textContent = totalSubmitted;
-		document.getElementById("totalWrong").textContent = totalSubmitted - totalValid;
-		document.getElementById("totalMissings").textContent = totalMissing;
+		const stats = computeYearStats(allRecords);
+
+		document.getElementById("totalAll").textContent = stats.totalAll;
+		document.getElementById("totalSubmitted").textContent = stats.totalSubmitted;
+		document.getElementById("totalWrong").textContent = stats.totalSubmitted - stats.totalValid;
+		document.getElementById("totalMissings").textContent = stats.totalMissing;
 	}
 
 
