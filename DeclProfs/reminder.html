@@ -142,6 +142,10 @@
             font-weight: 700;
         }
 
+		.d-none {
+			display: none;
+		}
+
         .filters-row {
             gap: 12px;
         }
@@ -237,7 +241,7 @@
     </div>
 
     <!-- STATS -->
-    <div id="statsDiv" class="stats-grid mb-4" style="display: none">
+    <div id="statsDiv" class="stats-grid mb-4 d-none">
 
         <div class="stats-card stat-box">
             <div class="stat-title">
@@ -489,7 +493,7 @@
 			document.getElementById('searchDiv').style.display = 'block';
 			document.getElementById('statusDiv').style.display = 'block';
 			document.getElementById('sendDiv').style.display = 'block';
-			document.getElementById('statsDiv').style.display = 'block';
+			document.getElementById('statsDiv').classList.remove('d-none');
 			document.getElementById('reminderCheckbox').style.display = 'table-cell';
 			isAdmin = true;
 		}
