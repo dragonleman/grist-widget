@@ -337,8 +337,7 @@
 					input.value = rec[fieldName] || "";
 					input.readOnly = isReadOnly;
 
-					//input.addEventListener('blur', async () => {
-					input.addEventListener('change', async () => {
+					input.addEventListener('blur', async () => {
 
 						if (input.value === rec[fieldName]) return;
 
@@ -399,8 +398,7 @@
 								rec.ErrorDate;
 						}
 
-						//input.addEventListener('blur', async () => {
-						input.addEventListener('change', async () => {	
+						input.addEventListener('blur', async () => {	
 
 							if (input.value === rec[cfg.key]) return;
 
@@ -501,11 +499,11 @@
 
 			alert("Coucou");
 
-			// if (!initialized) {
-			// 	alert("Coucou2");
-			// 	applyFilters();
-			// 	initialized = true;
-			// }
+			if (!initialized) {
+				alert("Coucou2");
+				applyFilters();
+				initialized = true;
+			}
 		});
 
 		searchInput.addEventListener("input", () => {
