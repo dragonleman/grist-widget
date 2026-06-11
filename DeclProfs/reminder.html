@@ -118,7 +118,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        .stats-grid {
+        /* .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
@@ -140,7 +140,37 @@
         .stat-value {
             font-size: 28px;
             font-weight: 700;
-        }
+        } */
+
+
+
+
+
+
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+			gap: 20px;
+		}
+
+		.stats-grid-small {
+			padding-left: 40px;
+		}
+
+		.filter-card {
+			cursor: pointer;
+			transition: all .2s ease;
+		}
+
+		.filter-card:hover {
+			transform: translateY(-2px);
+		}
+
+		.filter-card.active {
+			border: 2px solid #ff0000;
+		}
+
+
 
 		.d-none {
 			display: none;
@@ -274,6 +304,81 @@
         </div>
 
     </div>
+
+	<!-- FILTERS / STATS -->
+	<div id="statsDiv" class="mb-4 d-none">
+
+		<!-- Niveau 1 -->
+		<div class="stats-grid">
+
+			<div class="stats-card filter-card active"
+				data-filter="all">
+				<div class="stat-title">
+					All
+				</div>
+
+				<div class="stat-value" id="totalAll">
+					0
+				</div>
+			</div>
+
+		</div>
+
+		<!-- Niveau 2 -->
+		<div class="stats-grid mt-3">
+
+			<div class="stats-card filter-card"
+				data-filter="submitted">
+				<div class="stat-title">
+					Submitted
+				</div>
+
+				<div class="stat-value" id="totalSubmitted">
+					0
+				</div>
+			</div>
+
+			<div class="stats-card filter-card"
+				data-filter="missing">
+				<div class="stat-title">
+					Missing
+				</div>
+
+				<div class="stat-value" id="totalMissings">
+					0
+				</div>
+			</div>
+
+		</div>
+
+		<!-- Niveau 3 -->
+		<div class="stats-grid mt-3 stats-grid-small">
+
+			<div class="stats-card filter-card"
+				data-filter="well">
+				<div class="stat-title">
+					Well
+				</div>
+
+				<div class="stat-value" id="totalWell">
+					0
+				</div>
+			</div>
+
+			<div class="stats-card filter-card"
+				data-filter="wrong">
+				<div class="stat-title">
+					Wrong
+				</div>
+
+				<div class="stat-value" id="totalWrong">
+					0
+				</div>
+			</div>
+
+		</div>
+
+	</div>
 
     <!-- TABLE -->
     <div class="table-card">
@@ -499,6 +604,22 @@
 		}
 
 		applyFilters();
+	});
+
+	// Filter all
+	document.querySelectorAll('.filter-card').forEach(card => {
+		card.addEventListener('click', () => {
+
+			document
+				.querySelectorAll('.filter-card')
+				.forEach(c => c.classList.remove('active'));
+
+			card.classList.add('active');
+
+			const filter = card.dataset.filter;
+
+			filterTable(filter);
+		});
 	});
 
 	// Search filter
