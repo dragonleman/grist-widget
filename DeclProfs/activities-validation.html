@@ -8,7 +8,7 @@
 	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
 
 	<style>
-		.draft-list {
+		/* .draft-list {
 			list-style: none;
 			padding: 0;
 			margin: 0;
@@ -21,6 +21,33 @@
 			margin-bottom: 12px;
 			background: #fafafa;
 			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+		} */
+
+		.draft-card {
+			background: #fff;
+			border: 1px solid #e5e7eb;
+			border-radius: 10px;
+			padding: 16px;
+			margin-bottom: 16px;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+		}
+
+		.draft-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 12px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.draft-meta {
+			font-size: 12px;
+			color: #6c757d;
+		}
+
+		.draft-form .form-group {
+			margin-bottom: 12px;
 		}
 	</style>
 </head>
@@ -85,20 +112,23 @@
 					<use xlink:href="#user"></use>
 				</svg>
 			</div>
-
-			<!-- ADD BUTTON -->
-			<button id="addBtn" class="btn btn-secondary btn-sm">
-				<svg class="icon" aria-hidden="true">
-					<use xlink:href="#plus"></use>
-				</svg>
-				Add new activity
-			</button>
-
 		</div>
 
 		<!-- LIST CONTAINER -->
 		<div class="card p-3 mb-3">
+
+			<!-- LIST DRAFTS -->
 			<ul id="draftList" class="draft-list"></ul>
+
+			<!-- ADD BUTTON -->
+			<div class="text-center mt-3">
+				<button id="addBtn" class="btn btn-secondary btn-sm">
+					<svg class="icon" aria-hidden="true">
+						<use xlink:href="#plus"></use>
+					</svg>
+					Add new activity
+				</button>
+			</div>
 		</div>
 
 		<!-- INFO + VALIDATION FOOTER -->
@@ -182,283 +212,570 @@
 			validateBtn.disabled = !allValid;
 		}
 
+		// function renderDrafts(drafts) {
+		// 	draftList.innerHTML = "";
+
+		// 	if (!drafts.length) {
+		// 		draftList.innerHTML = "<li>No drafts</li>";
+		// 		checkDraftsValidity();
+		// 		return;
+		// 	}
+
+		// 	drafts.forEach(rec => {
+		// 		const card = document.createElement("li");
+		// 		card.className = "draft-card";
+
+		// 		const form = document.createElement("form");
+		// 		form.className = "draft-form";
+
+		// 		const field = ({ labelText, inputEl, id, helpText = '' }) => {
+		// 			const wrapper = document.createElement('div');
+		// 			wrapper.className = 'form-group';
+
+		// 			const label = document.createElement('label');
+		// 			label.setAttribute('for', id);
+		// 			label.textContent = labelText;
+
+		// 			inputEl.id = id;
+		// 			inputEl.name = id;
+		// 			inputEl.classList.add('form-control');
+
+		// 			wrapper.appendChild(label);
+		// 			wrapper.appendChild(inputEl);
+
+		// 			if (helpText) {
+		// 				const small = document.createElement('small');
+		// 				small.id = `${id}-help`;
+		// 				small.className = 'form-text text-muted';
+		// 				small.textContent = helpText;
+		// 				inputEl.setAttribute('aria-describedby', small.id);
+		// 				wrapper.appendChild(small);
+		// 			}
+
+		// 			return wrapper;
+		// 		};
+
+		// 		const is_read_only = rec.Access === "🛑" && !("Name" in rec);
+
+		// 		// Name (read-only)
+		// 		if ('Name' in rec) {
+		// 			const input = document.createElement('input');
+		// 			input.type = 'text';
+		// 			input.value = rec.Name || '';
+		// 			input.readOnly = true;
+
+		// 			form.appendChild(
+		// 				field({
+		// 					labelText: transColumns.Name,
+		// 					inputEl: input,
+		// 					id: `name-input-${rec.id}`
+		// 				})
+		// 			);
+		// 		}
+
+		// 		// Activity
+		// 		if ('Activity' in rec) {
+		// 			const input = document.createElement('input');
+		// 			input.type = 'text';
+		// 			input.value = rec.Activity || '';
+		// 			input.readOnly = is_read_only;
+
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Activity) {
+		// 					await grist.selectedTable.update({
+		// 						id: rec.id,
+		// 						fields: { Activity: input.value }
+		// 					});
+		// 				}
+		// 				checkDraftsValidity();
+		// 			});
+
+		// 			form.appendChild(
+		// 				field({
+		// 					labelText: transColumns.Activity,
+		// 					inputEl: input,
+		// 					id: `activity-input-${rec.id}`
+		// 				})
+		// 			);
+		// 		}
+
+		// 		// Principal
+		// 		if ('Principal' in rec) {
+		// 			const input = document.createElement('input');
+		// 			input.type = 'text';
+		// 			input.value = rec.Principal || '';
+		// 			input.readOnly = is_read_only;
+
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Principal) {
+		// 					await grist.selectedTable.update({
+		// 						id: rec.id,
+		// 						fields: { Principal: input.value }
+		// 					});
+		// 				}
+		// 				checkDraftsValidity();
+		// 			});
+
+		// 			form.appendChild(
+		// 				field({
+		// 					labelText: transColumns.Principal,
+		// 					inputEl: input,
+		// 					id: `principal-input-${rec.id}`
+		// 				})
+		// 			);
+		// 		}
+
+		// 		// Start_date + End_date
+		// 		if ('Start_date' in rec || 'End_date' in rec) {
+		// 			const row = document.createElement('div');
+		// 			row.className = 'row';
+
+		// 			if ('Start_date' in rec) {
+		// 				const col = document.createElement('div');
+		// 				col.className = 'col-6';
+
+		// 				const input = document.createElement('input');
+		// 				input.type = 'date';
+		// 				input.value = rec.Start_date || '';
+		// 				input.readOnly = is_read_only;
+
+		// 				input.addEventListener('blur', async () => {
+		// 					if (input.value !== rec.Start_date) {
+		// 						await grist.selectedTable.update({
+		// 							id: rec.id,
+		// 							fields: { Start_date: input.value }
+		// 						});
+		// 					}
+		// 					checkDraftsValidity();
+		// 				});
+
+		// 				col.appendChild(
+		// 					field({
+		// 						labelText: transColumns.Start_date,
+		// 						inputEl: input,
+		// 						id: `start-date-input-${rec.id}`
+		// 					})
+		// 				);
+
+		// 				row.appendChild(col);
+		// 			}
+
+		// 			if ('End_date' in rec) {
+		// 				const col = document.createElement('div');
+		// 				col.className = 'col-6';
+
+		// 				const input = document.createElement('input');
+		// 				input.type = 'date';
+		// 				input.value = rec.End_date || '';
+		// 				input.style.backgroundColor = rec.ErrorDate || '';
+		// 				input.readOnly = is_read_only;
+
+		// 				input.addEventListener('blur', async () => {
+		// 					if (input.value !== rec.End_date) {
+		// 						await grist.selectedTable.update({
+		// 							id: rec.id,
+		// 							fields: { End_date: input.value }
+		// 						});
+		// 					}
+		// 				});
+
+		// 				col.appendChild(
+		// 					field({
+		// 						labelText: transColumns.End_date,
+		// 						inputEl: input,
+		// 						id: `end-date-input-${rec.id}`
+		// 					})
+		// 				);
+
+		// 				row.appendChild(col);
+		// 			}
+
+		// 			form.appendChild(row);
+		// 		}
+
+		// 		// Comments
+		// 		if ('Comments' in rec) {
+		// 			const input = document.createElement('input');
+		// 			input.type = 'text';
+		// 			input.value = rec.Comments || '';
+		// 			input.readOnly = is_read_only;
+
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Comments) {
+		// 					await grist.selectedTable.update({
+		// 						id: rec.id,
+		// 						fields: { Comments: input.value }
+		// 					});
+		// 				}
+		// 			});
+
+		// 			form.appendChild(
+		// 				field({
+		// 					labelText: transColumns.Comments,
+		// 					inputEl: input,
+		// 					id: `comments-input-${rec.id}`
+		// 				})
+		// 			);
+		// 		}
+
+		// 		// Comments_admins
+		// 		if ('Comments_admins' in rec) {
+		// 			isByAPR = true;
+		// 			const input = document.createElement('input');
+		// 			input.type = 'text';
+		// 			input.value = rec.Comments_admins || '';
+		// 			input.readOnly = is_read_only;
+
+		// 			input.addEventListener('blur', async () => {
+		// 				if (input.value !== rec.Comments_admins) {
+		// 					await grist.selectedTable.update({
+		// 						id: rec.id,
+		// 						fields: { Comments_admins: input.value }
+		// 					});
+		// 				}
+		// 			});
+
+		// 			form.appendChild(
+		// 				field({
+		// 					labelText: transColumns.Comments_admins,
+		// 					inputEl: input,
+		// 					id: `comments-admins-input-${rec.id}`
+		// 				})
+		// 			);
+		// 		}
+
+		// 		// UpdatedAt (read-only)
+		// 		if ('UpdatedAt' in rec) {
+		// 			const input = document.createElement('input');
+		// 			input.type = 'date';
+		// 			input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
+		// 			input.readOnly = true;
+
+		// 			form.appendChild(
+		// 				field({
+		// 					labelText: transColumns.UpdatedAt,
+		// 					inputEl: input,
+		// 					id: `updated-at-input-${rec.id}`
+		// 				})
+		// 			);
+		// 		}
+
+		// 		const delBtn = document.createElement("button");
+		// 		delBtn.type = "button";
+		// 		delBtn.className = "btn btn-tertiary btn-sm";
+		// 		delBtn.innerHTML = `
+		// 			<svg class="icon" aria-hidden="true">
+		// 				<use xlink:href="#trash"></use>
+		// 			</svg>
+		// 			Delete
+		// 		`;
+		// 		delBtn.title = "Delete the draft";
+
+		// 		const recordId = rec.id;
+
+		// 		delBtn.addEventListener("click", async () => {
+		// 			const result = await Swal.fire({
+		// 				icon: "warning",
+		// 				title: "Delete draft?",
+		// 				text: "Are you sure you want to delete this draft?",
+		// 				showCancelButton: true,
+		// 				confirmButtonText: "Yes, delete it",
+		// 				cancelButtonText: "Cancel",
+		// 				confirmButtonColor: "#d33",
+		// 				cancelButtonColor: "#6c757d",
+		// 				reverseButtons: true
+		// 			});
+
+		// 			if (!result.isConfirmed) return;
+
+		// 			await grist.selectedTable.destroy([recordId]);
+
+		// 			await Swal.fire({
+		// 				icon: "success",
+		// 				title: "Deleted",
+		// 				timer: 1200,
+		// 				showConfirmButton: false
+		// 			});
+		// 		});
+
+		// 		form.appendChild(delBtn);
+		// 		card.appendChild(form);
+		// 		draftList.appendChild(card);
+		// 	});
+
+		// 	checkDraftsValidity();
+
+		// 	if (isByAPR) {
+		// 		document.getElementById('searchDiv').style.display = 'block';
+		// 	}
+		// }
+
 		function renderDrafts(drafts) {
 			draftList.innerHTML = "";
+			isByAPR = false;
 
 			if (!drafts.length) {
-				draftList.innerHTML = "<li>No drafts</li>";
+				draftList.innerHTML = `
+					<div class="alert alert-light">
+						No drafts found.
+					</div>
+				`;
 				checkDraftsValidity();
 				return;
 			}
 
 			drafts.forEach(rec => {
+
 				const card = document.createElement("li");
 				card.className = "draft-card";
+
+				const isReadOnly =
+					rec.Access === "🛑" &&
+					!("Name" in rec);
+
+				// =====================================================
+				// HEADER
+				// =====================================================
+
+				const header = document.createElement("div");
+				header.className = "draft-header";
+
+				const title = document.createElement("div");
+
+				title.innerHTML = `
+					<strong>${rec.Activity || "New activity"}</strong>
+					${rec.Status === "draft" ? " 📝" : ""}
+				`;
+
+				const meta = document.createElement("div");
+				meta.className = "draft-meta";
+
+				if (rec.UpdatedAt) {
+					meta.textContent =
+						"Updated " +
+						new Date(rec.UpdatedAt)
+							.toLocaleDateString("fr-CH");
+				}
+
+				header.appendChild(title);
+				header.appendChild(meta);
+
+				card.appendChild(header);
+
+				// =====================================================
+				// FORM
+				// =====================================================
 
 				const form = document.createElement("form");
 				form.className = "draft-form";
 
-				const field = ({ labelText, inputEl, id, helpText = '' }) => {
-					const wrapper = document.createElement('div');
-					wrapper.className = 'form-group';
+				const field = ({
+					labelText,
+					inputEl,
+					id,
+					helpText = ''
+				}) => {
 
-					const label = document.createElement('label');
-					label.setAttribute('for', id);
+					const wrapper = document.createElement("div");
+					wrapper.className = "form-group";
+
+					const label = document.createElement("label");
 					label.textContent = labelText;
+					label.setAttribute("for", id);
 
 					inputEl.id = id;
-					inputEl.name = id;
-					inputEl.classList.add('form-control');
+					inputEl.classList.add("form-control");
 
 					wrapper.appendChild(label);
 					wrapper.appendChild(inputEl);
 
 					if (helpText) {
-						const small = document.createElement('small');
-						small.id = `${id}-help`;
-						small.className = 'form-text text-muted';
+						const small = document.createElement("small");
+						small.className = "form-text text-muted";
 						small.textContent = helpText;
-						inputEl.setAttribute('aria-describedby', small.id);
 						wrapper.appendChild(small);
 					}
 
 					return wrapper;
 				};
 
-				const is_read_only = rec.Access === "🛑" && !("Name" in rec);
+				// =====================================================
+				// NAME
+				// =====================================================
 
-				// Name (read-only)
-				if ('Name' in rec) {
-					const input = document.createElement('input');
-					input.type = 'text';
-					input.value = rec.Name || '';
+				if ("Name" in rec) {
+
+					isByAPR = true;
+
+					const input = document.createElement("input");
+
+					input.type = "text";
+					input.value = rec.Name || "";
 					input.readOnly = true;
 
 					form.appendChild(
 						field({
 							labelText: transColumns.Name,
 							inputEl: input,
-							id: `name-input-${rec.id}`
+							id: `name-${rec.id}`
 						})
 					);
 				}
 
-				// Activity
-				if ('Activity' in rec) {
-					const input = document.createElement('input');
-					input.type = 'text';
-					input.value = rec.Activity || '';
-					input.readOnly = is_read_only;
+				// =====================================================
+				// SIMPLE INPUTS
+				// =====================================================
 
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Activity) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { Activity: input.value }
-							});
-						}
-						checkDraftsValidity();
-					});
+				const textFields = [
+					"Activity",
+					"Principal",
+					"Comments",
+					"Comments_admins"
+				];
 
-					form.appendChild(
-						field({
-							labelText: transColumns.Activity,
-							inputEl: input,
-							id: `activity-input-${rec.id}`
-						})
-					);
-				}
+				textFields.forEach(fieldName => {
 
-				// Principal
-				if ('Principal' in rec) {
-					const input = document.createElement('input');
-					input.type = 'text';
-					input.value = rec.Principal || '';
-					input.readOnly = is_read_only;
+					if (!(fieldName in rec)) return;
 
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Principal) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { Principal: input.value }
-							});
-						}
-						checkDraftsValidity();
-					});
+					const input = document.createElement("input");
 
-					form.appendChild(
-						field({
-							labelText: transColumns.Principal,
-							inputEl: input,
-							id: `principal-input-${rec.id}`
-						})
-					);
-				}
+					input.type = "text";
+					input.value = rec[fieldName] || "";
+					input.readOnly = isReadOnly;
 
-				// Start_date + End_date
-				if ('Start_date' in rec || 'End_date' in rec) {
-					const row = document.createElement('div');
-					row.className = 'row';
+					input.addEventListener("blur", async () => {
 
-					if ('Start_date' in rec) {
-						const col = document.createElement('div');
-						col.className = 'col-6';
+						if (input.value === rec[fieldName]) return;
 
-						const input = document.createElement('input');
-						input.type = 'date';
-						input.value = rec.Start_date || '';
-						input.readOnly = is_read_only;
-
-						input.addEventListener('blur', async () => {
-							if (input.value !== rec.Start_date) {
-								await grist.selectedTable.update({
-									id: rec.id,
-									fields: { Start_date: input.value }
-								});
+						await grist.selectedTable.update({
+							id: rec.id,
+							fields: {
+								[fieldName]: input.value
 							}
+						});
+
+						checkDraftsValidity();
+					});
+
+					form.appendChild(
+						field({
+							labelText: transColumns[fieldName],
+							inputEl: input,
+							id: `${fieldName}-${rec.id}`
+						})
+					);
+				});
+
+				// =====================================================
+				// DATES
+				// =====================================================
+
+				if ("Start_date" in rec || "End_date" in rec) {
+
+					const row = document.createElement("div");
+					row.className = "row";
+
+					[
+						{
+							key: "Start_date",
+							label: transColumns.Start_date
+						},
+						{
+							key: "End_date",
+							label: transColumns.End_date
+						}
+					].forEach(cfg => {
+
+						if (!(cfg.key in rec)) return;
+
+						const col = document.createElement("div");
+						col.className = "col-md-6";
+
+						const input = document.createElement("input");
+
+						input.type = "date";
+						input.value = rec[cfg.key] || "";
+						input.readOnly = isReadOnly;
+
+						if (
+							cfg.key === "End_date" &&
+							rec.ErrorDate
+						) {
+							input.style.backgroundColor =
+								rec.ErrorDate;
+						}
+
+						input.addEventListener("blur", async () => {
+
+							if (input.value === rec[cfg.key]) return;
+
+							await grist.selectedTable.update({
+								id: rec.id,
+								fields: {
+									[cfg.key]: input.value
+								}
+							});
+
 							checkDraftsValidity();
 						});
 
 						col.appendChild(
 							field({
-								labelText: transColumns.Start_date,
+								labelText: cfg.label,
 								inputEl: input,
-								id: `start-date-input-${rec.id}`
+								id: `${cfg.key}-${rec.id}`
 							})
 						);
 
 						row.appendChild(col);
-					}
-
-					if ('End_date' in rec) {
-						const col = document.createElement('div');
-						col.className = 'col-6';
-
-						const input = document.createElement('input');
-						input.type = 'date';
-						input.value = rec.End_date || '';
-						input.style.backgroundColor = rec.ErrorDate || '';
-						input.readOnly = is_read_only;
-
-						input.addEventListener('blur', async () => {
-							if (input.value !== rec.End_date) {
-								await grist.selectedTable.update({
-									id: rec.id,
-									fields: { End_date: input.value }
-								});
-							}
-						});
-
-						col.appendChild(
-							field({
-								labelText: transColumns.End_date,
-								inputEl: input,
-								id: `end-date-input-${rec.id}`
-							})
-						);
-
-						row.appendChild(col);
-					}
+					});
 
 					form.appendChild(row);
 				}
 
-				// Comments
-				if ('Comments' in rec) {
-					const input = document.createElement('input');
-					input.type = 'text';
-					input.value = rec.Comments || '';
-					input.readOnly = is_read_only;
+				card.appendChild(form);
 
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Comments) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { Comments: input.value }
-							});
-						}
-					});
+				// =====================================================
+				// FOOTER
+				// =====================================================
 
-					form.appendChild(
-						field({
-							labelText: transColumns.Comments,
-							inputEl: input,
-							id: `comments-input-${rec.id}`
-						})
-					);
-				}
-
-				// Comments_admins
-				if ('Comments_admins' in rec) {
-					isByAPR = true;
-					const input = document.createElement('input');
-					input.type = 'text';
-					input.value = rec.Comments_admins || '';
-					input.readOnly = is_read_only;
-
-					input.addEventListener('blur', async () => {
-						if (input.value !== rec.Comments_admins) {
-							await grist.selectedTable.update({
-								id: rec.id,
-								fields: { Comments_admins: input.value }
-							});
-						}
-					});
-
-					form.appendChild(
-						field({
-							labelText: transColumns.Comments_admins,
-							inputEl: input,
-							id: `comments-admins-input-${rec.id}`
-						})
-					);
-				}
-
-				// UpdatedAt (read-only)
-				if ('UpdatedAt' in rec) {
-					const input = document.createElement('input');
-					input.type = 'date';
-					input.value = rec.UpdatedAt ? new Date(rec.UpdatedAt).toISOString().substring(0, 10) : '';
-					input.readOnly = true;
-
-					form.appendChild(
-						field({
-							labelText: transColumns.UpdatedAt,
-							inputEl: input,
-							id: `updated-at-input-${rec.id}`
-						})
-					);
-				}
+				const footer = document.createElement("div");
+				footer.className =
+					"d-flex justify-content-end mt-3";
 
 				const delBtn = document.createElement("button");
+
 				delBtn.type = "button";
-				delBtn.className = "btn btn-tertiary btn-sm";
+				delBtn.className =
+					"btn btn-danger btn-sm";
+
 				delBtn.innerHTML = `
 					<svg class="icon" aria-hidden="true">
 						<use xlink:href="#trash"></use>
 					</svg>
 					Delete
 				`;
-				delBtn.title = "Delete the draft";
 
-				const recordId = rec.id;
+				delBtn.disabled = isReadOnly;
+
+				if (isReadOnly) {
+					delBtn.style.opacity = "0.4";
+				}
 
 				delBtn.addEventListener("click", async () => {
+
 					const result = await Swal.fire({
 						icon: "warning",
 						title: "Delete draft?",
-						text: "Are you sure you want to delete this draft?",
+						text: "Are you sure?",
 						showCancelButton: true,
-						confirmButtonText: "Yes, delete it",
-						cancelButtonText: "Cancel",
-						confirmButtonColor: "#d33",
-						cancelButtonColor: "#6c757d",
-						reverseButtons: true
+						confirmButtonText: "Delete",
+						cancelButtonText: "Cancel"
 					});
 
 					if (!result.isConfirmed) return;
 
-					await grist.selectedTable.destroy([recordId]);
+					await grist.selectedTable.destroy([rec.id]);
 
 					await Swal.fire({
 						icon: "success",
@@ -468,17 +785,18 @@
 					});
 				});
 
-				form.appendChild(delBtn);
-				card.appendChild(form);
+				footer.appendChild(delBtn);
+				card.appendChild(footer);
+
 				draftList.appendChild(card);
 			});
 
 			checkDraftsValidity();
 
-			if (isByAPR) {
-				document.getElementById('searchDiv').style.display = 'block';
-			}
+			document.getElementById("searchDiv").style.display =
+				isByAPR ? "block" : "none";
 		}
+
 
 		function applyFilters() {
 			renderDrafts(getFilteredDrafts());
