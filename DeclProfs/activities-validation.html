@@ -8,21 +8,6 @@
 	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
 
 	<style>
-		/* .draft-list {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-		}
-
-		.draft-card {
-			border: 1px solid #ddd;
-			border-radius: 6px;
-			padding: 12px;
-			margin-bottom: 12px;
-			background: #fafafa;
-			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-		} */
-
 		.draft-card {
 			background: #fff;
 			border: 1px solid #e5e7eb;
@@ -68,41 +53,6 @@
 	<div class="breadcrumb-container pb-0 mb-0">
 		<nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
 	</div>
-  
-  	<!-- <div class="main-container m-4">
-		<div id="searchDiv" style="position: relative; max-width: 300px; display: none;">
-			<input type="text" id="searchInput" placeholder="Search someone..." style="padding-left: 30px; box-sizing: border-box;">
-			<svg class="icon" aria-hidden="true" 
-				style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none;">
-				<use xlink:href="#user"></use>
-			</svg>
-		</div>
-
-		<div>
-			<ul id="draftList"></ul>
-		</div>
-
-		<div class="toolbar">
-			<button id="addBtn" class="btn btn-secondary btn-sm mb-3">
-				<svg class="icon" aria-hidden="true">
-					<use xlink:href="#plus"></use>
-				</svg>
-				Add new activity
-			</button>
-			<div class="alert alert-info alert-dismissible fade show" role="alert">
-				<p>With my submission, I certify that this list of activities is complete and accurate and declare not to have devoted to them more than the equivalent of 1 day per week for a full time position.</p>
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<button id="validateBtn" class="btn btn-success btn-sm">
-				<svg class="icon" aria-hidden="true">
-					<use xlink:href="#check"></use>
-				</svg>				
-				Validate
-			</button>
-		</div>
-	</div> -->
 
 	<div class="main-container m-4">
 
@@ -228,17 +178,17 @@
 		function updateCardHeader(rec, titleEl) {
 			const valid = isDraftValid(rec);
 
-			titleEl.innerHTML = `
-				<strong>${rec.Activity || "New activity"}</strong>
-				<span class="badge badge-${valid ? 'success' : 'danger'} ml-2">
-					${valid ? 'Complete' : 'Incomplete'}
-				</span>
-			`;
-			
 			// titleEl.innerHTML = `
 			// 	<strong>${rec.Activity || "New activity"}</strong>
-			// 	${isDraftValid(rec) ? '✅' : '❌'}
+			// 	<span class="badge badge-${valid ? 'success' : 'danger'} ml-2">
+			// 		${valid ? 'Complete' : 'Incomplete'}
+			// 	</span>
 			// `;
+			
+			titleEl.innerHTML = `
+				<strong>${rec.Activity || "New activity"}</strong>
+				${isDraftValid(rec) ? '✅' : '❌'}
+			`;
 		}
 
 		async function saveField(rec, field, value, titleEl) {
