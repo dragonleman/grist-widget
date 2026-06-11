@@ -89,8 +89,6 @@
 		</div>
 	</div> -->
 
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -239,7 +237,7 @@
     </div>
 
     <!-- STATS -->
-    <div class="stats-grid mb-4">
+    <div id="statsDiv" class="stats-grid mb-4" style="display: none">
 
         <div class="stats-card stat-box">
             <div class="stat-title">
@@ -307,302 +305,300 @@
 
 </div>
 
-</body>
-</html>
-```
 
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+	const selectAll = document.getElementById('selectAll');
+	const yearFilter = document.getElementById("yearFilter");
 
-	<script>
-		const selectAll = document.getElementById('selectAll');
-		const yearFilter = document.getElementById("yearFilter");
+	let allRecords = [];
+	let selectedYear = new Date().getFullYear().toString();
+	let isAdmin = false;
 
-		let allRecords = [];
-		let selectedYear = new Date().getFullYear().toString();
-		let isAdmin = false;
+	window.grist.ready({ requiredAccess: 'full' });
 
-		window.grist.ready({ requiredAccess: 'full' });
+	function parseStatusByYear(str) {
+		try {
+			return JSON.parse(str || "{}");
+		} catch (e) {
+			console.error("Invalid StatusByYear JSON:", str);
+			return {};
+		}
+	}
 
-		function parseStatusByYear(str) {
-			try {
-				return JSON.parse(str || "{}");
-			} catch (e) {
-				console.error("Invalid StatusByYear JSON:", str);
-				return {};
-			}
+	function renderTable(records) {
+
+		const tbody = document.querySelector('#table_alt tbody');
+		tbody.innerHTML = '';
+
+		if (!records || records.length === 0) {
+
+			const row = tbody.insertRow();
+			const cell = row.insertCell();
+
+			cell.colSpan = 8;
+			cell.textContent = 'No data found.';
+			cell.style.textAlign = 'center';
+
+			return;
 		}
 
-		function renderTable(records) {
+		let totalSubmitted = 0;		// number of users have submitted activity (valid, wrong, drafts)
+		let totalValid = 0;			// number of users have valid activities 
+		let totalMissing = 0;		// number of users that have not yet submitted activities
 
-			const tbody = document.querySelector('#table_alt tbody');
-			tbody.innerHTML = '';
+		for (const rec of records) {
 
-			if (!records || records.length === 0) {
+			const statusMap = parseStatusByYear(rec.StatusByYear);
 
-				const row = tbody.insertRow();
-				const cell = row.insertCell();
+			// Ignore empty records of selected year
+			if (selectedYear && !(selectedYear in statusMap)) {
+				continue;
+			}
 
-				cell.colSpan = 8;
-				cell.textContent = 'No data found.';
-				cell.style.textAlign = 'center';
+			// Status
+			let status;
 
+			if (selectedYear) {
+				status = (statusMap[selectedYear].totalActivities === statusMap[selectedYear].totalValid) && (statusMap[selectedYear].totalActivities > 0) ? "✅" : "❌";
+
+				if (statusMap[selectedYear].totalActivities === 0) {
+					totalMissing++;
+				} else {
+					totalSubmitted++
+					if (status === "✅") {
+						totalValid++;
+					} 
+				}
+
+			} else {
+				status = "";
+			}
+
+			const row = tbody.insertRow();
+
+			// SelectReminder
+			if (isAdmin) {
+				const checkboxCell = row.insertCell();
+				const checkboxInput = document.createElement('input');
+				checkboxInput.type = 'checkbox';
+				checkboxInput.classList.add('row-checkbox');
+				checkboxInput.checked = !!rec.SelectReminder;
+				checkboxInput.addEventListener('change', async () => {
+					if (checkboxInput.checked !== rec.SelectReminder) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { SelectReminder: checkboxInput.checked }
+						});
+					}
+				});
+				checkboxCell.appendChild(checkboxInput);
+			}
+
+			// Name
+			row.insertCell().textContent = rec.Name || '';
+
+			// Username
+			row.insertCell().textContent = rec.Username || '';
+
+			// Email
+			row.insertCell().textContent = rec.Email || '';
+
+			// Sciper
+			row.insertCell().textContent = rec.UserId || '';
+
+			// Unit
+			row.insertCell().textContent = rec.Unit || '';
+
+			// Status
+			row.insertCell().textContent = status;
+
+			// Sent Reminder At
+			row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
+
+			// Updated At
+			row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
+		}
+
+		document.getElementById("totalSubmitted").textContent = totalSubmitted;
+		document.getElementById("totalWrong").textContent = totalSubmitted - totalValid;
+		document.getElementById("totalMissings").textContent = totalMissing;
+	}
+
+	function getFiltered() {
+		const searchValue = document.getElementById('searchInput').value.toLowerCase();
+
+		const statusValue = document.getElementById('statusFilter').value;
+
+		return allRecords.filter(rec => {
+
+			const matchesSearch = (rec.Name || '').toLowerCase().includes(searchValue);
+
+			const statusMap = parseStatusByYear(rec.StatusByYear);
+
+			if (selectedYear && !(selectedYear in statusMap)) {
+				return false;
+			}
+
+			const displayStatus = statusMap[selectedYear] ? "✅" : "❌";
+
+			const matchesStatus =
+				statusValue === 'All' ||
+				displayStatus === statusValue;
+
+			return matchesSearch && matchesStatus;
+		});
+	}
+
+	function applyFilters() {
+		renderTable(getFiltered());
+	}
+
+	window.grist.onRecords((records) => {
+		allRecords = records || [];
+
+		const years = new Set();
+
+		for (const rec of allRecords) {
+			const statusMap = parseStatusByYear(rec.StatusByYear);
+			Object.keys(statusMap || {}).forEach(year => {
+				years.add(year);
+			});
+		}
+
+		const currentYear = new Date().getFullYear().toString();
+		years.add(currentYear);
+
+		const sortedYears = [...years].sort();
+
+		if (!sortedYears.includes(selectedYear)) {
+			selectedYear = currentYear;
+		}
+
+		yearFilter.innerHTML = sortedYears
+			.map(year => {
+				return `<option value="${year}" ${year === selectedYear ? "selected" : ""}>${year}</option>`;
+			})
+			.join("");
+
+		yearFilter.value = selectedYear;
+
+		if (allRecords.length > 1) {
+			document.getElementById('searchDiv').style.display = 'block';
+			document.getElementById('statusDiv').style.display = 'block';
+			document.getElementById('sendDiv').style.display = 'block';
+			document.getElementById('statsDiv').style.display = 'block';
+			document.getElementById('reminderCheckbox').style.display = 'table-cell';
+			isAdmin = true;
+		}
+
+		applyFilters();
+	});
+
+	// Search filter
+	document
+		.getElementById('searchInput')
+		.addEventListener('input', applyFilters);
+
+	// Status filter
+	document
+		.getElementById('statusFilter')
+		.addEventListener('change', applyFilters);
+
+	// Select all
+	selectAll.addEventListener('change', async () => {
+		const checked = selectAll.checked;
+
+		// Update visuel immédiat
+		document.querySelectorAll('.row-checkbox').forEach(cb => {
+			cb.checked = checked;
+		});
+
+		const filtered = getFiltered();
+
+		// Update Grist
+		const actions = filtered.map(rec => [
+			"UpdateRecord",
+			"Users",
+			rec.id,
+			{
+				SelectReminder: checked
+			}
+		]);
+
+		await grist.docApi.applyUserActions(actions);
+	});
+	
+	yearFilter.addEventListener("change", (e) => {
+		selectedYear = e.target.value;
+		applyFilters();
+	});
+
+	// Send reminder
+	document
+		.getElementById('sendReminderBtn')
+		.addEventListener('click', async () => {
+
+			// Premier record avec SelectReminder = true
+			const firstSelected = allRecords.find(
+				rec => rec.SelectReminder === true
+			);
+
+			if (!firstSelected) {
+				await Swal.fire({
+					icon: "info",
+					title: "No professors selected",
+					text: "Please select at least one professor.",
+					confirmButtonText: "OK"
+				});
 				return;
 			}
 
-			let totalSubmitted = 0;		// number of users have submitted activity (valid, wrong, drafts)
-			let totalValid = 0;			// number of users have valid activities 
-			let totalMissing = 0;		// number of users that have not yet submitted activities
+			const result = await Swal.fire({
+				icon: "question",
+				title: "Send reminders?",
+				text: "Are you sure you want to send reminders to selected professors?",
+				showCancelButton: true,
+				confirmButtonText: "Yes, send reminders",
+				cancelButtonText: "Cancel",
+				confirmButtonColor: "#3085d6"
+			});
 
-			for (const rec of records) {
+			if (!result.isConfirmed) return;
 
-				const statusMap = parseStatusByYear(rec.StatusByYear);
-
-				// Ignore empty records of selected year
-				if (selectedYear && !(selectedYear in statusMap)) {
-					continue;
-				}
-
-				// Status
-				let status;
-
-				if (selectedYear) {
-					status = (statusMap[selectedYear].totalActivities === statusMap[selectedYear].totalValid) && (statusMap[selectedYear].totalActivities > 0) ? "✅" : "❌";
-
-					if (statusMap[selectedYear].totalActivities === 0) {
-						totalMissing++;
-					} else {
-						totalSubmitted++
-						if (status === "✅") {
-							totalValid++;
-						} 
+			try {
+				await window.grist.selectedTable.update({
+					id: firstSelected.id,
+					fields: {
+						SelectedYear: selectedYear,
+						ValidateBtn: true
 					}
-
-				} else {
-					status = "";
-				}
-
-				const row = tbody.insertRow();
-
-				// SelectReminder
-				if (isAdmin) {
-					const checkboxCell = row.insertCell();
-					const checkboxInput = document.createElement('input');
-					checkboxInput.type = 'checkbox';
-					checkboxInput.classList.add('row-checkbox');
-					checkboxInput.checked = !!rec.SelectReminder;
-					checkboxInput.addEventListener('change', async () => {
-						if (checkboxInput.checked !== rec.SelectReminder) {
-							await window.grist.selectedTable.update({
-								id: rec.id,
-								fields: { SelectReminder: checkboxInput.checked }
-							});
-						}
-					});
-					checkboxCell.appendChild(checkboxInput);
-				}
-
-				// Name
-				row.insertCell().textContent = rec.Name || '';
-
-				// Username
-				row.insertCell().textContent = rec.Username || '';
-
-				// Email
-				row.insertCell().textContent = rec.Email || '';
-
-				// Sciper
-				row.insertCell().textContent = rec.UserId || '';
-
-				// Unit
-				row.insertCell().textContent = rec.Unit || '';
-
-				// Status
-				row.insertCell().textContent = status;
-
-				// Sent Reminder At
-				row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
-
-				// Updated At
-				row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
-			}
-
-			document.getElementById("totalSubmitted").textContent = totalSubmitted;
-			document.getElementById("totalWrong").textContent = totalSubmitted - totalValid;
-			document.getElementById("totalMissings").textContent = totalMissing;
-		}
-
-		function getFiltered() {
-			const searchValue = document.getElementById('searchInput').value.toLowerCase();
-
-			const statusValue = document.getElementById('statusFilter').value;
-
-			return allRecords.filter(rec => {
-
-				const matchesSearch = (rec.Name || '').toLowerCase().includes(searchValue);
-
-				const statusMap = parseStatusByYear(rec.StatusByYear);
-
-				if (selectedYear && !(selectedYear in statusMap)) {
-					return false;
-				}
-
-				const displayStatus = statusMap[selectedYear] ? "✅" : "❌";
-
-				const matchesStatus =
-					statusValue === 'All' ||
-					displayStatus === statusValue;
-
-				return matchesSearch && matchesStatus;
-			});
-		}
-
-		function applyFilters() {
-			renderTable(getFiltered());
-		}
-
-		window.grist.onRecords((records) => {
-			allRecords = records || [];
-
-			const years = new Set();
-
-			for (const rec of allRecords) {
-				const statusMap = parseStatusByYear(rec.StatusByYear);
-				Object.keys(statusMap || {}).forEach(year => {
-					years.add(year);
+				});
+				await Swal.fire({
+					icon: "success",
+					title: "Send reminders",
+					text: "Reminder emails are being sent.",
+					timer: 1500,
+					showConfirmButton: false
+				});
+			} catch (err) {
+				console.error(err);
+				await Swal.fire({
+					icon: "error",
+					title: "Error",
+					text: "Error triggering workflow."
 				});
 			}
-
-			const currentYear = new Date().getFullYear().toString();
-			years.add(currentYear);
-
-			const sortedYears = [...years].sort();
-
-			if (!sortedYears.includes(selectedYear)) {
-				selectedYear = currentYear;
-			}
-
-			yearFilter.innerHTML = sortedYears
-				.map(year => {
-					return `<option value="${year}" ${year === selectedYear ? "selected" : ""}>${year}</option>`;
-				})
-				.join("");
-
-			yearFilter.value = selectedYear;
-
-			if (allRecords.length > 1) {
-				document.getElementById('searchDiv').style.display = 'block';
-				document.getElementById('statusDiv').style.display = 'block';
-				document.getElementById('sendDiv').style.display = 'block';
-				document.getElementById('reminderCheckbox').style.display = 'table-cell';
-				isAdmin = true;
-			}
-
-			applyFilters();
 		});
+</script>
 
-		// Search filter
-		document
-			.getElementById('searchInput')
-			.addEventListener('input', applyFilters);
+<script>
+	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+	featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+</script>
 
-		// Status filter
-		document
-			.getElementById('statusFilter')
-			.addEventListener('change', applyFilters);
-
-		// Select all
-		selectAll.addEventListener('change', async () => {
-			const checked = selectAll.checked;
-
-			// Update visuel immédiat
-			document.querySelectorAll('.row-checkbox').forEach(cb => {
-				cb.checked = checked;
-			});
-
-			const filtered = getFiltered();
-
-			// Update Grist
-			const actions = filtered.map(rec => [
-				"UpdateRecord",
-				"Users",
-				rec.id,
-				{
-					SelectReminder: checked
-				}
-			]);
-
-			await grist.docApi.applyUserActions(actions);
-		});
-		
-		yearFilter.addEventListener("change", (e) => {
-			selectedYear = e.target.value;
-			applyFilters();
-		});
-
-		// Send reminder
-		document
-			.getElementById('sendReminderBtn')
-			.addEventListener('click', async () => {
-
-				// Premier record avec SelectReminder = true
-				const firstSelected = allRecords.find(
-					rec => rec.SelectReminder === true
-				);
-
-				if (!firstSelected) {
-					await Swal.fire({
-						icon: "info",
-						title: "No professors selected",
-						text: "Please select at least one professor.",
-						confirmButtonText: "OK"
-					});
-					return;
-				}
-
-				const result = await Swal.fire({
-					icon: "question",
-					title: "Send reminders?",
-					text: "Are you sure you want to send reminders to selected professors?",
-					showCancelButton: true,
-					confirmButtonText: "Yes, send reminders",
-					cancelButtonText: "Cancel",
-					confirmButtonColor: "#3085d6"
-				});
-
-				if (!result.isConfirmed) return;
-
-				try {
-					await window.grist.selectedTable.update({
-						id: firstSelected.id,
-						fields: {
-							SelectedYear: selectedYear,
-							ValidateBtn: true
-						}
-					});
-					await Swal.fire({
-						icon: "success",
-						title: "Send reminders",
-						text: "Reminder emails are being sent.",
-						timer: 1500,
-						showConfirmButton: false
-					});
-				} catch (err) {
-					console.error(err);
-					await Swal.fire({
-						icon: "error",
-						title: "Error",
-						text: "Error triggering workflow."
-					});
-				}
-			});
-	</script>
-
-	<script>
-    	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
-    	featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
-  	</script>
 </body>
 </html>
 
