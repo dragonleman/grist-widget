@@ -481,10 +481,9 @@
 	
 	yearInput.addEventListener("input", (e) => {
 
-		const value = e.target.value.trim();
+		const year = e.target.value.trim();
 
-		if (
-			Number.isInteger(year) && year.toString().length === 4) {
+		if (Number.isInteger(year) && year.toString().length === 4) {
 			selectedYear = String(year);
 			applyFilters();
 		}
