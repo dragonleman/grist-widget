@@ -111,7 +111,7 @@
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	<script>
+	<!-- <script>
 		const addBtn = document.getElementById("addBtn");
 		const validateBtn = document.getElementById("validateBtn");
 		const draftList = document.getElementById("draftList");
@@ -596,7 +596,306 @@
 				showConfirmButton: false
 			});
 		});
-	</script>
+	</script> -->
+
+
+<script>
+const addBtn = document.getElementById("addBtn");
+const validateBtn = document.getElementById("validateBtn");
+const draftList = document.getElementById("draftList");
+const searchInput = document.getElementById("searchInput");
+
+const today = new Date().toISOString().slice(0, 10);
+
+// ========================
+// STATE
+// ========================
+let allRecords = [];
+let cardsById = new Map();
+let currentFilter = "";
+
+// ========================
+// INIT GRIST
+// ========================
+grist.ready({ requiredAccess: "full" });
+
+// ========================
+// FILTER
+// ========================
+searchInput.addEventListener("input", () => {
+  currentFilter = searchInput.value.trim().toLowerCase();
+  syncUI();
+});
+
+// ========================
+// VALIDATION
+// ========================
+function isDraftValid(rec) {
+  return !!(
+    rec.Activity?.trim() &&
+    rec.Principal?.trim() &&
+    rec.Start_date
+  );
+}
+
+function checkDraftsValidity() {
+  const drafts = allRecords.filter(r => r.Status === "draft");
+
+  const filtered = currentFilter
+    ? drafts.filter(r => (r.Name || "").toLowerCase().includes(currentFilter))
+    : drafts;
+
+  validateBtn.disabled = !filtered.length || !filtered.every(isDraftValid);
+}
+
+// ========================
+// HEADER UPDATE
+// ========================
+function updateCardHeader(rec, titleEl) {
+  const valid = isDraftValid(rec);
+
+  titleEl.innerHTML = `
+    <strong>${rec.Activity || "New activity"}</strong>
+    <span class="badge badge-${valid ? "success" : "danger"} ml-2">
+      ${valid ? "Complete" : "Incomplete"}
+    </span>
+  `;
+}
+
+// ========================
+// CREATE CARD
+// ========================
+function createCard(rec) {
+  const card = document.createElement("li");
+  card.className = "draft-card";
+
+  const header = document.createElement("div");
+  header.className = "draft-header";
+
+  const title = document.createElement("div");
+  const meta = document.createElement("div");
+  meta.className = "draft-meta";
+
+  header.appendChild(title);
+  header.appendChild(meta);
+
+  const form = document.createElement("form");
+  form.className = "draft-form";
+
+  card._id = rec.id;
+  card._title = title;
+  card._meta = meta;
+
+  updateCardHeader(rec, title);
+
+  if (rec.UpdatedAt) {
+    meta.textContent =
+      "Updated " +
+      new Date(rec.UpdatedAt).toLocaleDateString("fr-CH");
+  }
+
+  buildForm(rec, form, title);
+
+  card.appendChild(header);
+  card.appendChild(form);
+
+  return card;
+}
+
+// ========================
+// FORM BUILDER
+// ========================
+function buildForm(rec, form, titleEl) {
+  const fields = ["Activity", "Principal", "Comments", "Comments_admins"];
+
+  fields.forEach(fieldName => {
+    if (!(fieldName in rec)) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "form-group";
+
+    const label = document.createElement("label");
+    label.textContent = fieldName;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "form-control";
+    input.value = rec[fieldName] || "";
+
+    input.addEventListener("change", async () => {
+      if (input.value === rec[fieldName]) return;
+
+      await grist.selectedTable.update({
+        id: rec.id,
+        fields: { [fieldName]: input.value }
+      });
+
+      rec[fieldName] = input.value;
+
+      updateCardHeader(rec, titleEl);
+      checkDraftsValidity();
+    });
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    form.appendChild(wrapper);
+  });
+
+  // DATE FIELDS
+  const dates = ["Start_date", "End_date"];
+
+  dates.forEach(key => {
+    if (!(key in rec)) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "form-group";
+
+    const label = document.createElement("label");
+    label.textContent = key;
+
+    const input = document.createElement("input");
+    input.type = "date";
+    input.className = "form-control";
+    input.value = rec[key] || "";
+
+    input.addEventListener("change", async () => {
+      if (input.value === rec[key]) return;
+
+      await grist.selectedTable.update({
+        id: rec.id,
+        fields: { [key]: input.value }
+      });
+
+      rec[key] = input.value;
+
+      checkDraftsValidity();
+    });
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    form.appendChild(wrapper);
+  });
+}
+
+// ========================
+// SYNC UI (NO FULL RE-RENDER)
+// ========================
+function syncUI() {
+  const drafts = allRecords.filter(r => r.Status === "draft");
+
+  const filtered = currentFilter
+    ? drafts.filter(r =>
+        (r.Name || "").toLowerCase().includes(currentFilter)
+      )
+    : drafts;
+
+  // REMOVE OLD
+  for (let [id, card] of cardsById.entries()) {
+    if (!filtered.find(r => r.id === id)) {
+      card.remove();
+      cardsById.delete(id);
+    }
+  }
+
+  // ADD / UPDATE
+  filtered.forEach(rec => {
+    if (!cardsById.has(rec.id)) {
+      const card = createCard(rec);
+      draftList.appendChild(card);
+      cardsById.set(rec.id, card);
+    } else {
+      const card = cardsById.get(rec.id);
+
+      updateCardHeader(rec, card._title);
+
+      if (rec.UpdatedAt) {
+        card._meta.textContent =
+          "Updated " +
+          new Date(rec.UpdatedAt).toLocaleDateString("fr-CH");
+      }
+    }
+  });
+
+  checkDraftsValidity();
+}
+
+// ========================
+// GRIST DATA ONLY
+// ========================
+grist.onRecords(records => {
+  allRecords = records;
+  syncUI();
+});
+
+// ========================
+// ADD
+// ========================
+addBtn.addEventListener("click", async () => {
+  await grist.selectedTable.create({
+    fields: {
+      Activity: "",
+      Start_date: today,
+      End_date: today,
+      Status: "draft"
+    }
+  });
+});
+
+// ========================
+// VALIDATE
+// ========================
+validateBtn.addEventListener("click", async () => {
+  const drafts = allRecords.filter(r => r.Status === "draft");
+
+  const result = await Swal.fire({
+    icon: "question",
+    title: "Validate drafts?",
+    text: `Validate ${drafts.length} draft(s)?`,
+    showCancelButton: true
+  });
+
+  if (!result.isConfirmed) return;
+
+  const actions = drafts.map((r, index) => [
+    "UpdateRecord",
+    "Activities",
+    r.id,
+    {
+      Status: "",
+      ...(index === 0 && {
+        Is_by_admin: true,
+        LogAction: "create",
+        ValidationBtn: true
+      })
+    }
+  ]);
+
+  await grist.docApi.applyUserActions(actions);
+
+  Swal.fire({
+    icon: "success",
+    title: "Done",
+    timer: 1500,
+    showConfirmButton: false
+  });
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	<script>
     	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
