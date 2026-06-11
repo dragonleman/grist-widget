@@ -227,6 +227,17 @@
 	let selectedFilter = "all";
 	let isAdmin = false;
 
+	const acceptedColumns = [
+        'ActivityStat',
+        'Name',
+        'Activity',
+        'Principal',
+        'Start_date',
+        'End_date',
+        'Comments',
+        'Comments_admins'
+    ]
+
 	window.grist.ready({ requiredAccess: 'full' });
 
 	function parseStatusByYear(str) {
