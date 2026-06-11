@@ -476,10 +476,17 @@
 		await grist.docApi.applyUserActions(actions);
 	});
 	
-	yearFilter.addEventListener("change", (e) => {
-		alert("Coucou");
-		selectedYear = e.target.value;
-		applyFilters();
+	// yearFilter.addEventListener("change", (e) => {
+	// 	alert("Coucou");
+	// 	selectedYear = e.target.value;
+	// 	applyFilters();
+	// });
+
+	document.addEventListener("change", (e) => {
+		if (e.target && e.target.id === "yearFilter") {
+			selectedYear = e.target.value;
+			applyFilters();
+		}
 	});
 
 	// Send reminder
