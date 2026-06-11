@@ -471,19 +471,17 @@
 								rec.ErrorDate;
 						}
 
-						// input.addEventListener("blur", async () => {
+						input.addEventListener('blur', async () => {
 
-						// 	if (input.value === rec[cfg.key]) return;
+							if (input.value === rec[cfg.key]) return;
 
-						// 	await grist.selectedTable.update({
-						// 		id: rec.id,
-						// 		fields: {
-						// 			[cfg.key]: input.value
-						// 		}
-						// 	});
-
-						// 	checkDraftsValidity();
-						// });
+							await saveField(
+								rec,
+								cfg.key,
+								input.value,
+								title
+							);
+						});
 
 						col.appendChild(
 							field({
