@@ -198,6 +198,7 @@
 		}
 
 		function renderDrafts(drafts) {
+			alert("Coucou");
 			draftList.innerHTML = "";
 			isByAPR = false;
 
@@ -500,7 +501,7 @@
 			allRecords = records;
 
 			if (!initialized) {
-				applyFilters(); // premier rendu uniquement
+				applyFilters();
 				initialized = true;
 			}
 		});
