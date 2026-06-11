@@ -517,6 +517,18 @@
 		}
 	});
 
+	// DOWNLOAD CSV
+    function sanitizeCSV(value) {
+        const str = String(value ?? "");
+
+        // Protection Excel formula injection
+        if (/^[=+\-@]/.test(str)) {
+            return "'" + str;
+        }
+
+        return str;
+    }
+
     function downloadCSV(records, filename = "activities.csv") {
 
         const exportColumns = columns.filter(col =>
