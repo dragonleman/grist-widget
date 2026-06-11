@@ -171,9 +171,7 @@
 			const allValid = drafts.every(r => isDraftValid(r));
 
 			validateBtn.disabled = !allValid;
-		}
-
-	
+		}	
 
 		function updateCardHeader(rec, titleEl) {
 			const valid = isDraftValid(rec);
@@ -230,10 +228,12 @@
 
 				const title = document.createElement("div");
 
-				title.innerHTML = `
-					<strong>${rec.Activity || "New activity"}</strong>
-					${isDraftValid(rec) ? '✅' : '❌'}
-				`;
+				updateCardHeader(rec, title);
+
+				// title.innerHTML = `
+				// 	<strong>${rec.Activity || "New activity"}</strong>
+				// 	${isDraftValid(rec) ? '✅' : '❌'}
+				// `;
 
 				const meta = document.createElement("div");
 				meta.className = "draft-meta";
@@ -340,20 +340,6 @@
 					input.type = "text";
 					input.value = rec[fieldName] || "";
 					input.readOnly = isReadOnly;
-
-					// input.addEventListener("blur", async () => {
-
-					// 	if (input.value === rec[fieldName]) return;
-
-					// 	await grist.selectedTable.update({
-					// 		id: rec.id,
-					// 		fields: {
-					// 			[fieldName]: input.value
-					// 		}
-					// 	});
-
-					// 	checkDraftsValidity();
-					// });
 
 					input.addEventListener('blur', async () => {
 
@@ -588,7 +574,6 @@
 				{ 	
 					Status: "",
 					...(index === 0 && { 
-						ValidationBtn: true,
 						Is_by_admin: isByAPR,
 						LogAction: 'create',
 						ValidationBtn: true
