@@ -198,7 +198,6 @@
 		}
 
 		function renderDrafts(drafts) {
-			alert("Coucou");
 			draftList.innerHTML = "";
 			isByAPR = false;
 
@@ -500,7 +499,10 @@
 		grist.onRecords(records => {
 			allRecords = records;
 
+			alert("Coucou");
+
 			if (!initialized) {
+				alert("Coucou2");
 				applyFilters();
 				initialized = true;
 			}
