@@ -211,15 +211,15 @@
 	const table = document.getElementById('table');
 
     const columns = [
-        { key: 'Name', label: 'Name', readonly: true },
+        { key: 'Name', label: 'Name', readonly: true, required: false },
 
-        { key: 'Activity', label: 'Activity', editable: true },
-        { key: 'Principal', label: 'Principal', editable: true },
-        { key: 'Comments', label: 'Comments', editable: true },
-        { key: 'Comments_admins', label: 'Comments admins', editable: true },
+        { key: 'Activity', label: 'Activity', required: true },
+        { key: 'Principal', label: 'Principal', required: true },
+        { key: 'Comments', label: 'Comments', required: true },
+        { key: 'Comments_admins', label: 'Comments admins', required: false },
 
-        { key: 'Start_date', label: 'Start date', type: 'date' },
-        { key: 'End_date', label: 'End date', type: 'date' }
+        { key: 'Start_date', label: 'Start date', type: 'date', required: false },
+        { key: 'End_date', label: 'End date', type: 'date', required: true }
     ];
 
 	grist.ready({ requiredAccess: 'full' });
@@ -394,7 +394,7 @@
                         }
                     });
 
-                    Swal.fire({
+                    await Swal.fire({
                         icon: 'success',
                         title: 'Duplicated',
                         timer: 1200,
@@ -444,7 +444,7 @@
 
                     await grist.selectedTable.destroy([rec.id]);
 
-                    Swal.fire({
+                    await Swal.fire({
                         icon: 'success',
                         title: 'Deleted',
                         timer: 1200,
@@ -495,7 +495,7 @@
 
                     downloadCSV([rec], `${rec.Name}_${rec.id}.csv`);
 
-                    Swal.fire({
+                    await Swal.fire({
                         icon: 'success',
                         title: 'CSV téléchargé !',
                         timer: 1200,
@@ -534,7 +534,7 @@
 					link.click();
 					URL.revokeObjectURL(link.href);
 
-					Swal.fire({
+					await Swal.fire({
 						icon: 'success',
 						title: 'CSV téléchargé !',
 						timer: 1200,
@@ -591,7 +591,7 @@
             //             }
             //         });
 
-            //         Swal.fire({
+            //         await Swal.fire({
             //             icon: 'success',
             //             title: 'Email sent',
             //             timer: 1200,
@@ -816,7 +816,9 @@
             wrapper.className = 'form-group';
 
             const label = document.createElement('label');
-            label.textContent = col.label;
+            label.textContent = col.required
+                ? `${col.label} <span class="text-danger">*</span>`
+                : col.label;;
 
             let input = document.createElement('input');
             input.className = 'form-control';
@@ -892,6 +894,14 @@
 	// SAVE
 	// =====================================================
 
+    function isDraftValid(rec) {
+        return !!(
+            rec.Activity?.trim() &&
+            rec.Principal?.trim() &&
+            rec.Start_date
+        );
+    }
+
 	document
 		.getElementById('validateBtn')
 		.addEventListener('click', async () => {
@@ -905,6 +915,15 @@
 				});
 				return;
 			}
+
+            if (!isDraftValid(pendingChanges)) {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Save failed',
+                    text: 'The form is incomplete'
+                });
+                return;
+            }
 
             pendingChanges['Is_by_admin'] = isByAPR;
             pendingChanges['LogAction'] = 'update';
