@@ -215,11 +215,11 @@
 
         { key: 'Activity', label: 'Activity', required: true },
         { key: 'Principal', label: 'Principal', required: true },
-        { key: 'Comments', label: 'Comments', required: true },
+        { key: 'Comments', label: 'Comments', required: false },
         { key: 'Comments_admins', label: 'Comments admins', required: false },
 
-        { key: 'Start_date', label: 'Start date', type: 'date', required: false },
-        { key: 'End_date', label: 'End date', type: 'date', required: true }
+        { key: 'Start_date', label: 'Start date', type: 'date', required: true },
+        { key: 'End_date', label: 'End date', type: 'date', required: false }
     ];
 
 	grist.ready({ requiredAccess: 'full' });
@@ -816,7 +816,7 @@
             wrapper.className = 'form-group';
 
             const label = document.createElement('label');
-            label.textContent = col.required
+            label.innerHTML = col.required
                 ? `${col.label} <span class="text-danger">*</span>`
                 : col.label;;
 
