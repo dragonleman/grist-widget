@@ -144,7 +144,6 @@
 			let filtered = allRecords.filter(r => r.Status === "draft");
 
 			if (nameQuery) {
-				alert("nameQuery");
 				filtered = filtered.filter(rec =>
 					(rec.Name || "").toLowerCase().includes(nameQuery)
 				);
@@ -199,8 +198,6 @@
 		}
 
 		function renderDrafts(drafts) {
-			alert("renderDrafts1");
-
 			draftList.innerHTML = "";
 			isByAPR = false;
 
@@ -213,8 +210,6 @@
 				checkDraftsValidity();
 				return;
 			}
-
-			alert("renderDrafts2");
 
 			drafts.forEach(rec => {
 
@@ -345,8 +340,6 @@
 					input.addEventListener('blur', async () => {
 
 						if (input.value === rec[fieldName]) return;
-
-						alert("Activity blur");
 
 						await saveField(
 							rec,
@@ -503,10 +496,7 @@
 		grist.onRecords(records => {
 			allRecords = records;
 
-			alert("Coucou");
-
 			if (!initialized) {
-				alert("Coucou2");
 				applyFilters();
 				initialized = true;
 			}
