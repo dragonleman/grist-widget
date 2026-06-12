@@ -144,6 +144,7 @@
 			let filtered = allRecords.filter(r => r.Status === "draft");
 
 			if (nameQuery) {
+				alert("nameQuery");
 				filtered = filtered.filter(rec =>
 					(rec.Name || "").toLowerCase().includes(nameQuery)
 				);
