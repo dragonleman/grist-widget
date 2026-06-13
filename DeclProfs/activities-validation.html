@@ -185,6 +185,8 @@
 					${valid ? 'Complete' : 'Incomplete'}
 				</span>
 			`;
+
+			checkDraftsValidity();
 		}
 
 		async function saveField(rec, field, value, titleEl) {
@@ -196,7 +198,7 @@
 			rec[field] = value;
 
 			updateCardHeader(rec, titleEl);
-			checkDraftsValidity();
+			// checkDraftsValidity();
 		}
 
 		function renderDrafts(drafts) {
