@@ -39,6 +39,12 @@
             padding-left: 34px !important;
             height: 40px;
         }
+
+		button:disabled {
+			opacity: 0.4;
+			filter: grayscale(30%);
+			cursor: not-allowed;
+		}
 	</style>
 </head>
 <body>
@@ -190,6 +196,7 @@
 				fields: { [field]: value }
 			});
 
+			// Update grist table before checkDraftsValidity()
 			const tableName = await grist.selectedTable.getTableId();
     		const freshData = await grist.docApi.fetchTable(tableName);
 
