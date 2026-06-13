@@ -190,7 +190,8 @@
 				fields: { [field]: value }
 			});
 
-			await grist.docAPI.fetchTable();
+			const tableName = await grist.selectedTable.getTableId();
+    		const freshData = await grist.docApi.fetchTable(tableName);
 
 			rec[field] = value;
 
