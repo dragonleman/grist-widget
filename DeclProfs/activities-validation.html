@@ -162,7 +162,6 @@
 
 		// Activate/Deactivate 'Validate' button
 		function checkDraftsValidity() {
-			alert("checkDraftsValidity");
 			const drafts = getFilteredDrafts();
 
 			if (!drafts.length) {
@@ -172,6 +171,8 @@
 
 			const allValid = drafts.every(r => isDraftValid(r));
 
+			alert(`checkDraftsValidity : ${allValid}`);
+			
 			validateBtn.disabled = !allValid;
 		}	
 
