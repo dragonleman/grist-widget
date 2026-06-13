@@ -171,8 +171,8 @@
 
 			const allValid = drafts.every(r => isDraftValid(r));
 
-			alert(`checkDraftsValidity : ${allValid}`);
-			
+			alert(`checkDraftsValidity : ${drafts.length}  - ${allValid}`);
+
 			validateBtn.disabled = !allValid;
 		}	
 
