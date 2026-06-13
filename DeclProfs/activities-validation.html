@@ -170,9 +170,6 @@
 			}
 
 			const allValid = drafts.every(r => isDraftValid(r));
-
-			alert(`checkDraftsValidity : ${drafts.length}  - ${allValid}`);
-
 			validateBtn.disabled = !allValid;
 		}	
 
@@ -192,6 +189,8 @@
 				id: rec.id,
 				fields: { [field]: value }
 			});
+
+			await grist.docAPI.fetchTable();
 
 			rec[field] = value;
 
