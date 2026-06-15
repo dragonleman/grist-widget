@@ -24,6 +24,11 @@
         #sendmailButton {
             min-width: 160px;
         }
+
+        #yearInput {
+            padding-left: 34px !important;
+            height: 40px;
+        }
     </style>
 </head>
 <body>
@@ -65,15 +70,25 @@
                         </label>
                     </div>
 
-                    <div class="col-md-4">
-                        <input
-                            id="exceptionYearInput"
-                            type="text"
-                            placeholder="YYYY"
-                            inputmode="numeric"
-                            maxlength="4"
+                    <div class="col-md-4" style="position: relative; width: 140px;">
+                        <input type="text"
+                            id="yearInput"
                             class="form-control"
-                        >
+                            placeholder="YYYY"
+                            pattern="[0-9]{4}"
+                            inputmode="numeric"
+                            maxlength="4">
+                        <svg class="icon"
+                            aria-hidden="true"
+                            style="position: absolute;
+                                    left: 10px;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    width: 16px;
+                                    height: 16px;
+                                    pointer-events: none;">
+                            <use xlink:href="#calendar"></use>
+                        </svg>
                     </div>
                 </div>
 
@@ -175,6 +190,7 @@
 	<script>
 		const startDateInput = document.getElementById('startDateInput');
         const endDateInput = document.getElementById('endDateInput');
+        const yearInput = document.getElementById('yearInput');
         const excBtn = document.getElementById('exceptionSwitch');
         const updateActBtn = document.getElementById('updateActBtnButton');
 
@@ -182,6 +198,18 @@
 
 		window.grist.onRecords(records => {
             const rec = records[0];
+
+            // Year
+            yearInput.value = rec.exception_year || '';
+
+            yearInput.addEventListener('blur', async () => {
+                if (startDateInput.value !== rec.Start_date) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: { exception_year: yearInput.value }
+                    });
+                }
+            });
 
             // Start date
             startDateInput.value = rec.Start_date || '';
