@@ -820,15 +820,11 @@
         }
 
         // Start_date validation
-        if (field === 'Start_date') {
-            setError(field, !value);
-        }
-
-        // End_date validation
-        if (field === 'End_date') {
+        if ((field === 'Start_date')  || (field === 'End_date')) {
             const start = checkField(pendingChanges, 'Start_date');
 
             if (!start) {
+                setError(field, !value);
                 return;
             }
 
