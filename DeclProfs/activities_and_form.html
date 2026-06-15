@@ -824,14 +824,17 @@
         if (field === 'End_date') {
             const start = checkField(pendingChanges, 'Start_date');
 
+            alert("End_date");
+
             if (!start) {
                 return;
             }
 
             const end = value;
 
-            const invalidRange =
-                start && end && start > end;
+            const invalidRange = end && start > end;
+
+            alert(invalidRange);
 
             setError('End_date', invalidRange);
             setError('Start_date', invalidRange);
