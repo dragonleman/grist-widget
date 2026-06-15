@@ -173,6 +173,52 @@
                         </p>
                     </div>
 
+                    <!-- Toggle -->
+                    <div class="d-flex align-items-center">
+
+                        <div class="custom-control custom-switch">
+                            <input
+                                id="updateActSwitch"
+                                type="checkbox"
+                                class="custom-control-input"
+                            >
+                            <label
+                                class="custom-control-label"
+                                for="exceptionSwitch"
+                            >
+                            </label>
+                        </div>
+
+                        <span
+                            id="exceptionBadge"
+                            class="badge badge-secondary ml-3"
+                        >
+                            Disabled
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Update Activities -->
+        <!-- <div class="card">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <h4 class="card-title mb-1">
+                            Update Activities
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            Update statuses of all activities.
+                        </p>
+                    </div>
+
                     <button
                         id="updateActBtnButton"
                         class="btn btn-primary">
@@ -182,7 +228,7 @@
                 </div>
 
             </div>
-        </div>
+        </div> -->
 
     </div>
 
@@ -192,7 +238,7 @@
         const endDateInput = document.getElementById('endDateInput');
         const yearInput = document.getElementById('yearInput');
         const excBtn = document.getElementById('exceptionSwitch');
-        const updateActBtn = document.getElementById('updateActBtnButton');
+        const updateActSwitch = document.getElementById('updateActSwitch');
 
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -203,7 +249,7 @@
             yearInput.value = rec.exception_year || '';
 
             yearInput.addEventListener('blur', async () => {
-                if (startDateInput.value !== rec.Start_date) {
+                if (yearInput.value !== rec.exception_year) {
                     await window.grist.selectedTable.update({
                         id: rec.id,
                         fields: { exception_year: yearInput.value }
@@ -246,9 +292,9 @@
             });
 
             // Update activities
-            updateActBtn.checked = Boolean(rec.UpdateActivitiesStatuses);
+            updateActSwitch.checked = Boolean(rec.UpdateActivitiesStatuses);
 
-            updateActBtn.addEventListener('click', async () => {
+            updateActSwitch.addEventListener('change', async () => {
                 await window.grist.selectedTable.update({
                     id: rec.id,
                     fields: { UpdateActivitiesStatuses: true }
