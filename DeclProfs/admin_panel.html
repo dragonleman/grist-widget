@@ -26,7 +26,7 @@
         }
 
         #yearInput {
-            padding-left: 34px !important;
+            padding-left: 40px !important;
             height: 40px;
         }
     </style>
@@ -53,7 +53,6 @@
         <!-- Exceptions -->
         <div class="card mb-4">
             <div class="card-body">
-
                 <h4 class="card-title mb-2">
                     Exceptions
                 </h4>
@@ -81,7 +80,7 @@
                         <svg class="icon"
                             aria-hidden="true"
                             style="position: absolute;
-                                    left: 10px;
+                                    left: 28px;
                                     top: 50%;
                                     transform: translateY(-50%);
                                     width: 16px;
@@ -99,21 +98,11 @@
                             Exception period
                         </label>
                     </div>
-
                     <div class="col-md-4">
-                        <input
-                            id="startDateInput"
-                            type="date"
-                            class="form-control"
-                        >
+                        <input id="startDateInput" type="date" class="form-control">
                     </div>
-
                     <div class="col-md-4">
-                        <input
-                            id="endDateInput"
-                            type="date"
-                            class="form-control"
-                        >
+                        <input id="endDateInput" type="date" class="form-control">
                     </div>
                 </div>
 
@@ -126,34 +115,18 @@
                     </div>
 
                     <div class="col-md-8">
-
                         <div class="d-flex align-items-center">
-
                             <div class="custom-control custom-switch">
-                                <input
-                                    id="exceptionSwitch"
-                                    type="checkbox"
-                                    class="custom-control-input"
-                                >
-                                <label
-                                    class="custom-control-label"
-                                    for="exceptionSwitch"
-                                >
+                                <input id="exceptionSwitch" type="checkbox" class="custom-control-input">
+                                <label class="custom-control-label" for="exceptionSwitch">
                                 </label>
                             </div>
-
-                            <span
-                                id="exceptionBadge"
-                                class="badge badge-secondary ml-3"
-                            >
+                            <span id="exceptionBadge" class="badge badge-secondary ml-3">
                                 Disabled
                             </span>
-
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -182,17 +155,11 @@
                                 type="checkbox"
                                 class="custom-control-input"
                             >
-                            <label
-                                class="custom-control-label"
-                                for="updateActSwitch"
-                            >
+                            <label class="custom-control-label" for="updateActSwitch">
                             </label>
                         </div>
 
-                        <span
-                            id="updateActBadge"
-                            class="badge badge-secondary ml-3"
-                        >
+                        <span id="updateActBadge" class="badge badge-secondary ml-3">
                             Disabled
                         </span>
 
@@ -202,37 +169,10 @@
 
             </div>
         </div>
-
-        <!-- Update Activities -->
-        <!-- <div class="card">
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-                        <h4 class="card-title mb-1">
-                            Update Activities
-                        </h4>
-
-                        <p class="text-muted mb-0">
-                            Update statuses of all activities.
-                        </p>
-                    </div>
-
-                    <button
-                        id="updateActBtnButton"
-                        class="btn btn-primary">
-                        Update
-                    </button>
-
-                </div>
-
-            </div>
-        </div> -->
-
     </div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
 		const startDateInput = document.getElementById('startDateInput');
         const endDateInput = document.getElementById('endDateInput');

@@ -928,6 +928,7 @@
             pendingChanges['Is_by_admin'] = isByAPR;
             pendingChanges['LogAction'] = 'update';
             pendingChanges['ValidationBtn'] = true;
+            pendingChanges['UpdatedAt'] = new Date().toISOString().replace('T', ' ').split('.')[0];
 
 			await grist.selectedTable.update({
 				id: selectedId,

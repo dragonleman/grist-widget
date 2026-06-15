@@ -582,6 +582,7 @@
 				{ 	
 					Status: "",
 					...(index === 0 && { 
+						UpdatedAt: new Date().toISOString().replace('T', ' ').split('.')[0],
 						Is_by_admin: isByAPR,
 						LogAction: 'create',
 						ValidationBtn: true
