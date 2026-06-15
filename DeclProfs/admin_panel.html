@@ -184,13 +184,13 @@
                             >
                             <label
                                 class="custom-control-label"
-                                for="exceptionSwitch"
+                                for="updateActSwitch"
                             >
                             </label>
                         </div>
 
                         <span
-                            id="exceptionBadge"
+                            id="updateActBadge"
                             class="badge badge-secondary ml-3"
                         >
                             Disabled
@@ -297,7 +297,7 @@
             updateActSwitch.addEventListener('change', async () => {
                 await window.grist.selectedTable.update({
                     id: rec.id,
-                    fields: { UpdateActivitiesStatuses: true }
+                    fields: { UpdateActivitiesStatuses: updateActSwitch.checked }
                 });
             });
         });
