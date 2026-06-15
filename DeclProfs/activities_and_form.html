@@ -806,8 +806,6 @@
         const input = getInput(field);
         if (!input) return;
 
-        alert(`error : ${isError}`);
-
         input.classList.toggle('error', isError);
     }
 
@@ -831,6 +829,8 @@
             const end = value;
 
             const invalidRange = end && start > end;
+
+            alert(`error : from $(start) to ${end}    ; $(invalidRange)`);
 
             setError('End_date', invalidRange);
             setError('Start_date', invalidRange);
