@@ -339,7 +339,7 @@
                     if (rec.Status === 'draft') value += ' 📝';
                 } else if  (col.key === 'Start_date' || col.key === 'End_date') {
                     if (rec[col.key]) {
-                        value = new Date(rec[col.key]).toLocaleDateString('fr-CH');
+                        value = new Date(rec[col.key]).toLocaleDateString('fr-CH').replaceAll(".", "/");
                     } else {
                         value = "";
                     }                    
@@ -980,6 +980,8 @@
                 });
                 return;
             }
+
+            delete pendingChanges['rec'];
 
             const d = new Date();
 
