@@ -327,6 +327,7 @@
 			tr.addEventListener('click', () => {
 				selectedId = rec.id;
 				pendingChanges = {};
+                pendingChanges['rec'] = rec;
 				renderAll();
 			});
 
@@ -873,6 +874,7 @@
 			if (index < filteredRecords.length - 1) {
 				selectedId = filteredRecords[index + 1].id;
 				pendingChanges = {};
+                pendingChanges['rec'] = filteredRecords[index + 1];
 				renderAll();
 			}
 		});
@@ -886,6 +888,7 @@
 			if (index > 0) {
 				selectedId = filteredRecords[index - 1].id;
 				pendingChanges = {};
+                pendingChanges['rec'] = filteredRecords[index - 1];
 				renderAll();
 			}
 		});
@@ -894,12 +897,56 @@
 	// SAVE
 	// =====================================================
 
-    function isDraftValid(rec) {
-        return !!(
-            rec.Activity?.trim() &&
-            rec.Principal?.trim() &&
-            rec.Start_date
-        );
+    // function checkField(pendchg, field) {
+    //     if (pendchg[field]) {
+    //         return pendchg[field].trim()
+    //     }
+    //     return pendchg.rec[field].trim()
+    // }
+
+    // function checkDates(pendchg) {
+    //     if (!checkField(pendchg, 'Start_date')) {
+    //         return false;
+    //     }
+    //     let start;
+    //     if (pendchg['Start_date']) {
+    //         start = pendchg['Start_date'];
+    //     } else {
+    //         start = pendchg.rec.Start_date;
+    //     }
+
+    //     if (pendchg['End_date']) {
+    //         return start <= pendchg['End_date'];
+    //     } else if (pendchg.rec.End_date) {
+    //         return start <= pendchg.rec.End_date;
+    //     }
+    //     return true;
+    // }
+
+    // function isDraftValid(pendchg) {
+    //     return !!(
+    //         checkField(pendchg, 'Activity') &&
+    //         checkField(pendchg, 'Principal') &&
+    //         checkField(pendchg, 'Start_date') &&
+    //     	checkDates(pendchg)
+    //     );
+    // }
+
+    function checkField(pendchg, field) {
+        return pendchg[field] ?? pendchg.rec?.[field];
+    }
+
+    function isDraftValid(pendchg) {
+        const activity = checkField(pendchg, 'Activity');
+        const principal = checkField(pendchg, 'Principal');
+        const start = checkField(pendchg, 'Start_date');
+        const end = checkField(pendchg, 'End_date');
+
+        if (!activity?.trim() || !principal?.trim() || !start) {
+            return false;
+        }
+
+        return !end || start <= end;
     }
 
 	document
@@ -908,7 +955,7 @@
 
 			if (!selectedId) return;
 
-			if (!Object.keys(pendingChanges).length) {
+			if (Object.keys(pendingChanges).length > 1) {
 				await Swal.fire({
 					icon: 'info',
 					title: 'No changes'

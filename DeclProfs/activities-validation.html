@@ -162,7 +162,8 @@
 			return !!(
 				rec.Activity?.trim() &&
 				rec.Principal?.trim() &&
-				rec.Start_date
+				rec.Start_date &&
+        		(!rec.End_date || rec.Start_date <= rec.End_date)
 			);
 		}
 
