@@ -211,7 +211,7 @@
 
 			// Activity / Principal validation
 			if (field === 'Activity' || field === 'Principal') {
-				setError(field, !rec[field] || !rec[field].trim());
+				setError(field, rec.id, !rec[field] || !rec[field].trim());
 			}
 
 			// Start_date validation
@@ -446,13 +446,13 @@
 						input.setAttribute('data-field', cfg.key);
 						input.setAttribute('data-id', rec.id);
 
-						if (
-							cfg.key === "End_date" &&
-							rec.ErrorDate
-						) {
-							input.style.backgroundColor =
-								rec.ErrorDate;
-						}
+						// if (
+						// 	cfg.key === "End_date" &&
+						// 	rec.ErrorDate
+						// ) {
+						// 	input.style.backgroundColor =
+						// 		rec.ErrorDate;
+						// }
 
 						input.addEventListener('blur', async () => {	
 
