@@ -933,6 +933,7 @@
     // }
 
     function checkField(pendchg, field) {
+        console.log("field :", field);
         return pendchg[field] ?? pendchg.rec?.[field];
     }
 
@@ -954,6 +955,8 @@
 		.addEventListener('click', async () => {
 
 			if (!selectedId) return;
+
+            console.log("pendingChanges :", pendingChanges);
 
 			if (Object.keys(pendingChanges).length < 2) {
 				await Swal.fire({
