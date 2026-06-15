@@ -39,64 +39,10 @@
 		<nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
 	</div>
 
-
-  	<!-- <div class="main-container m-4">
-        <h3>Admin panel</h3>
-
-        <hr>
-
-        <h5>Exceptions</h5>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-sm">
-                    <div class="form-group">
-                        <label for="startDateInput" class="mr-2 mb-0">Start date</label>
-                        <input id="startDateInput" type="date" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="endDateInput" class="mr-2 mb-0">End date</label>
-                        <input id="endDateInput" type="date" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm d-flex align-items-center">
-                    <div class="custom-control custom-switch">
-                        <input id="exceptionSwitch" type="checkbox" class="custom-control-input">
-                        <label class="custom-control-label" for="exceptionSwitch">Exception</label>
-                    </div>
-                </div>
-                <div class="col-sm">
-                </div>
-            </div>
-        </div>
-
-		<hr>
-
-        <h5>Send emails</h5>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-sm">
-                    <p>Send emails to all people that have not yet filled their forms.</p>
-                </div>
-                <div class="col-sm">
-                    <button id="sendmailButton" class="btn btn-primary">Send emails</button>
-                </div>
-                <div class="col-sm">
-                </div>
-            </div>
-        </div>    
-	</div> -->
-
-
-
     <div class="main-container py-4" style="max-width: 1000px; margin: auto;">
 
     <div class="mb-5">
-        <h2 class="mb-1">Admin Panel</h2>
-        <p class="text-muted">
-            Manage declaration exceptions and reminder emails.
-        </p>
+        <h2 class="mb-1">Administration Dashboard</h2>
     </div>
 
     <!-- Exceptions -->
@@ -108,53 +54,88 @@
             </h4>
 
             <p class="text-muted mb-4">
-                Configure the period during which declaration exceptions apply.
+                Configure exception settings for the declaration campaign.
             </p>
 
-            <div class="row">
-
+            <!-- Year -->
+            <div class="row align-items-center mb-3">
                 <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="startDateInput">
-                            Start date
-                        </label>
-                        <input
-                            id="startDateInput"
-                            type="date"
-                            class="form-control"
-                        >
-                    </div>
+                    <label for="exceptionYearInput" class="mb-0">
+                        Year of exception
+                    </label>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="endDateInput">
-                            End date
-                        </label>
-                        <input
-                            id="endDateInput"
-                            type="date"
-                            class="form-control"
-                        >
-                    </div>
+                    <input
+                        id="exceptionYearInput"
+                        type="number"
+                        min="2020"
+                        max="2100"
+                        class="form-control"
+                    >
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="row align-items-center mb-3">
+                <div class="col-md-4">
+                    <label class="mb-0">
+                        Exception period
+                    </label>
                 </div>
 
-                <div class="col-md-4 d-flex align-items-end">
-                    <div class="custom-control custom-switch mb-2">
-                        <input
-                            id="exceptionSwitch"
-                            type="checkbox"
-                            class="custom-control-input"
-                        >
-                        <label
-                            class="custom-control-label"
-                            for="exceptionSwitch"
-                        >
-                            Enable exception
-                        </label>
-                    </div>
+                <div class="col-md-4">
+                    <input
+                        id="startDateInput"
+                        type="date"
+                        class="form-control"
+                    >
                 </div>
 
+                <div class="col-md-4">
+                    <input
+                        id="endDateInput"
+                        type="date"
+                        class="form-control"
+                    >
+                </div>
+            </div>
+
+            <!-- Toggle -->
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="mb-0">
+                        Exception status
+                    </label>
+                </div>
+
+                <div class="col-md-8">
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="custom-control custom-switch">
+                            <input
+                                id="exceptionSwitch"
+                                type="checkbox"
+                                class="custom-control-input"
+                            >
+                            <label
+                                class="custom-control-label"
+                                for="exceptionSwitch"
+                            >
+                            </label>
+                        </div>
+
+                        <span
+                            id="exceptionBadge"
+                            class="badge badge-secondary ml-3"
+                        >
+                            Disabled
+                        </span>
+
+                    </div>
+
+                </div>
             </div>
 
         </div>
