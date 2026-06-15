@@ -830,9 +830,6 @@
 
             const invalidRange = end && start > end;
 
-            //alert(`${JSON.stringify(pendingChanges['rec']['Start_date'], null, 2)}      error : from ${start} to ${end}  invalidRange: ${invalidRange}`);
-            alert(`${pendingChanges['rec']['Start_date']}      error : from ${start} to ${end}  invalidRange: ${invalidRange}`);
-
             setError('End_date', invalidRange);
             setError('Start_date', invalidRange);
         }
@@ -972,6 +969,8 @@
             return false;
         }
 
+        alert(`from  ${start}   to ${end}`);
+
         return !end || start <= end;
     }
 
@@ -980,8 +979,6 @@
 		.addEventListener('click', async () => {
 
 			if (!selectedId) return;
-
-            alert(JSON.stringify(pendingChanges, null, 2));
 
 			if (Object.keys(pendingChanges).length < 2) {
 				await Swal.fire({
@@ -1073,8 +1070,6 @@
 
 	grist.onRecords(records => {
         // Do not refresh if grist asking for refresh and user still validating
-        alert(Object.keys(pendingChanges).length);
-        
         if (Object.keys(pendingChanges).length > 1 ) {
             return;
         }
