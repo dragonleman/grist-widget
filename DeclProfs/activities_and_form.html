@@ -72,6 +72,11 @@
             padding-left: 34px !important;
             height: 40px;
         }
+
+        input.error {
+            border: 1px solid #dc3545 !important;
+            background-color: #fff5f5;
+        }
 	</style>
 </head>
 
@@ -782,9 +787,58 @@
 	// FORM
 	// =====================================================
 
-	function trackChange(field, value) {
-		pendingChanges[field] = value;
-	}
+    function validateAllLive() {
+        const valid = isDraftValid(pendingChanges);
+        document.getElementById('validateBtn').disabled = !valid;
+    }
+
+    function getInput(field) {
+        return document.querySelector(`[data-field="${field}"]`);
+    }
+
+	// function trackChange(field, value) {
+	// 	pendingChanges[field] = value;
+	// }
+
+    function setError(field, isError) {
+        const input = getInput(field);
+        if (!input) return;
+
+        input.classList.toggle('error', isError);
+    }
+
+    function trackChange(field, value) {
+        pendingChanges[field] = value;
+
+        // Activity / Principal validation
+        if (field === 'Activity' || field === 'Principal') {
+            setError(field, !value || !value.trim());
+        }
+
+        // Start_date validation
+        if (field === 'Start_date') {
+            setError(field, !value);
+        }
+
+        // End_date validation
+        if (field === 'End_date') {
+            const start = checkField(pendingChanges, 'Start_date');
+
+            if (!start) {
+                return;
+            }
+
+            const end = value;
+
+            const invalidRange =
+                start && end && start > end;
+
+            setError('End_date', invalidRange);
+            setError('Start_date', invalidRange);
+        }
+
+        validateAllLive();
+    }
 
 	function formField(label, input) {
 
@@ -829,6 +883,7 @@
 
             let input = document.createElement('input');
             input.className = 'form-control';
+            input.setAttribute('data-field', col.key);
 
             // -------------------------
             // TYPE HANDLING
@@ -903,43 +958,7 @@
 	// SAVE
 	// =====================================================
 
-    // function checkField(pendchg, field) {
-    //     if (pendchg[field]) {
-    //         return pendchg[field].trim()
-    //     }
-    //     return pendchg.rec[field].trim()
-    // }
-
-    // function checkDates(pendchg) {
-    //     if (!checkField(pendchg, 'Start_date')) {
-    //         return false;
-    //     }
-    //     let start;
-    //     if (pendchg['Start_date']) {
-    //         start = pendchg['Start_date'];
-    //     } else {
-    //         start = pendchg.rec.Start_date;
-    //     }
-
-    //     if (pendchg['End_date']) {
-    //         return start <= pendchg['End_date'];
-    //     } else if (pendchg.rec.End_date) {
-    //         return start <= pendchg.rec.End_date;
-    //     }
-    //     return true;
-    // }
-
-    // function isDraftValid(pendchg) {
-    //     return !!(
-    //         checkField(pendchg, 'Activity') &&
-    //         checkField(pendchg, 'Principal') &&
-    //         checkField(pendchg, 'Start_date') &&
-    //     	checkDates(pendchg)
-    //     );
-    // }
-
     function checkField(pendchg, field) {
-        console.log("field :", field);
         return pendchg[field] ?? pendchg.rec?.[field];
     }
 
@@ -1053,6 +1072,10 @@
 	// =====================================================
 
 	grist.onRecords(records => {
+        // Do not refresh if grist asking for refresh and user still validating
+        if (Object.keys(pendingChanges).length > 1 ) {
+            return;
+        }
 		allRecords = records;
         document.getElementById('yearInput').value = new Date().getFullYear().toString();
 		renderAll();
