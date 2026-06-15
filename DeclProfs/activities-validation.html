@@ -45,6 +45,11 @@
 			filter: grayscale(30%);
 			cursor: not-allowed;
 		}
+
+        input.error {
+            border: 1px solid #dc3545 !important;
+            background-color: #fff5f5;
+        }
 	</style>
 </head>
 <body>
@@ -191,6 +196,42 @@
 			`;
 		}
 
+		function getInput(field, id) {
+			return document.querySelector(`[data-field="${field}"][data-id="${id}"]`);
+		}
+
+		function setError(field, id, isError) {
+			const input = getInput(field, id);
+			if (!input) return;
+
+			input.classList.toggle('error', isError);
+		}
+
+		function trackChange(field, rec) {
+
+			// Activity / Principal validation
+			if (field === 'Activity' || field === 'Principal') {
+				setError(field, !rec[field] || !rec[field].trim());
+			}
+
+			// Start_date validation
+			if ((field === 'Start_date') || (field === 'End_date')) {
+				const start = rec['Start_date'] ?? rec?.['Start_date'];
+
+				if (!start) {
+					setError('Start_date', rec.id, true);
+					return;
+				}
+
+				const end = rec['End_date'];
+
+				const invalidRange = end && new Date(start) > new Date(end);
+
+				setError('End_date', rec.id, invalidRange);
+				setError('Start_date', rec.id, invalidRange);
+			}
+		}
+
 		async function saveField(rec, field, value, titleEl) {
 			await grist.selectedTable.update({
 				id: rec.id,
@@ -203,6 +244,7 @@
 
 			rec[field] = value;
 
+			trackChange(field, rec);
 			updateCardHeader(rec, titleEl);
 			checkDraftsValidity();
 		}
@@ -346,6 +388,8 @@
 					input.type = "text";
 					input.value = rec[fieldName] || "";
 					input.readOnly = isReadOnly;
+					input.setAttribute('data-field', fieldName);
+					input.setAttribute('data-id', rec.id);
 
 					input.addEventListener('blur', async () => {
 
@@ -399,6 +443,8 @@
 						input.type = "date";
 						input.value = rec[cfg.key] || "";
 						input.readOnly = isReadOnly;
+						input.setAttribute('data-field', cfg.key);
+						input.setAttribute('data-id', rec.id);
 
 						if (
 							cfg.key === "End_date" &&
