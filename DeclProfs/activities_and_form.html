@@ -828,7 +828,7 @@
 
             const end = value;
 
-            const invalidRange = end && start > end;
+            const invalidRange = end && new Date(start) > new Date(end);
 
             setError('End_date', invalidRange);
             setError('Start_date', invalidRange);
