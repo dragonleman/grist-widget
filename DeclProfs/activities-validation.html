@@ -538,7 +538,7 @@
 
 				draftList.appendChild(card);
 
-				// Initial Validation
+				// Initial validation
 				['Activity', 'Principal', 'Start_date', 'End_date']
 					.filter(field => field in rec)
 					.forEach(field => trackChange(field, rec));

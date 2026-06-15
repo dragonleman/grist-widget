@@ -810,8 +810,6 @@
     }
 
     function trackChange(field, value) {
-        pendingChanges[field] = value;
-
         // Activity / Principal validation
         if (field === 'Activity' || field === 'Principal') {
             setError(field, !value || !value.trim());
@@ -833,6 +831,12 @@
             setError('End_date', invalidRange);
             setError('Start_date', invalidRange);
         }
+    }
+
+    function updatePendingChange(field, value) {
+        pendingChanges[field] = value;
+
+        trackChange(field, value);
 
         validateAllLive();
     }
@@ -902,7 +906,7 @@
                 input.readOnly = true;
             } else {
                 input.addEventListener('change', () => {
-                    trackChange(col.key, input.value);
+                    updatePendingChange(col.key, input.value);
                 });
             }
 
@@ -910,6 +914,11 @@
             wrapper.appendChild(input);
             form.appendChild(wrapper);
         }
+
+        // Initial validation
+        ['Activity', 'Principal', 'Start_date', 'End_date']
+            .filter(field => field in rec)
+            .forEach(field => trackChange(field, rec[field]));
     }
 
 	// =====================================================
