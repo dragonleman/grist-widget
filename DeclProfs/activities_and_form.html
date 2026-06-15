@@ -1073,6 +1073,8 @@
 
 	grist.onRecords(records => {
         // Do not refresh if grist asking for refresh and user still validating
+        alert(Object.keys(pendingChanges).length);
+        
         if (Object.keys(pendingChanges).length > 1 ) {
             return;
         }
