@@ -818,7 +818,7 @@
         }
 
         // Start_date validation
-        if ((field === 'Start_date')  || (field === 'End_date')) {
+        if ((field === 'Start_date') || (field === 'End_date')) {
             const start = checkField(pendingChanges, 'Start_date');
 
             if (!start) {
@@ -830,7 +830,7 @@
 
             const invalidRange = end && start > end;
 
-            alert(`error : from $(start) to ${end}    ; $(invalidRange)`);
+            alert(`${pendingChanges.rec}     error : from $(start) to ${end}    ; $(invalidRange)`);
 
             setError('End_date', invalidRange);
             setError('Start_date', invalidRange);
