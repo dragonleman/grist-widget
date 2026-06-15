@@ -73,6 +73,12 @@
             height: 40px;
         }
 
+        button:disabled {
+			opacity: 0.4;
+			filter: grayscale(30%);
+			cursor: not-allowed;
+		}
+
         input.error {
             border: 1px solid #dc3545 !important;
             background-color: #fff5f5;
@@ -796,13 +802,11 @@
         return document.querySelector(`[data-field="${field}"]`);
     }
 
-	// function trackChange(field, value) {
-	// 	pendingChanges[field] = value;
-	// }
-
     function setError(field, isError) {
         const input = getInput(field);
         if (!input) return;
+
+        alert("error");
 
         input.classList.toggle('error', isError);
     }
@@ -824,8 +828,6 @@
         if (field === 'End_date') {
             const start = checkField(pendingChanges, 'Start_date');
 
-            alert("End_date");
-
             if (!start) {
                 return;
             }
@@ -833,8 +835,6 @@
             const end = value;
 
             const invalidRange = end && start > end;
-
-            alert(invalidRange);
 
             setError('End_date', invalidRange);
             setError('Start_date', invalidRange);
