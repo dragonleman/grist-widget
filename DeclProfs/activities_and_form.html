@@ -830,7 +830,7 @@
 
             const invalidRange = end && start > end;
 
-            alert(`${JSON.stringify(pendingChanges.rec, null, 2)}      error : from ${start} to ${end}  invalidRange: ${invalidRange}`
+            alert(`${JSON.stringify(pendingChanges, null, 2)}      error : from ${start} to ${end}  invalidRange: ${invalidRange}`
 );
 
             setError('End_date', invalidRange);
