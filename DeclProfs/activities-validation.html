@@ -537,6 +537,11 @@
 				card.appendChild(footer);
 
 				draftList.appendChild(card);
+
+				// Initial Validation
+				['Activity', 'Principal', 'Start_date', 'End_date']
+					.filter(field => field in rec)
+					.forEach(field => trackChange(field, rec));
 			});
 
 			checkDraftsValidity();
