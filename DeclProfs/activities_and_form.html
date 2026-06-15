@@ -955,7 +955,7 @@
 
 			if (!selectedId) return;
 
-			if (Object.keys(pendingChanges).length === 1) {
+			if (Object.keys(pendingChanges).length < 2) {
 				await Swal.fire({
 					icon: 'info',
 					title: 'No changes'
