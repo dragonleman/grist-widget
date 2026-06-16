@@ -815,7 +815,7 @@
             setError(field, !value || !value.trim());
         }
 
-        // Start_date validation
+        // Date validation
         if ((field === 'Start_date') || (field === 'End_date')) {
             const start = checkField(pendingChanges, 'Start_date');
 
@@ -905,7 +905,7 @@
             if (isFieldReadOnly) {
                 input.readOnly = true;
             } else {
-                input.addEventListener('change', () => {
+                input.addEventListener('input', () => {
                     updatePendingChange(col.key, input.value);
                 });
             }
