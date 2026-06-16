@@ -806,7 +806,8 @@
                 fields: {
                     Activity: '',
                     Principal: '',
-                    Start_date: today
+                    Start_date: today,
+                    Status: 'draft'
                 }
             });
         });
@@ -1077,9 +1078,14 @@
 		filteredRecords = getFilteredRecords();
 
 		if (!selectedId && filteredRecords.length) {
-			selectedId = filteredRecords[0].id;
+            const lastRec = filteredRecords[filteredRecords.length - 1];
+            selectedId = lastRec.id;
             pendingChanges = {};
-            pendingChanges['rec'] = filteredRecords[0];
+            pendingChanges['rec'] = lastRec;
+
+			// selectedId = filteredRecords[0].id;
+            // pendingChanges = {};
+            // pendingChanges['rec'] = filteredRecords[0];
 		}
 
 		if (selectedId && !filteredRecords.some(r => r.id === selectedId)) {
@@ -1105,9 +1111,7 @@
 
 		allRecords = records;
 
-        if (!document.getElementById('yearInput').value) {
-            document.getElementById('yearInput').value = new Date().getFullYear().toString();
-        }
+        document.getElementById('yearInput').value = new Date().getFullYear().toString();
        
         renderAll();
 	});
