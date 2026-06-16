@@ -633,7 +633,6 @@
 			if (!result.isConfirmed) return;
 
 			try {
-				alert(selectedYear);
 				await window.grist.selectedTable.update({
 					id: firstSelected.id,
 					fields: {
