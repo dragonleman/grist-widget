@@ -155,9 +155,6 @@
                             <label class="custom-control-label" for="updateActSwitch">
                             </label>
                         </div>
-                        <span id="updateActBadge" class="badge badge-secondary ml-3">
-                            Disabled
-                        </span>
                     </div>
                 </div>
             </div>
@@ -172,8 +169,25 @@
         const yearInput = document.getElementById('yearInput');
         const excBtn = document.getElementById('exceptionSwitch');
         const updateActSwitch = document.getElementById('updateActSwitch');
+        const exceptionBadge = document.getElementById('exceptionBadge');
 
 		window.grist.ready({ requiredAccess: 'full' });
+
+        function updateExceptionBadge(enabled) {
+            exceptionBadge.textContent = enabled ? 'Enabled' : 'Disabled';
+
+            exceptionBadge.classList.remove(
+                'badge-success',
+                'badge-secondary',
+                'badge-light'
+            );
+
+            if (enabled) {
+                exceptionBadge.classList.add('badge-success');
+            } else {
+                exceptionBadge.classList.add('badge-light');
+            }
+        }
 
 		window.grist.onRecords(records => {
             const rec = records[0];
@@ -217,7 +231,12 @@
             // Exception (Switch)
             excBtn.checked = Boolean(rec.exception);
 
+            updateExceptionBadge(excBtn.checked);
+
             excBtn.addEventListener('change', async () => {
+
+                updateExceptionBadge(excBtn.checked);
+
                 await window.grist.selectedTable.update({
                     id: rec.id,
                     fields: { exception: excBtn.checked }
