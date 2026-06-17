@@ -84,6 +84,14 @@
             border: 1px solid #dc3545 !important;
             background-color: #fff5f5;
         }
+
+        .status-badge {
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
 	</style>
 </head>
 
@@ -940,12 +948,12 @@
                 let activityStatValue = '';
 
                 if (!rec.ActivityStat) {
-                    activityStatValue += '🔴' + ' <span class="badge badge-danger">Incomplete</span>';
+                    activityStatValue += '🔴' + ' <span class="badge badge-danger status-badge">Incomplete</span>';
                 }
 
                 if (rec.Status === 'draft') {
                     if (activityStatValue) activityStatValue += ' ';
-                    activityStatValue += '🟡' + ' <span class="badge badge-warning">Draft</span>';
+                    activityStatValue += '🟡' + ' <span class="badge badge-warning status-badge">Draft</span>';
                 }
 
                 const label = document.createElement('label');
@@ -953,6 +961,8 @@
 
                 wrapper.appendChild(label);
                 form.appendChild(wrapper);
+
+                continue;
             }
 
             const wrapper = document.createElement('div');
