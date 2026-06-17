@@ -958,7 +958,9 @@
                     activityStatValue += '⚠️' + ' <span class="badge badge-warning status-badge">Draft</span>';
                 }
 
-                if (!valid) {
+                if (valid) {
+                    activityStatValue += '🟢' + ' <span class="badge badge-success status-badge">Complete</span>';
+                } else {
                     activityStatValue += '🔴' + ' <span class="badge badge-danger status-badge">Incomplete</span>';
                 }
 
