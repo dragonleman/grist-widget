@@ -397,7 +397,7 @@
                 let value = rec[col.key] || '';
                 if (col.key === 'ActivityStat') {
                     value = rec[col.key] ? '' : '🔴';
-                    if (rec.Status === 'draft') value += '🟡';
+                    if (rec.Status === 'draft') value += '⚠️';
                 } else if  (col.key === 'Start_date' || col.key === 'End_date') {
                     if (rec[col.key]) {
                         value = new Date(rec[col.key]).toLocaleDateString('fr-CH').replaceAll(".", "/");
@@ -953,7 +953,7 @@
 
                 if (rec.Status === 'draft') {
                     if (activityStatValue) activityStatValue += ' ';
-                    activityStatValue += '🟡' + ' <span class="badge badge-warning status-badge">Draft</span>';
+                    activityStatValue += '⚠️' + ' <span class="badge badge-warning status-badge">Draft</span>';
                 }
 
                 const label = document.createElement('label');
