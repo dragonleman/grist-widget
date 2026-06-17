@@ -174,23 +174,6 @@
                 </svg>
 			</div>
 
-            <!-- <div class="d-flex justify-content-end mb-2 gap-2">
-                <button id="addActivityBtn" class="btn btn-success btn-sm">
-                    <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#plus"></use>
-                    </svg>
-                    Add Activity
-                </button>
-
-                <button id="duplicateAllBtn" class="btn btn-warning btn-sm">
-                    Duplicate all
-                </button>
-
-                <button id="downloadAllBtn" class="btn btn-secondary btn-sm ml-2">
-                    Download CSV
-                </button>
-            </div> -->
-
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <!-- LEFT ACTIONS -->
                 <div>
@@ -258,6 +241,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    const searchInput = document.getElementById('searchInput');
+    const yearInput = document.getElementById('yearInput');
+
     document.getElementById("currentYear").textContent = new Date().getFullYear();
 
 	const today = new Date().toISOString().slice(0, 10);
@@ -291,16 +277,9 @@
 
 	function getFilteredRecords() {
 
-		const search =
-			document.getElementById('searchInput')
-				.value
-				.trim()
-				.toLowerCase();
+		const search = searchInput.value.trim().toLowerCase();
 
-		const year =
-			document.getElementById('yearInput')
-				.value
-				.trim();
+		const year = yearInput.value.trim();
 
 		let filtered = [...allRecords];
 
@@ -1137,13 +1116,109 @@
 	// FILTER EVENTS
 	// =====================================================
 
-	document
-		.getElementById('searchInput')
-		.addEventListener('input', renderAll);
+	searchInput.addEventListener('input', renderAll);
 
-	document
-		.getElementById('yearInput')
-		.addEventListener('input', renderAll);
+	yearInput.addEventListener('input', renderAll);
+ 
+	// =====================================================
+	// VALIDATE ALL DRAFTS
+	// =====================================================
+
+    function getFilteredDrafts() {
+        const nameQuery = searchInput.value.trim().toLowerCase();
+
+        let filtered = allRecords.filter(r => r.Status === "draft");
+
+        if (nameQuery) {
+            filtered = filtered.filter(rec =>
+                (rec.Name || "").toLowerCase().includes(nameQuery)
+            );
+        }
+
+        return filtered;
+    }
+
+    function isDraftValid(rec) {
+        return !!(
+            rec.Activity?.trim() &&
+            rec.Principal?.trim() &&
+            rec.Start_date &&
+            (!rec.End_date || rec.Start_date <= rec.End_date)
+        );
+    }
+
+    document.getElementById('validateDraftsBtn').addEventListener("click", async () => {
+        const drafts = getFilteredDrafts();
+
+        if (!drafts.length) {
+            Swal.fire({
+                icon: "info",
+                title: "No drafts",
+                text: "There are no drafts to validate.",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        // Check if all drafts are valids
+        const allValid = drafts.every(r => isDraftValid(r));
+
+        if (!allValid) {
+            Swal.fire({
+                icon: "error",
+                title: "Can't validate all drafts",
+                text: `There are draftsthat are not valid.`,
+            });
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: "Validate drafts?",
+            text: `Validate ${drafts.length} draft(s)?`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, validate",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#3085d6"
+        });
+
+        if (!result.isConfirmed) return;
+
+        const d = new Date();
+
+        const now =
+            d.getFullYear() + '-' +
+            String(d.getMonth()+1).padStart(2,'0') + '-' +
+            String(d.getDate()).padStart(2,'0') + ' ' +
+            String(d.getHours()).padStart(2,'0') + ':' +
+            String(d.getMinutes()).padStart(2,'0') + ':' +
+            String(d.getSeconds()).padStart(2,'0');
+
+        const actions = drafts.map((r, index) => [
+            "UpdateRecord",
+            "Activities",
+            r.id,
+            { 	
+                Status: "",
+                ...(index === 0 && { 
+                    UpdatedAt: now,
+                    Is_by_admin: isByAPR,
+                    LogAction: 'update',
+                    ValidationBtn: true
+                })
+            }
+        ]);
+
+        await grist.docApi.applyUserActions(actions);
+
+        Swal.fire({
+            icon: "success",
+            title: "Done",
+            text: `${drafts.length} draft(s) validated.`,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
 
 	// =====================================================
 	// MAIN RENDER
