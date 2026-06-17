@@ -397,8 +397,11 @@
                 let value = rec[col.key] || '';
                 if (col.key === 'ActivityStat') {
                     const valid = isDraftValid(rec);
-                    value = valid ? '' : '🔴';
-                    if (rec.Status === 'draft') value += '⚠️';
+                    if (rec.Status === 'draft') {
+                        value = valid ? '⚠️🟢' : '⚠️🔴';
+                    } else {
+                        value = valid ? '' : '🔴';
+                    }
                 } else if  (col.key === 'Start_date' || col.key === 'End_date') {
                     if (rec[col.key]) {
                         value = new Date(rec[col.key]).toLocaleDateString('fr-CH').replaceAll(".", "/");
@@ -950,13 +953,13 @@
 
                 const valid = isDraftValid(rec);
 
-                if (!valid) {
-                    activityStatValue += '🔴' + ' <span class="badge badge-danger status-badge">Incomplete</span>';
-                }
-
                 if (rec.Status === 'draft') {
                     if (activityStatValue) activityStatValue += ' ';
                     activityStatValue += '⚠️' + ' <span class="badge badge-warning status-badge">Draft</span>';
+                }
+
+                if (!valid) {
+                    activityStatValue += '🔴' + ' <span class="badge badge-danger status-badge">Incomplete</span>';
                 }
 
                 const label = document.createElement('label');
