@@ -29,6 +29,18 @@
             padding-left: 40px !important;
             height: 40px;
         }
+
+        #exceptionBadge {
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        #exceptionBadge.badge-light {
+            border: 1px solid #ced4da;
+        }
     </style>
 </head>
 <body>
@@ -122,7 +134,7 @@
                                 </label>
                             </div>
                             <span id="exceptionBadge" class="badge badge-secondary ml-3">
-                                Disabled
+                                Inactive
                             </span>
                         </div>
                     </div>
@@ -174,7 +186,7 @@
 		window.grist.ready({ requiredAccess: 'full' });
 
         function updateExceptionBadge(enabled) {
-            exceptionBadge.textContent = enabled ? 'Enabled' : 'Disabled';
+            exceptionBadge.textContent = enabled ? 'Active' : 'Inactive';
 
             exceptionBadge.classList.remove(
                 'badge-success',
