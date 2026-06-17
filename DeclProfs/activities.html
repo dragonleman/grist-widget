@@ -933,13 +933,35 @@
 
             if (!(col.key in rec)) continue;
 
+            if (col.key === 'ActivityStat') {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'form-group';
+
+                let activityStatValue = '';
+
+                if (!rec.ActivityStat) {
+                    activityStatValue += '🔴' + ' <span class="badge badge-danger">Incomplete</span>';
+                }
+
+                if (rec.Status === 'draft') {
+                    if (activityStatValue) activityStatValue += ' ';
+                    activityStatValue += '🟡' + ' <span class="badge badge-warning">Draft</span>';
+                }
+
+                const label = document.createElement('label');
+                label.innerHTML = activityStatValue;
+
+                wrapper.appendChild(label);
+                form.appendChild(wrapper);
+            }
+
             const wrapper = document.createElement('div');
             wrapper.className = 'form-group';
 
             const label = document.createElement('label');
             label.innerHTML = col.required
                 ? `${col.label} <span class="text-danger">*</span>`
-                : col.label;;
+                : col.label;
 
             let input = document.createElement('input');
             input.className = 'form-control';
