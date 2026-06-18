@@ -1082,6 +1082,17 @@
                 return;
             }
 
+            const result = await Swal.fire({
+                icon: 'question',
+                title: 'Validation of activities of "${rec.Activity}"',
+                text: `With my submission, I certify that this list of activities is complete and accurate and declare not to have devoted to them more than the equivalent of 1 day per week for a full time position.`,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (!result.isConfirmed) return;
+
             delete pendingChanges['rec'];
 
             const d = new Date();
@@ -1172,10 +1183,12 @@
             return;
         }
 
+        const year = yearInput.value.trim();
+
         const result = await Swal.fire({
             icon: "question",
-            title: "Validate drafts?",
-            text: `Validate ${drafts.length} draft(s)?`,
+            title: `Validate ${drafts.length} draft(s) of ${year} ?`,
+            text: "With my submission, I certify that this list of activities is complete and accurate and declare not to have devoted to them more than the equivalent of 1 day per week for a full time position.",
             showCancelButton: true,
             confirmButtonText: "Yes, validate",
             cancelButtonText: "Cancel",
