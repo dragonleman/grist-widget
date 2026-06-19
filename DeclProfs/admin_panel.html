@@ -357,14 +357,14 @@
 	        // =====================================================
 
             // Download activities year
-            yearActivitiesInput.value = rec.DownloadedYear || '';
+            yearActivitiesInput.value = rec.DownloadYear || '';
 
             yearActivitiesInput.addEventListener('blur', async () => {
-                if (yearActivitiesInput.value !== rec.DownloadedYear) {
+                if (yearActivitiesInput.value !== rec.DownloadYear) {
                     await window.grist.selectedTable.update({
                         id: rec.id,
                         fields: {
-                            DownloadedYear: yearActivitiesInput.value
+                            DownloadYear: yearActivitiesInput.value
                         }
                     });
                 }
