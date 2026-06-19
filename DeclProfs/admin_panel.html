@@ -258,6 +258,9 @@
         const excBtn = document.getElementById('exceptionSwitch');
         const updateActSwitch = document.getElementById('updateActSwitch');
         const exceptionBadge = document.getElementById('exceptionBadge');
+        const yearActivitiesInput = document.getElementById('yearActivitiesInput');
+        const sendActivitiesTo = document.getElementById('sendActivitiesTo');
+        const sendActivitiesSwitch = document.getElementById('sendActivitiesSwitch');
 
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -279,6 +282,10 @@
 
 		window.grist.onRecords(records => {
             const rec = records[0];
+
+            // =====================================================
+	        // EXCEPTIONS
+	        // =====================================================
 
             // Year
             yearInput.value = rec.exception_year || '';
@@ -331,6 +338,10 @@
                 });
             });
 
+            // =====================================================
+	        // UPDATE ACTIVITIES
+	        // =====================================================
+
             // Update activities
             updateActSwitch.checked = Boolean(rec.UpdateActivitiesStatuses);
 
@@ -338,6 +349,50 @@
                 await window.grist.selectedTable.update({
                     id: rec.id,
                     fields: { UpdateActivitiesStatuses: updateActSwitch.checked }
+                });
+            });
+
+            // =====================================================
+	        // DOWNLOAD ACTIVITIES
+	        // =====================================================
+
+            // Download activities year
+            yearActivitiesInput.value = rec.DownloadActivitiesYear || '';
+
+            yearActivitiesInput.addEventListener('blur', async () => {
+                if (yearActivitiesInput.value !== rec.DownloadActivitiesYear) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: {
+                            DownloadActivitiesYear: yearActivitiesInput.value
+                        }
+                    });
+                }
+            });
+
+            // Download activities email
+            sendActivitiesTo.value = rec.SendActivitiesTo || '';
+
+            sendActivitiesTo.addEventListener('blur', async () => {
+                if (sendActivitiesTo.value !== rec.SendActivitiesTo) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: {
+                            SendActivitiesTo: sendActivitiesTo.value
+                        }
+                    });
+                }
+            });
+
+            // Download activities switch
+            sendActivitiesSwitch.checked = Boolean(rec.SendActivitiesNow);
+
+            sendActivitiesSwitch.addEventListener('change', async () => {
+                await window.grist.selectedTable.update({
+                    id: rec.id,
+                    fields: {
+                        SendActivitiesNow: sendActivitiesSwitch.checked
+                    }
                 });
             });
         });
