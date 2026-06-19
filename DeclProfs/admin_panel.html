@@ -357,41 +357,41 @@
 	        // =====================================================
 
             // Download activities year
-            yearActivitiesInput.value = rec.DownloadActivitiesYear || '';
+            yearActivitiesInput.value = rec.DownloadedYear || '';
 
             yearActivitiesInput.addEventListener('blur', async () => {
-                if (yearActivitiesInput.value !== rec.DownloadActivitiesYear) {
+                if (yearActivitiesInput.value !== rec.DownloadedYear) {
                     await window.grist.selectedTable.update({
                         id: rec.id,
                         fields: {
-                            DownloadActivitiesYear: yearActivitiesInput.value
+                            DownloadedYear: yearActivitiesInput.value
                         }
                     });
                 }
             });
 
             // Download activities email
-            sendActivitiesTo.value = rec.SendActivitiesTo || '';
+            sendActivitiesTo.value = rec.To_Email_Downloaded || '';
 
             sendActivitiesTo.addEventListener('blur', async () => {
-                if (sendActivitiesTo.value !== rec.SendActivitiesTo) {
+                if (sendActivitiesTo.value !== rec.To_Email_Downloaded) {
                     await window.grist.selectedTable.update({
                         id: rec.id,
                         fields: {
-                            SendActivitiesTo: sendActivitiesTo.value
+                            To_Email_Downloaded: sendActivitiesTo.value
                         }
                     });
                 }
             });
 
             // Download activities switch
-            sendActivitiesSwitch.checked = Boolean(rec.SendActivitiesNow);
+            sendActivitiesSwitch.checked = Boolean(rec.DownloadBtn);
 
             sendActivitiesSwitch.addEventListener('change', async () => {
                 await window.grist.selectedTable.update({
                     id: rec.id,
                     fields: {
-                        SendActivitiesNow: sendActivitiesSwitch.checked
+                        DownloadBtn: sendActivitiesSwitch.checked
                     }
                 });
             });
