@@ -515,49 +515,10 @@
 
                     await Swal.fire({
                         icon: 'success',
-                        title: 'CSV téléchargé !',
+                        title: 'CSV dowloaded !',
                         timer: 1200,
                         showConfirmButton: false
                     });
-                });
-
-
-                csvBtn.addEventListener('click', async (e) => {
-
-                    e.stopPropagation();
-
-                    const result = await Swal.fire({
-						icon: 'question',
-						title: 'Télécharger CSV ?',
-						text: `Télécharger "${rec.Activity}" en CSV ?`,
-						showCancelButton: true,
-						confirmButtonText: 'Oui, télécharger',
-						cancelButtonText: 'Annuler',
-						confirmButtonColor: '#3085d6',
-						cancelButtonColor: '#6c757d'
-					});
-
-					if (!result.isConfirmed) return;
-
-                    const values = visibleColumns.map(k => rec[k] ?? '');
-
-					const csvContent =
-						visibleColumns.join(",") + "\n" +
-						values.map(v => `"${sanitizeCSV(v).replace(/"/g, '""')}"`).join(",");
-
-					const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-					const link = document.createElement("a");
-					link.href = URL.createObjectURL(blob);
-					link.download = `${rec.Activity || "ligne"}_${rec.id}.csv`;
-					link.click();
-					URL.revokeObjectURL(link.href);
-
-					await Swal.fire({
-						icon: 'success',
-						title: 'CSV téléchargé !',
-						timer: 1200,
-						showConfirmButton: false
-					});
                 });
             }
 
