@@ -511,7 +511,7 @@
 
                     if (!result.isConfirmed) return;
 
-                    downloadCSV([rec], `${rec.Name}_${rec.id}.csv`);
+                    downloadCSV([rec], `Activity_${rec.id}.csv`);
 
                     await Swal.fire({
                         icon: 'success',
