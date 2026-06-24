@@ -593,6 +593,7 @@
 		const activeFilter = document.querySelector('.filter-pill.active')?.dataset.filter || 'all';
         const yearQuery = yearInput.value.trim();
 
+		alert(`${activeFilter}_${yearQuery || "all"}.csv`);
         downloadCSV(filtered, `${activeFilter}_${yearQuery || "all"}.csv`);
 
         Swal.fire({
