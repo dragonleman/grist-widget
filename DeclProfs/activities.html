@@ -136,7 +136,22 @@
 		<!-- LEFT -->
 		<div class="left-panel">
 
-			<div id="searchDiv" class="mb-2" style="position: relative; display: none">
+            <div id="searchDiv" class="mb-2" style="display:none;">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg width="16" height="16">
+                            <use xlink:href="#user"></use>
+                        </svg>
+                    </span>
+
+                    <input type="text"
+                        id="searchInput"
+                        class="form-control"
+                        placeholder="Search someone...">
+                </div>
+            </div>
+
+			<!-- <div id="searchDiv" class="mb-2" style="position: relative; display: none">
 				<input type="text"
 					   id="searchInput"
 					   class="form-control"
@@ -152,7 +167,7 @@
                             pointer-events: none;">
                     <use xlink:href="#user"></use>
                 </svg>
-			</div>
+			</div> -->
 
 			<!-- <div class="mb-3" style="position: relative; width: 140px;">
 				<input type="text"
@@ -180,9 +195,9 @@
             <div class="mb-3" style="width: 200px;">
                 <div class="input-group">
                     <span class="input-group-text">
-                    <svg width="16" height="16">
-                        <use xlink:href="#calendar"></use>
-                    </svg>
+                        <svg width="16" height="16">
+                            <use xlink:href="#calendar"></use>
+                        </svg>
                     </span>
 
                     <input id="yearInput" type="text" class="form-control" placeholder="YYYY" maxlength="4">
