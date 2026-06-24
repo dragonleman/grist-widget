@@ -815,7 +815,7 @@
 	// =====================================================
 
     function validateAllLive() {
-        const valid = isDraftValid(pendingChanges);
+        const valid = isDraftLiveValid(pendingChanges);
         document.getElementById('validateBtn').disabled = !valid;
     }
 
@@ -831,8 +831,6 @@
     }
 
     function trackChange(field, value) {
-        alert("field");
-
         // Activity / Principal validation
         if (field === 'Activity' || field === 'Principal') {
             setError(field, !value || !value.trim());
@@ -1019,7 +1017,7 @@
         return pendchg[field] ?? pendchg.rec?.[field];
     }
 
-    function isDraftValid(pendchg) {
+    function isDraftLiveValid(pendchg) {
         const activity = checkField(pendchg, 'Activity');
         const principal = checkField(pendchg, 'Principal');
         const start = checkField(pendchg, 'Start_date');
@@ -1046,7 +1044,7 @@
 				return;
 			}
 
-            if (!isDraftValid(pendingChanges)) {
+            if (!isDraftLiveValid(pendingChanges)) {
                 await Swal.fire({
                     icon: 'error',
                     title: 'Save failed',
