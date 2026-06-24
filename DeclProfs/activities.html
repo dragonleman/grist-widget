@@ -144,53 +144,9 @@
                         </svg>
                     </span>
 
-                    <input type="text"
-                        id="searchInput"
-                        class="form-control"
-                        placeholder="Search someone...">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
                 </div>
             </div>
-
-			<!-- <div id="searchDiv" class="mb-2" style="position: relative; display: none">
-				<input type="text"
-					   id="searchInput"
-					   class="form-control"
-					   placeholder="Search someone...">
-                <svg class="icon"
-                        aria-hidden="true"
-                        style="position: absolute;
-                            left: 10px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            width: 16px;
-                            height: 16px;
-                            pointer-events: none;">
-                    <use xlink:href="#user"></use>
-                </svg>
-			</div> -->
-
-			<!-- <div class="mb-3" style="position: relative; width: 140px;">
-				<input type="text"
-					   id="yearInput"
-					   class="form-control"
-					   placeholder="YYYY"
-					   inputmode="numeric"
-					   maxlength="4">
-                <svg class="icon"
-                    aria-hidden="true"
-                    style="position: absolute;
-                            left: 10px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            width: 16px;
-                            height: 16px;
-                            pointer-events: none;">
-                    <use xlink:href="#calendar"></use>
-                </svg>
-                <small class="text-muted">
-                    Leave this field blank to display all years.
-                </small>
-			</div> -->
 
             <div class="mb-3" style="width: 200px;">
                 <div class="input-group">
@@ -871,6 +827,8 @@
         // Date validation
         if ((field === 'Start_date') || (field === 'End_date')) {
             const start = checkField(pendingChanges, 'Start_date');
+
+            alert(pendingChanges);
 
             if (!start) {
                 setError('Start_date', true);
