@@ -127,7 +127,7 @@
             <svg class="icon" aria-hidden="true">
                 <use xlink:href="#check"></use>
             </svg>
-			Validate
+			Save
 		</button>
 	</div>
 
@@ -152,6 +152,9 @@
                             pointer-events: none;">
                     <use xlink:href="#user"></use>
                 </svg>
+                <small class="text-muted">
+                    Leave this field blank to display all years.
+                </small>
 			</div>
 
 			<div class="mb-3" style="position: relative; width: 140px;">
@@ -195,7 +198,7 @@
                         <svg class="icon" aria-hidden="true">
                             <use xlink:href="#check"></use>
                         </svg>
-                        Validate Drafts
+                        Save & Submit
                     </button>
 
                     <button id="downloadAllBtn" class="btn btn-secondary btn-sm ml-2">
@@ -828,6 +831,8 @@
     }
 
     function trackChange(field, value) {
+        alert("field");
+
         // Activity / Principal validation
         if (field === 'Activity' || field === 'Principal') {
             setError(field, !value || !value.trim());
@@ -1155,7 +1160,7 @@
 
         const result = await Swal.fire({
             icon: "question",
-            title: `Validate ${drafts.length} draft(s) of ${year} ?`,
+            title: `Submit ${drafts.length} draft(s) of ${year} ?`,
             text: "With my submission, I certify that this list of activities is complete and accurate and declare not to have devoted to them more than the equivalent of 1 day per week for a full time position.",
             showCancelButton: true,
             confirmButtonText: "Yes, validate",
