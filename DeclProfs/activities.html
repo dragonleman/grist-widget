@@ -1260,22 +1260,36 @@
 
 		filteredRecords = getFilteredRecords();
 
-		if (!selectedId && filteredRecords.length) {
-            const lastRec = filteredRecords[filteredRecords.length - 1];
-            selectedId = lastRec.id;
-            pendingChanges = {};
-            pendingChanges['rec'] = lastRec;
+		// if (!selectedId && filteredRecords.length) {
+        //     const lastRec = filteredRecords[filteredRecords.length - 1];
+        //     selectedId = lastRec.id;
+        //     pendingChanges = {};
+        //     pendingChanges['rec'] = lastRec;
 
-			// selectedId = filteredRecords[0].id;
-            // pendingChanges = {};
-            // pendingChanges['rec'] = filteredRecords[0];
-		}
+		// 	// selectedId = filteredRecords[0].id;
+        //     // pendingChanges = {};
+        //     // pendingChanges['rec'] = filteredRecords[0];
+		// }
 
-		if (selectedId && !filteredRecords.some(r => r.id === selectedId)) {
-			selectedId = filteredRecords.length	? filteredRecords[0].id	: null;
-            pendingChanges = {};
-            pendingChanges['rec'] = null;
-		}
+		// if (selectedId && !filteredRecords.some(r => r.id === selectedId)) {
+		// 	selectedId = filteredRecords.length	? filteredRecords[0].id	: null;
+        //     pendingChanges = {};
+        //     pendingChanges['rec'] = null;
+		// }
+
+        if (!filteredRecords.length) {
+            selectedId = null;
+            pendingChanges = { rec: null };
+        }
+        else if (!selectedId || !filteredRecords.some(r => r.id === selectedId)) {
+            selectedId = filteredRecords[filteredRecords.length - 1].id;
+        }
+
+        const currentRec = filteredRecords.find(r => r.id === selectedId) || null;
+
+        pendingChanges = {
+            rec: currentRec
+        };
 
 		renderTable();
 		renderForm();
