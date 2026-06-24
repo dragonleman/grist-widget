@@ -1022,6 +1022,8 @@
 		.getElementById('validateBtn')
 		.addEventListener('click', async () => {
 
+            alert(selectedId);
+
 			if (!selectedId) return;
 
 			if (Object.keys(pendingChanges).length < 2) {
@@ -1257,23 +1259,6 @@
 	function renderAll() {
 
 		filteredRecords = getFilteredRecords();
-
-		// if (!selectedId && filteredRecords.length) {
-        //     const lastRec = filteredRecords[filteredRecords.length - 1];
-        //     selectedId = lastRec.id;
-        //     pendingChanges = {};
-        //     pendingChanges['rec'] = lastRec;
-
-		// 	// selectedId = filteredRecords[0].id;
-        //     // pendingChanges = {};
-        //     // pendingChanges['rec'] = filteredRecords[0];
-		// }
-
-		// if (selectedId && !filteredRecords.some(r => r.id === selectedId)) {
-		// 	selectedId = filteredRecords.length	? filteredRecords[0].id	: null;
-        //     pendingChanges = {};
-        //     pendingChanges['rec'] = null;
-		// }
 
         if (!filteredRecords.length) {
             selectedId = null;
