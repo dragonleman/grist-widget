@@ -64,7 +64,7 @@
 			margin-top: 16px;
 		}
 
-        .readonly-row {
+        .readonly-row td:not(:last-child) {
             opacity: 0.5;
             filter: grayscale(0.6);
         }
@@ -411,44 +411,38 @@
                 </svg>
             `;
 
-            if (isReadOnly) {
-                dupBtn.style.opacity = '0.4';
-                dupBtn.style.cursor = 'not-allowed';
-            } else {
-                dupBtn.addEventListener('click', async (e) => {
+            dupBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
 
-                    e.stopPropagation();
-
-                    const result = await Swal.fire({
-                        icon: 'question',
-                        title: 'Duplicate ?',
-                        text: `Duplicate "${rec.Activity}" ?`,
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'Cancel'
-                    });
-
-                    if (!result.isConfirmed) return;
-
-                    await grist.selectedTable.create({
-                        fields: {
-                            Activity: rec.Activity || '',
-                            Principal: rec.Principal || '',
-                            Start_date: today,
-                            End_date: today,
-                            Comments: rec.Comments || '',
-                            Comments_admins: rec.Comments_admins || ''
-                        }
-                    });
-
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Duplicated',
-                        timer: 1200,
-                        showConfirmButton: false
-                    });
+                const result = await Swal.fire({
+                    icon: 'question',
+                    title: 'Duplicate ?',
+                    text: `Duplicate "${rec.Activity}" ?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel'
                 });
-            }
+
+                if (!result.isConfirmed) return;
+
+                await grist.selectedTable.create({
+                    fields: {
+                        Activity: rec.Activity || '',
+                        Principal: rec.Principal || '',
+                        Start_date: today,
+                        End_date: today,
+                        Comments: rec.Comments || '',
+                        Comments_admins: rec.Comments_admins || ''
+                    }
+                });
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Duplicated',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+            });
 
             tdActions.appendChild(dupBtn);
 
