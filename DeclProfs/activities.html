@@ -411,8 +411,6 @@
                 </svg>
             `;
 
-            dupBtn.disabled = isReadOnly;
-
             if (isReadOnly) {
                 dupBtn.style.opacity = '0.4';
                 dupBtn.style.cursor = 'not-allowed';
@@ -1021,8 +1019,6 @@
 	document
 		.getElementById('validateBtn')
 		.addEventListener('click', async () => {
-
-            alert(selectedId);
 
 			if (!selectedId) return;
 
