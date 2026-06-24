@@ -173,7 +173,7 @@
 		</button>
 
 		<button class="filter-pill" data-filter="wrong">
-			Wrong <span id="totalWrong">0</span>
+			Incomplete <span id="totalWrong">0</span>
 		</button>
 
 		<button class="filter-pill" data-filter="missing">
@@ -590,8 +590,10 @@
 
         if (!result.isConfirmed) return;
 
+		const activeFilter = document.querySelector('.filter-pill.active')?.dataset.filter || 'all';
         const yearQuery = yearInput.value.trim();
-        downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
+
+        downloadCSV(filtered, `${activeFilter}_${yearQuery || "all"}.csv`);
 
         Swal.fire({
             icon: "success",
