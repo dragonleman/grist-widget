@@ -828,7 +828,7 @@
         if ((field === 'Start_date') || (field === 'End_date')) {
             const start = checkField(pendingChanges, 'Start_date');
 
-            alert(pendingChanges);
+            alert(JSON.stringify(pendingChanges['rec'], null, 2));
 
             if (!start) {
                 setError('Start_date', true);
