@@ -1043,15 +1043,13 @@
                 return;
             }
 
-            if (!result.isConfirmed) return;
-
             delete pendingChanges['rec'];
 
             const d = new Date();
 
             pendingChanges['Is_by_admin'] = isByAPR;
             pendingChanges['LogAction'] = 'update';
-            pendingChanges['ValidationBtn'] = true;
+            pendingChanges['SaveBtn'] = true;
             pendingChanges['UpdatedAt'] =
                 d.getFullYear() + '-' +
                 String(d.getMonth()+1).padStart(2,'0') + '-' +
@@ -1130,7 +1128,7 @@
             Swal.fire({
                 icon: "error",
                 title: "Can't validate all drafts",
-                text: `There are draftsthat are not valid.`,
+                text: `There are drafts that are not valid.`,
             });
             return;
         }
