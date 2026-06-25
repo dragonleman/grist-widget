@@ -232,7 +232,8 @@
 			{ key: 'Name', label: 'Name' },
 			{ key: 'Unit', label: 'Unit' },
 			{ key: 'Status', label: 'Status' },
-			{ key: 'UpdatedAt', label: 'Updated at' }
+			{ key: 'Comments', label: 'Comments' },
+			{ key: 'Comments_admin', label: 'Comments APR' }
 		],
 
 		wrong: [
@@ -346,13 +347,15 @@
 			}
 
 			// Status
-			let status;
+			let status = "";
+			let comments = "";
+			let comments_admin = "";
 
 			if (selectedYear) {
 				status = (statusMap[selectedYear].totalActivities === statusMap[selectedYear].totalValid) && (statusMap[selectedYear].totalActivities > 0) ? "✅" : "❌";
-			} else {
-				status = "";
-			}
+				comments = statusMap[selectedYear].comments;
+				comments_admin = statusMap[selectedYear].commentsAdmin;
+			} 
 
 			const row = tbody.insertRow();
 
@@ -382,6 +385,14 @@
 
 					case 'Status':
 						value = status;
+						break;
+
+					case 'Comments':
+						value = comments;
+						break;
+
+					case 'Comments_admin':
+						value = comments_admin;
 						break;
 
 					case 'UpdatedAt':
