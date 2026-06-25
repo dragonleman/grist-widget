@@ -267,11 +267,17 @@
 		}
 	}
 
+	// =====================================================
+	// RENDER
+	// =====================================================
+
 	function renderTable(records) {
 
 		const visibleColumns = tableColumns[selectedFilter] || tableColumns.all;
 
+		//
 		// THEAD
+		//
 		table.querySelector('thead').innerHTML = '';
 
 		// Checkbox
@@ -279,7 +285,7 @@
 
 		const th = document.createElement('th');
 		th.id = 'reminderCheckbox';
-		th.style.display = 'none';
+		th.style.display = isAdmin ? 'table-cell' : 'none';
 
 		const checkbox = document.createElement('input');
 		checkbox.type = 'checkbox';
@@ -297,7 +303,9 @@
 
 		table.querySelector('thead').appendChild(tr);
 
+		//
 		// TBODY
+		//
 		const tbody = document.querySelector('#table_alt tbody');
 		tbody.innerHTML = '';
 
@@ -532,7 +540,6 @@
 			document.getElementById('searchDiv').style.display = 'block';
 			document.getElementById('tooldDiv').style.display = 'block';
 			document.getElementById('statsDiv').classList.remove('d-none');
-			document.getElementById('reminderCheckbox').style.display = 'table-cell';
 			isAdmin = true;
 		}
 
