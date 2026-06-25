@@ -116,27 +116,6 @@
 						<input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
 					</div>
 				</div>
-                <!-- <div id="searchDiv"
-                     class="mb-3"
-                     style="width: 320px; position: relative; display: none;">
-
-                    <input
-                        type="text"
-                        id="searchInput"
-                        class="form-control"
-                        placeholder="Search someone...">
-                    <svg class="icon"
-                         aria-hidden="true"
-                         style="position: absolute;
-                                left: 10px;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                width: 16px;
-                                height: 16px;
-                                pointer-events: none;">
-                        <use xlink:href="#user"></use>
-                    </svg>
-                </div> -->
 
 				<div class="mb-3" style="width: 200px;">
 					<div class="input-group">
@@ -153,34 +132,21 @@
 						Leave blank to display all years.
 					</small>
 				</div>
-<!-- 
-				<div style="width: 140px; position: relative;">
-					<input type="text"
-						id="yearInput"
-						class="form-control"
-						placeholder="YYYY"
-						inputmode="numeric"
-						maxlength="4">
-					<svg class="icon"
-						aria-hidden="true"
-						style="position: absolute;
-							   left: 10px;
-							   top: 50%;
-							   transform: translateY(-50%);
-							   width: 16px;
-							   height: 16px;
-							   pointer-events: none;">
-						<use xlink:href="#calendar"></use>
-					</svg>
-				</div> -->
             </div>
 
             <div id="tooldDiv" style="display: none;" class="d-flex align-items-center justify-content-end">
 				<div class="btn-group" role="group">
 					<button id="downloadAllBtn" class="btn btn-secondary btn-sm">
+						<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#download"></use>
+                        </svg>
 						Download CSV
 					</button>
+
 					<button id="sendReminderBtn" class="btn btn-info btn-sm">
+						<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#mail"></use>
+                        </svg>
 						Send reminder
 					</button>
 				</div>
@@ -217,7 +183,7 @@
             <table id="table_alt" class="table table-boxed mb-0">
 
                 <thead>
-                    <tr>
+                    <!-- <tr>
                         <th id="reminderCheckbox" style="display: none">
                             <input type="checkbox" id="selectAll">
                         </th>
@@ -229,7 +195,7 @@
                         <th>Status</th>
                         <th>Sent reminder at</th>
                         <th>Updated at</th>
-                    </tr>
+                    </tr> -->
                 </thead>
 
                 <tbody></tbody>
@@ -249,6 +215,7 @@
 <script>
 	const selectAll = document.getElementById('selectAll');
 	const yearInput = document.getElementById("yearInput");
+	const table = document.getElementById('table_alt');
 
 	let allRecords = [];
 	let selectedYear = new Date().getFullYear().toString();
@@ -258,6 +225,36 @@
     const columns = [
         { key: 'Name', label: 'Name' }
     ];
+
+	const tableColumns = {
+		all: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Username', label: 'Username' },
+			{ key: 'Email', label: 'Email' },
+			{ key: 'Unit', label: 'Unit' },
+			{ key: 'Status', label: 'Status' },
+			{ key: 'UpdatedAt', label: 'Updated at' }
+		],
+
+		submitted: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Unit', label: 'Unit' },
+			{ key: 'Status', label: 'Status' },
+			{ key: 'UpdatedAt', label: 'Updated at' }
+		],
+
+		wrong: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Email', label: 'Email' },
+			{ key: 'Status', label: 'Status' }
+		],
+
+		missing: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Email', label: 'Email' },
+			{ key: 'SentReminderAt', label: 'Reminder sent' }
+		]
+	};
 
 	window.grist.ready({ requiredAccess: 'full' });
 
@@ -272,6 +269,35 @@
 
 	function renderTable(records) {
 
+		const visibleColumns = tableColumns[selectedFilter] || tableColumns.all;
+
+		// THEAD
+		table.querySelector('thead').innerHTML = '';
+
+		// Checkbox
+		const tr = document.createElement('tr');
+
+		const th = document.createElement('th');
+		th.id = 'reminderCheckbox';
+		th.style.display = 'none';
+
+		const checkbox = document.createElement('input');
+		checkbox.type = 'checkbox';
+		checkbox.id = 'selectAll';
+
+		th.appendChild(checkbox);
+		tr.appendChild(th);
+
+		// Other columns
+		visibleColumns.forEach(col => {
+			const th = document.createElement('th');
+			th.textContent = col.label;
+			tr.appendChild(th);
+		});
+
+		table.querySelector('thead').appendChild(tr);
+
+		// TBODY
 		const tbody = document.querySelector('#table_alt tbody');
 		tbody.innerHTML = '';
 
@@ -325,29 +351,58 @@
 				checkboxCell.appendChild(checkboxInput);
 			}
 
-			// Name
-			row.insertCell().textContent = rec.Name || '';
+			for (const col of visibleColumns) {
 
-			// Username
-			row.insertCell().textContent = rec.Username || '';
+				let value = '';
 
-			// Email
-			row.insertCell().textContent = rec.Email || '';
+				switch(col.key) {
 
-			// Sciper
-			row.insertCell().textContent = rec.UserId || '';
+					case 'Status':
+						value = status;
+						break;
 
-			// Unit
-			row.insertCell().textContent = rec.Unit || '';
+					case 'UpdatedAt':
+						value = rec.UpdatedAt
+							? new Date(rec.UpdatedAt).toLocaleString('fr-CH')
+							: '';
+						break;
 
-			// Status
-			row.insertCell().textContent = status;
+					case 'SentReminderAt':
+						value = rec.SentReminderAt
+							? new Date(rec.SentReminderAt).toLocaleString('fr-CH')
+							: '';
+						break;
 
-			// Sent Reminder At
-			row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
+					default:
+						value = rec[col.key] || '';
+				}
 
-			// Updated At
-			row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
+				row.insertCell().textContent = value;
+			}
+
+			// // Name
+			// row.insertCell().textContent = rec.Name || '';
+
+			// // Username
+			// row.insertCell().textContent = rec.Username || '';
+
+			// // Email
+			// row.insertCell().textContent = rec.Email || '';
+
+			// // Sciper
+			// row.insertCell().textContent = rec.UserId || '';
+
+			// // Unit
+			// row.insertCell().textContent = rec.Unit || '';
+
+			// // Status
+			// row.insertCell().textContent = status;
+
+			// // Sent Reminder At
+			// row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
+
+			// // Updated At
+			// row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
 		}
 	}
 
