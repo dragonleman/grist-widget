@@ -355,6 +355,8 @@
 				status = (statusMap[selectedYear].totalActivities === statusMap[selectedYear].totalValid) && (statusMap[selectedYear].totalActivities > 0) ? "✅" : "❌";
 				comments = statusMap[selectedYear].comments;
 				comments_admin = statusMap[selectedYear].commentsAdmin;
+
+				alert(`comments = ${comments} ; APR = ${comments_admin}`);
 			} 
 
 			const row = tbody.insertRow();
