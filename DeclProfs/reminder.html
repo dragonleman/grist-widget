@@ -213,7 +213,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-	const selectAll = document.getElementById('selectAll');
+	//const selectAll = document.getElementById('selectAll');
 	const yearInput = document.getElementById("yearInput");
 	const table = document.getElementById('table_alt');
 
@@ -290,6 +290,30 @@
 		const checkbox = document.createElement('input');
 		checkbox.type = 'checkbox';
 		checkbox.id = 'selectAll';
+
+		// Select all
+		checkbox.addEventListener('change', async () => {
+			const checked = this.checked;
+
+			// Update immediate visual
+			document.querySelectorAll('.row-checkbox').forEach(cb => {
+				cb.checked = checked;
+			});
+
+			const filtered = getFiltered();
+
+			// Update Grist
+			const actions = filtered.map(rec => [
+				"UpdateRecord",
+				"Users",
+				rec.id,
+				{
+					SelectReminder: checked
+				}
+			]);
+
+			await grist.docApi.applyUserActions(actions);
+		});
 
 		th.appendChild(checkbox);
 		tr.appendChild(th);
@@ -566,29 +590,29 @@
 		.getElementById('searchInput')
 		.addEventListener('input', applyFilters);
 
-	// Select all
-	selectAll.addEventListener('change', async () => {
-		const checked = selectAll.checked;
+	// // Select all
+	// selectAll.addEventListener('change', async () => {
+	// 	const checked = selectAll.checked;
 
-		// Update visuel immédiat
-		document.querySelectorAll('.row-checkbox').forEach(cb => {
-			cb.checked = checked;
-		});
+	// 	// Update visuel immédiat
+	// 	document.querySelectorAll('.row-checkbox').forEach(cb => {
+	// 		cb.checked = checked;
+	// 	});
 
-		const filtered = getFiltered();
+	// 	const filtered = getFiltered();
 
-		// Update Grist
-		const actions = filtered.map(rec => [
-			"UpdateRecord",
-			"Users",
-			rec.id,
-			{
-				SelectReminder: checked
-			}
-		]);
+	// 	// Update Grist
+	// 	const actions = filtered.map(rec => [
+	// 		"UpdateRecord",
+	// 		"Users",
+	// 		rec.id,
+	// 		{
+	// 			SelectReminder: checked
+	// 		}
+	// 	]);
 
-		await grist.docApi.applyUserActions(actions);
-	});
+	// 	await grist.docApi.applyUserActions(actions);
+	// });
 	
 	yearInput.addEventListener("input", (e) => {
 		const year = e.target.value.trim();
