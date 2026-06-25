@@ -724,10 +724,12 @@
 				return;
 			}
 
+			const selectedCount = allRecords.filter(rec => rec.SelectReminder).length;
+
 			const result = await Swal.fire({
 				icon: "question",
 				title: `Send reminder for ${selectedYear}`,
-				text: `Are you sure you want to send reminders to selected professor(s) for the year ${selectedYear} ?`,
+				text: `Are you sure you want to send reminders to ${selectedCount} professor(s) for the year ${selectedYear} ?`,
 				showCancelButton: true,
 				confirmButtonText: "Yes, send reminders",
 				cancelButtonText: "Cancel",
