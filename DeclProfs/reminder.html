@@ -501,6 +501,7 @@
 	}
 
 	function applyFilters() {
+		alert("Coucou");
 		renderTable(getFiltered());
 
 		const stats = computeYearStats(allRecords);
@@ -599,7 +600,10 @@
 		}
 	});
 
-	// DOWNLOAD CSV
+	//
+    // DOWNLOAD CSV
+	//
+
     function sanitizeCSV(value) {
         const str = String(value ?? "");
 
@@ -652,7 +656,6 @@
         URL.revokeObjectURL(link.href);
     }
 
-    // Download all CSV
     document.getElementById('downloadAllBtn').addEventListener("click", async () => {
         const filtered = getFiltered();
 
@@ -693,7 +696,9 @@
         });
     });
 
-	// Send reminder
+	//
+	// SEND REMINDER
+	//
 	document
 		.getElementById('sendReminderBtn')
 		.addEventListener('click', async () => {
