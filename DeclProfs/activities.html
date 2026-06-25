@@ -629,6 +629,13 @@
             records.some(r => r[col.key] !== undefined)
         );
 
+        alert(
+            "exportColumns =\n" +
+            JSON.stringify(exportColumns, null, 2) +
+            "\n\ncolumns =\n" +
+            JSON.stringify(columns, null, 2)
+        );
+
         const csvRows = [];
 
         // HEADER
