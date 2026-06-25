@@ -418,14 +418,15 @@
 						const cb = document.createElement('input');
 						cb.type = 'checkbox';
 						cb.checked = !!rec.inactive;
-						cell.appendChild(cb);
 						cb.addEventListener('change', async () => {
-							await grist.docApi.applyUserActions([
-								['UpdateRecord', 'TaTable', rec.id, {
-									[col.key]: cb.checked
-								}]
-							]);
+							if (cb.checked !== rec.inactive) {
+								await window.grist.selectedTable.update({
+									id: rec.id,
+									fields: { [col.key]: cb.checked }
+								});
+							}
 						});
+						cell.appendChild(cb);
 						break;
 					}
 
@@ -433,14 +434,15 @@
 						const cb = document.createElement('input');
 						cb.type = 'checkbox';
 						cb.checked = !!rec.exempt;
-						cell.appendChild(cb);
 						cb.addEventListener('change', async () => {
-							await grist.docApi.applyUserActions([
-								['UpdateRecord', 'TaTable', rec.id, {
-									[col.key]: cb.checked
-								}]
-							]);
+							if (cb.checked !== rec.exempt) {
+								await window.grist.selectedTable.update({
+									id: rec.id,
+									fields: { [col.key]: cb.checked }
+								});
+							}
 						});
+						cell.appendChild(cb);
 						break;
 					}
 
