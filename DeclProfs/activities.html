@@ -257,6 +257,8 @@
         { key: 'ActivityStat', label: 'Status', readonly: true, required: false },
         { key: 'Name', label: 'Name', readonly: true, required: false },
 
+        { key: 'Sciper', label: 'Sciper', visible: false },
+
         { key: 'Activity', label: 'Activity', required: true },
         { key: 'Principal', label: 'Principal', required: true },
         { key: 'Comments', label: 'Comments', required: false },
@@ -326,7 +328,7 @@
         // Get available columns
         const columnNames = Object.keys(filteredRecords[0]);
 
-        let visibleColumns = columns.filter(c => columnNames.includes(c.key));
+        let visibleColumns = columns.filter(c => columnNames.includes(c.key) && c.visible !== false);
 
         if (visibleColumns.some(col => col.key === 'Name')) {
             document.getElementById('searchDiv').style.display = 'block';
