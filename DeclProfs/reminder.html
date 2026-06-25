@@ -105,7 +105,18 @@
 
         <div class="d-flex justify-content-between align-items-start flex-wrap">
             <div>
-                <div id="searchDiv"
+				<div id="searchDiv" class="mb-2" style="display:none;">
+					<div class="input-group">
+						<span class="input-group-text">
+							<svg width="16" height="16">
+								<use xlink:href="#user"></use>
+							</svg>
+						</span>
+
+						<input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
+					</div>
+				</div>
+                <!-- <div id="searchDiv"
                      class="mb-3"
                      style="width: 320px; position: relative; display: none;">
 
@@ -125,8 +136,24 @@
                                 pointer-events: none;">
                         <use xlink:href="#user"></use>
                     </svg>
-                </div>
+                </div> -->
 
+				<div class="mb-3" style="width: 200px;">
+					<div class="input-group">
+						<span class="input-group-text">
+							<svg width="16" height="16">
+								<use xlink:href="#calendar"></use>
+							</svg>
+						</span>
+
+						<input id="yearInput" type="text" class="form-control" placeholder="YYYY" maxlength="4">
+					</div>
+
+					<small class="text-muted d-block">
+						Leave blank to display all years.
+					</small>
+				</div>
+<!-- 
 				<div style="width: 140px; position: relative;">
 					<input type="text"
 						id="yearInput"
@@ -145,7 +172,7 @@
 							   pointer-events: none;">
 						<use xlink:href="#calendar"></use>
 					</svg>
-				</div>
+				</div> -->
             </div>
 
             <div id="tooldDiv" style="display: none;" class="d-flex align-items-center justify-content-end">
