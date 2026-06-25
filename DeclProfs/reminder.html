@@ -127,10 +127,6 @@
 
 						<input id="yearInput" type="text" class="form-control" placeholder="YYYY" maxlength="4">
 					</div>
-
-					<small class="text-muted d-block">
-						Leave blank to display all years.
-					</small>
 				</div>
             </div>
 
@@ -280,7 +276,7 @@
 		//
 		table.querySelector('thead').innerHTML = '';
 
-		// Checkbox
+		// Selection
 		const tr = document.createElement('tr');
 
 		const th = document.createElement('th');
@@ -291,7 +287,6 @@
 		checkbox.type = 'checkbox';
 		checkbox.id = 'selectAll';
 
-		// Select all
 		checkbox.addEventListener('change', async () => {
 			const checked = this.checked;
 
@@ -585,38 +580,14 @@
 
 	});
 
-	// Search filter
+	// User filter
 	document
 		.getElementById('searchInput')
 		.addEventListener('input', applyFilters);
 
-	// // Select all
-	// selectAll.addEventListener('change', async () => {
-	// 	const checked = selectAll.checked;
-
-	// 	// Update visuel immédiat
-	// 	document.querySelectorAll('.row-checkbox').forEach(cb => {
-	// 		cb.checked = checked;
-	// 	});
-
-	// 	const filtered = getFiltered();
-
-	// 	// Update Grist
-	// 	const actions = filtered.map(rec => [
-	// 		"UpdateRecord",
-	// 		"Users",
-	// 		rec.id,
-	// 		{
-	// 			SelectReminder: checked
-	// 		}
-	// 	]);
-
-	// 	await grist.docApi.applyUserActions(actions);
-	// });
-	
+	// Year filter
 	yearInput.addEventListener("input", (e) => {
 		const year = e.target.value.trim();
-		alert(year);
 
 		if (/^\d{4}$/.test(year)) {
 			selectedYear = year;
