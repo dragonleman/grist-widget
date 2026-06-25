@@ -501,7 +501,6 @@
 	}
 
 	function applyFilters() {
-		alert("Coucou");
 		renderTable(getFiltered());
 
 		const stats = computeYearStats(allRecords);
@@ -593,6 +592,7 @@
 	
 	yearInput.addEventListener("input", (e) => {
 		const year = e.target.value.trim();
+		alert(year);
 
 		if (/^\d{4}$/.test(year)) {
 			selectedYear = year;
