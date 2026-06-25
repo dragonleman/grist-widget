@@ -225,6 +225,8 @@
 	const tableColumns = {
 		all: [
 			{ key: 'Name', label: 'Name' },
+			{ key: 'inactive', label: 'Inactive' },
+			{ key: 'exempt', label: 'Exempt' },
 			{ key: 'Username', label: 'Username' },
 			{ key: 'Email', label: 'Email' },
 			{ key: 'Unit', label: 'Unit' },
@@ -384,39 +386,101 @@
 
 			for (const col of visibleColumns) {
 
-				let value = '';
+				const cell = row.insertCell();
 
-				switch(col.key) {
+				switch (col.key) {
 
 					case 'Status':
-						value = status;
+						cell.textContent = status;
 						break;
 
 					case 'Comments':
-						value = comments;
+						cell.textContent = comments;
 						break;
 
 					case 'Comments_admin':
-						value = comments_admin;
+						cell.textContent = comments_admin;
 						break;
 
 					case 'UpdatedAt':
-						value = rec.UpdatedAt
+						cell.textContent = rec.UpdatedAt
 							? new Date(rec.UpdatedAt).toLocaleString('fr-CH')
 							: '';
 						break;
 
 					case 'SentReminderAt':
-						value = rec.SentReminderAt
+						cell.textContent = rec.SentReminderAt
 							? new Date(rec.SentReminderAt).toLocaleString('fr-CH')
 							: '';
 						break;
 
+					case 'inactive': {
+						const cb = document.createElement('input');
+						cb.type = 'checkbox';
+						cb.checked = !!rec.inactive;
+						cell.appendChild(cb);
+						cb.addEventListener('change', async () => {
+							await grist.docApi.applyUserActions([
+								['UpdateRecord', 'TaTable', rec.id, {
+									[col.key]: cb.checked
+								}]
+							]);
+						});
+						break;
+					}
+
+					case 'exempt': {
+						const cb = document.createElement('input');
+						cb.type = 'checkbox';
+						cb.checked = !!rec.exempt;
+						cell.appendChild(cb);
+						cb.addEventListener('change', async () => {
+							await grist.docApi.applyUserActions([
+								['UpdateRecord', 'TaTable', rec.id, {
+									[col.key]: cb.checked
+								}]
+							]);
+						});
+						break;
+					}
+
 					default:
-						value = rec[col.key] || '';
+						cell.textContent = rec[col.key] || '';
 				}
 
-				row.insertCell().textContent = value;
+				// let value = '';
+
+				// switch(col.key) {
+
+				// 	case 'Status':
+				// 		value = status;
+				// 		break;
+
+				// 	case 'Comments':
+				// 		value = comments;
+				// 		break;
+
+				// 	case 'Comments_admin':
+				// 		value = comments_admin;
+				// 		break;
+
+				// 	case 'UpdatedAt':
+				// 		value = rec.UpdatedAt
+				// 			? new Date(rec.UpdatedAt).toLocaleString('fr-CH')
+				// 			: '';
+				// 		break;
+
+				// 	case 'SentReminderAt':
+				// 		value = rec.SentReminderAt
+				// 			? new Date(rec.SentReminderAt).toLocaleString('fr-CH')
+				// 			: '';
+				// 		break;
+
+				// 	default:
+				// 		value = rec[col.key] || '';
+				// }
+
+				// row.insertCell().textContent = value;
 			}
 
 			// // Name
