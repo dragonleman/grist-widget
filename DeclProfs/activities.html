@@ -880,6 +880,8 @@
 
             if (!(col.key in rec)) continue;
 
+            if (col.visible === false) continue;
+
             if (col.key === 'ActivityStat') {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'form-group';
