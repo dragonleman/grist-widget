@@ -218,10 +218,6 @@
 	let selectedFilter = "all";
 	let isAdmin = false;
 
-    const columns = [
-        { key: 'Name', label: 'Name' }
-    ];
-
 	const tableColumns = {
 		all: [
 			{ key: 'Name', label: 'Name' },
@@ -611,11 +607,11 @@
     }
 
     function downloadCSV(records, filename = "activities.csv") {
-
-        const exportColumns = columns.filter(col =>
-            col.key !== 'ActivityStat' &&
-            records.some(r => r[col.key] !== undefined)
-        );
+      
+		const exportColumns = [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Email', label: 'Email' },
+		];
 
         const csvRows = [];
 
@@ -693,6 +689,7 @@
 	//
 	// SEND REMINDER
 	//
+
 	document
 		.getElementById('sendReminderBtn')
 		.addEventListener('click', async () => {
