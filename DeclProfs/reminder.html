@@ -165,7 +165,7 @@
 			Submitted <span id="totalSubmitted">0</span>
 		</button>
 
-		<button class="filter-pill" data-filter="wrong">
+		<button class="filter-pill" data-filter="incomplete">
 			Incomplete <span id="totalWrong">0</span>
 		</button>
 
@@ -240,10 +240,11 @@
 			{ key: 'Comments_admin', label: 'Comments APR' }
 		],
 
-		wrong: [
+		incomplete: [
 			{ key: 'Name', label: 'Name' },
 			{ key: 'Email', label: 'Email' },
-			{ key: 'Status', label: 'Status' }
+			{ key: 'UpdatedAt', label: 'Updated at' },
+			{ key: 'SentReminderAt', label: 'Reminder sent' }
 		],
 
 		missing: [
@@ -477,7 +478,7 @@
 					matchesFilter = isSubmitted;
 					break;
 
-				case "wrong":
+				case "incomplete":
 					matchesFilter = isWrong;
 					break;
 
