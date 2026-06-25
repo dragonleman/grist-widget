@@ -288,8 +288,8 @@
 		checkbox.type = 'checkbox';
 		checkbox.id = 'selectAll';
 
-		checkbox.addEventListener('change', async () => {
-			const checked = this.checked;
+		checkbox.addEventListener('change', async (e) => {
+    		const checked = e.target.checked;
 
 			// Update immediate visual
 			document.querySelectorAll('.row-checkbox').forEach(cb => {
