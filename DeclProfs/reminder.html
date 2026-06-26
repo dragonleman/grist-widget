@@ -382,10 +382,12 @@
 				row.classList.add('inactive-row');
 			}
 
+			let checkboxInput = null;
+
 			// SelectReminder
 			if (isAdmin) {
 				const checkboxCell = row.insertCell();
-				const checkboxInput = document.createElement('input');
+				checkboxInput = document.createElement('input');
 				checkboxInput.type = 'checkbox';
 				checkboxInput.classList.add('row-checkbox');
 				checkboxInput.checked = !!rec.SelectReminder;
