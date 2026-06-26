@@ -281,6 +281,12 @@
 
 		const visibleColumns = tableColumns[selectedFilter] || tableColumns.all;
 
+		if (!isAdmin) {
+			visibleColumns = visibleColumns.filter(
+				col => !['inactive', 'exempt'].includes(col.key)
+			);
+		}
+
 		//
 		// THEAD
 		//
