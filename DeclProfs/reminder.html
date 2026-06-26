@@ -389,6 +389,7 @@
 				checkboxInput.type = 'checkbox';
 				checkboxInput.classList.add('row-checkbox');
 				checkboxInput.checked = !!rec.SelectReminder;
+				checkboxInput.disabled = !!rec.inactive || !!rec.exempt;
 				checkboxInput.addEventListener('change', async () => {
 					if (checkboxInput.checked !== rec.SelectReminder) {
 						await window.grist.selectedTable.update({
@@ -435,12 +436,14 @@
 						cb.type = 'checkbox';
 						cb.checked = !!rec.inactive;
 						cb.addEventListener('change', async () => {
-							if (cb.checked !== rec.inactive) {
-								await window.grist.selectedTable.update({
-									id: rec.id,
-									fields: { [col.key]: cb.checked }
-								});
+							if (isAdmin) {
+								checkboxInput.checked = false;
+								checkboxInput.disabled = rec.inactive || rec.exempt;
 							}
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { [col.key]: cb.checked }
+							});
 							row.classList.toggle('inactive-row', rec.inactive || rec.exempt);
 						});
 						cell.appendChild(cb);
@@ -452,12 +455,14 @@
 						cb.type = 'checkbox';
 						cb.checked = !!rec.exempt;
 						cb.addEventListener('change', async () => {
-							if (cb.checked !== rec.exempt) {
-								await window.grist.selectedTable.update({
-									id: rec.id,
-									fields: { [col.key]: cb.checked }
-								});
+							if (isAdmin) {
+								checkboxInput.checked = false;
+								checkboxInput.disabled = rec.inactive || rec.exempt;
 							}
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { [col.key]: cb.checked }
+							});
 							row.classList.toggle('inactive-row', rec.inactive || rec.exempt);
 						});
 						cell.appendChild(cb);
