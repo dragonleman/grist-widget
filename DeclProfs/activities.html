@@ -261,8 +261,8 @@
 
         { key: 'Activity', label: 'Activity', required: true },
         { key: 'Principal', label: 'Principal', required: true },
-        { key: 'Comments', label: 'Comments', required: false },
-        { key: 'Comments_admins', label: 'Comments admins', required: false },
+        { key: 'Comments', label: 'Comments', multiline: true, required: false },
+        { key: 'Comments_admins', label: 'Comments admins', multiline: true, required: false },
 
         { key: 'Start_date', label: 'Start date', type: 'date', required: true },
         { key: 'End_date', label: 'End date', type: 'date', required: false }
@@ -915,18 +915,18 @@
                 ? `${col.label} <span class="text-danger">*</span>`
                 : col.label;
 
-            let input = document.createElement('input');
+            let input = col.multiline
+                ? document.createElement('textarea')
+                : document.createElement('input');
+
             input.className = 'form-control';
             input.setAttribute('data-field', col.key);
 
-            // -------------------------
-            // TYPE HANDLING
-            // -------------------------
-            if (col.type === 'date') {
-                input.type = 'date';
+            if (col.multiline) {
+                input.rows = 4;
                 input.value = rec[col.key] || '';
             } else {
-                input.type = 'text';
+                input.type = col.type === 'date' ? 'date' : 'text';
                 input.value = rec[col.key] || '';
             }
 
