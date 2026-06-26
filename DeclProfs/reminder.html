@@ -279,7 +279,7 @@
 
 	function renderTable(records) {
 
-		const visibleColumns = tableColumns[selectedFilter] || tableColumns.all;
+		let visibleColumns = tableColumns[selectedFilter] || tableColumns.all;
 
 		if (!isAdmin) {
 			visibleColumns = visibleColumns.filter(
