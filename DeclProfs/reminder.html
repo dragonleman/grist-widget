@@ -189,19 +189,6 @@
             <table id="table_alt" class="table table-boxed mb-0">
 
                 <thead>
-                    <!-- <tr>
-                        <th id="reminderCheckbox" style="display: none">
-                            <input type="checkbox" id="selectAll">
-                        </th>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Sciper</th>
-                        <th>Unit</th>
-                        <th>Status</th>
-                        <th>Sent reminder at</th>
-                        <th>Updated at</th>
-                    </tr> -->
                 </thead>
 
                 <tbody></tbody>
@@ -219,7 +206,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-	//const selectAll = document.getElementById('selectAll');
 	const yearInput = document.getElementById("yearInput");
 	const table = document.getElementById('table_alt');
 
@@ -311,7 +297,7 @@
 				cb.checked = checked;
 			});
 
-			const filtered = getFiltered();
+			const filtered = getFiltered().filter(rec => !rec.inactive && !rec.exempt);
 
 			// Update Grist
 			const actions = filtered.map(rec => [
