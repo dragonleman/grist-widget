@@ -439,12 +439,11 @@
 						cb.checked = !!rec.inactive;
 						cb.addEventListener('change', async () => {
 							if (isAdmin) {
-								checkboxInput.checked = false;
 								checkboxInput.disabled = rec.inactive || rec.exempt;
 							}
 							await window.grist.selectedTable.update({
 								id: rec.id,
-								fields: { [col.key]: cb.checked }
+								fields: { [col.key]: cb.checked, SelectReminder: false }
 							});
 							row.classList.toggle('inactive-row', rec.inactive || rec.exempt);
 						});
@@ -458,12 +457,11 @@
 						cb.checked = !!rec.exempt;
 						cb.addEventListener('change', async () => {
 							if (isAdmin) {
-								checkboxInput.checked = false;
 								checkboxInput.disabled = rec.inactive || rec.exempt;
 							}
 							await window.grist.selectedTable.update({
 								id: rec.id,
-								fields: { [col.key]: cb.checked }
+								fields: { [col.key]: cb.checked, SelectReminder: false }
 							});
 							row.classList.toggle('inactive-row', rec.inactive || rec.exempt);
 						});
