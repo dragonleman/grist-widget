@@ -174,9 +174,9 @@
                         Add Activity
                     </button>
 
-                    <button id="duplicateAllBtn" class="btn btn-warning btn-sm ml-2">
+                    <!-- <button id="duplicateAllBtn" class="btn btn-warning btn-sm ml-2">
                         Duplicate All
-                    </button>
+                    </button> -->
                 </div>
 
                 <!-- RIGHT ACTIONS -->
@@ -406,7 +406,7 @@
 
             dupBtn.className = 'btn btn-sm btn-light';
 
-            dupBtn.title = 'Duplicate';
+            dupBtn.title = 'Duplicate to current year';
 
             dupBtn.innerHTML = `
                 <svg class="icon" aria-hidden="true">
@@ -721,7 +721,7 @@
             title: "Duplicate all activities?",
             text: `This will create ${filtered.length} new rows.`,
             showCancelButton: true,
-            confirmButtonText: "Yes, duplicate all",
+            confirmButtonText: "Yes, duplicate all to current year",
             cancelButtonText: "Cancel",
             confirmButtonColor: "#f0ad4e",
             cancelButtonColor: "#6c757d"
