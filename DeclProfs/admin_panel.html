@@ -143,7 +143,7 @@
         </div>
 
         <!-- Update Activities -->
-        <div class="card">
+        <!-- <div class="card">
             <div class="card-body">
 
                 <div class="d-flex justify-content-between align-items-center">
@@ -156,7 +156,7 @@
                         </p>
                     </div>
 
-                    <!-- Toggle -->
+                    <!-- Toggle
                     <div class="d-flex align-items-center">
                         <div class="custom-control custom-switch">
                             <input
@@ -170,10 +170,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Download all year activities -->
-        <div class="card">
+        <!-- <div class="card">
             <div class="card-body">
 
                 <h4 class="card-title mb-2">
@@ -184,7 +184,7 @@
                     Download all activities of a defined year.
                 </p>
 
-                <!-- Year -->
+                <!-- Year
                 <div class="row align-items-center mb-3">
                     <div class="col-md-4">
                         <label for="yearActivitiesInput" class="mb-0">
@@ -214,7 +214,7 @@
                     </div>
                 </div>
 
-                <!-- Email -->
+                <!-- Email
                 <div class="row align-items-center mb-3">
                     <div class="col-md-4">
                         <label class="mb-0">
@@ -226,11 +226,11 @@
                     </div>
                 </div>
 
-                <!-- Toggle -->
+                <!-- Toggle
                 <div class="row align-items-center">
                     <div class="col-md-4">
                         <label class="mb-0">
-                            Exception status
+                            Send now
                         </label>
                     </div>
 
@@ -245,8 +245,34 @@
                     </div>
                 </div>
             </div>
+        </div> -->
 
-        </div>
+        <!-- Download disclosure report activities (PDF) -->
+        <!-- <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title mb-2">
+                    Download Disclosure Activities
+                </h4>
+
+                <p class="text-muted mb-4">
+                    Create a disclosure report of activities for a Professor.
+                </p>
+
+                <!-- Email
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label for="sendReportTo" class="mb-0">
+                            Send To
+                        </label>
+                    </div>
+                    <div class="col">
+                        <input id="sendReportTo" type="text" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+        </div> -->
     </div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
@@ -261,6 +287,7 @@
         const yearActivitiesInput = document.getElementById('yearActivitiesInput');
         const sendActivitiesTo = document.getElementById('sendActivitiesTo');
         const sendActivitiesSwitch = document.getElementById('sendActivitiesSwitch');
+        const sendReportTo = document.getElementById('sendReportTo');
 
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -353,7 +380,7 @@
             });
 
             // =====================================================
-	        // DOWNLOAD ACTIVITIES
+	        // DOWNLOAD ACTIVITIES (EXCEL)
 	        // =====================================================
 
             // Download activities year
@@ -394,6 +421,24 @@
                         DownloadBtn: sendActivitiesSwitch.checked
                     }
                 });
+            });
+
+            // =====================================================
+	        // YEARLY REPORT ACTIVITIES (PDF)
+	        // =====================================================
+
+            // Report activities email
+            sendReportTo.value = rec.ReportSendTo || '';
+
+            sendReportTo.addEventListener('blur', async () => {
+                if (sendReportTo.value !== rec.ReportSendTo) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: {
+                            ReportSendTo: sendReportTo.value
+                        }
+                    });
+                }
             });
         });
 	</script>
