@@ -707,12 +707,6 @@
     document.getElementById('duplicateAllBtn').addEventListener('click', async () => {
         let filtered = getFilteredRecords();
 
-        filtered = filtered.filter(rec =>
-            rec.End_date !== null &&
-            rec.End_date !== undefined &&
-            rec.End_date !== ""
-        );
-
         if (!filtered || filtered.length === 0) {
             await Swal.fire({
                 icon: "info",
