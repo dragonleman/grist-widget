@@ -1013,7 +1013,6 @@
 	document
 		.getElementById('validateBtn')
 		.addEventListener('click', async () => {
-
 			if (!selectedId) return;
 
 			if (Object.keys(pendingChanges).length < 2) {
@@ -1023,6 +1022,19 @@
 				});
 				return;
 			}
+
+            const year = yearInput.value.trim();
+
+            if (isByAPR && !year) {
+                Swal.fire({
+                    icon: "error",
+                    title: "No year",
+                    text: "Select a year in the filter",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
 
             if (!isDraftLiveValid(pendingChanges)) {
                 await Swal.fire({
@@ -1048,6 +1060,10 @@
                 String(d.getMinutes()).padStart(2,'0') + ':' +
                 String(d.getSeconds()).padStart(2,'0');
 
+            if (isByAPR) {
+                pendingChanges['YearReport'] = year;
+            }
+            
 			await grist.selectedTable.update({
 				id: selectedId,
 				fields: pendingChanges
