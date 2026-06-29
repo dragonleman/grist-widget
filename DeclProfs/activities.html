@@ -626,6 +626,7 @@
 
         const exportColumns = columns.filter(col =>
             col.key !== 'ActivityStat' &&
+            (!col.isByAPR || col.visible !== false) &&
             records.some(r => r[col.key] !== undefined)
         );
 
