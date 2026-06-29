@@ -406,7 +406,7 @@
 
             dupBtn.className = 'btn btn-sm btn-light';
 
-            dupBtn.title = 'Duplicate to current year';
+            dupBtn.title = 'Duplicate to current';
 
             dupBtn.innerHTML = `
                 <svg class="icon" aria-hidden="true">
@@ -703,73 +703,73 @@
         });
     });
 
-    // DUPLICATE ALL
-    document.getElementById('duplicateAllBtn').addEventListener('click', async () => {
-        let filtered = getFilteredRecords();
+    // // DUPLICATE ALL
+    // document.getElementById('duplicateAllBtn').addEventListener('click', async () => {
+    //     let filtered = getFilteredRecords();
 
-        if (!filtered || filtered.length === 0) {
-            await Swal.fire({
-                icon: "info",
-                title: "No data",
-                text: "There are no activities to duplicate."
-            });
-            return;
-        }
+    //     if (!filtered || filtered.length === 0) {
+    //         await Swal.fire({
+    //             icon: "info",
+    //             title: "No data",
+    //             text: "There are no activities to duplicate."
+    //         });
+    //         return;
+    //     }
 
-        const result = await Swal.fire({
-            icon: "question",
-            title: "Duplicate all activities?",
-            text: `This will create ${filtered.length} new rows.`,
-            showCancelButton: true,
-            confirmButtonText: "Yes, duplicate all to current year",
-            cancelButtonText: "Cancel",
-            confirmButtonColor: "#f0ad4e",
-            cancelButtonColor: "#6c757d"
-        });
+    //     const result = await Swal.fire({
+    //         icon: "question",
+    //         title: "Duplicate all activities?",
+    //         text: `This will create ${filtered.length} new rows.`,
+    //         showCancelButton: true,
+    //         confirmButtonText: "Yes, duplicate all to current year",
+    //         cancelButtonText: "Cancel",
+    //         confirmButtonColor: "#f0ad4e",
+    //         cancelButtonColor: "#6c757d"
+    //     });
 
-        if (!result.isConfirmed) return;
+    //     if (!result.isConfirmed) return;
 
-        Swal.fire({
-            icon: "info",
-            title: "Duplicating activities...",
-            text: "Please wait",
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+    //     Swal.fire({
+    //         icon: "info",
+    //         title: "Duplicating activities...",
+    //         text: "Please wait",
+    //         allowOutsideClick: false,
+    //         allowEscapeKey: false,
+    //         showConfirmButton: false,
+    //         didOpen: () => {
+    //             Swal.showLoading();
+    //         }
+    //     });
 
-        const chunkSize = 20;
+    //     const chunkSize = 20;
 
-        for (let i = 0; i < filtered.length; i += chunkSize) {
-            const chunk = filtered.slice(i, i + chunkSize);
+    //     for (let i = 0; i < filtered.length; i += chunkSize) {
+    //         const chunk = filtered.slice(i, i + chunkSize);
 
-            await Promise.all(chunk.map(rec =>
-                window.grist.selectedTable.create({
-                    fields: {
-                        Activity: rec.Activity || "",
-                        Principal: rec.Principal || "",
-                        Start_date: today,
-                        End_date: today,
-                        Comments: rec.Comments || "",
-                        Comments_admins: rec.Comments_admins || "",
-                        Status: "draft",
-                    }
-                })
-            ));
-        }
+    //         await Promise.all(chunk.map(rec =>
+    //             window.grist.selectedTable.create({
+    //                 fields: {
+    //                     Activity: rec.Activity || "",
+    //                     Principal: rec.Principal || "",
+    //                     Start_date: today,
+    //                     End_date: today,
+    //                     Comments: rec.Comments || "",
+    //                     Comments_admins: rec.Comments_admins || "",
+    //                     Status: "draft",
+    //                 }
+    //             })
+    //         ));
+    //     }
 
-        await Swal.fire({
-            icon: "success",
-            title: "Activities duplicated!",
-            text: `${filtered.length} activity(s) duplicated.`,
-            timer: 1500,
-            showConfirmButton: false
-        });
+    //     await Swal.fire({
+    //         icon: "success",
+    //         title: "Activities duplicated!",
+    //         text: `${filtered.length} activity(s) duplicated.`,
+    //         timer: 1500,
+    //         showConfirmButton: false
+    //     });
 
-    });
+    // });
 
     // =====================================================
 	// ADD ACTIVITY
