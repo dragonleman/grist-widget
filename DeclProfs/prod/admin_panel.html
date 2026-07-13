@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+  	<meta charset="utf-8">
+  	<title>Activities Declaration</title>
+  	<link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+  	<link rel="stylesheet" href="css/declprofs.css">
+	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+    <style>
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.05);
+        }
+
+        .card-title {
+            margin-bottom: .25rem;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+
+        #sendmailButton {
+            min-width: 160px;
+        }
+
+        #yearInput, #yearActivitiesInput {
+            padding-left: 40px !important;
+            height: 40px;
+        }
+
+        #exceptionBadge {
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        #exceptionBadge.badge-light {
+            border: 1px solid #ced4da;
+        }
+    </style>
+</head>
+<body>
+  	<header class="header header-light my-2">
+		<div class="header-light-content">
+			<a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
+			<p class="site-title"><a href="#">Professor outside activities</a></p>
+			<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+		</div>
+  	</header>
+
+	<div class="breadcrumb-container pb-0 mb-0">
+		<nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
+	</div>
+
+    <div class="main-container py-4" style="max-width: 1000px; margin: auto;">
+
+        <div class="mb-5">
+            <h2 class="mb-1">Administration Dashboard</h2>
+        </div>
+
+        <!-- Exceptions -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-2">
+                    Exceptions
+                </h4>
+
+                <p class="text-muted mb-4">
+                    Configure exception settings for the declaration campaign.
+                </p>
+
+                <!-- Year -->
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label for="exceptionYearInput" class="mb-0">
+                            Year of exception
+                        </label>
+                    </div>
+
+                    <div class="col-md-4" style="position: relative; width: 140px;">
+                        <input type="text"
+                            id="yearInput"
+                            class="form-control"
+                            placeholder="YYYY"
+                            pattern="[0-9]{4}"
+                            inputmode="numeric"
+                            maxlength="4">
+                        <svg class="icon"
+                            aria-hidden="true"
+                            style="position: absolute;
+                                    left: 28px;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    width: 16px;
+                                    height: 16px;
+                                    pointer-events: none;">
+                            <use xlink:href="#calendar"></use>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Dates -->
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label class="mb-0">
+                            Exception period
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <input id="startDateInput" type="date" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <input id="endDateInput" type="date" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Toggle -->
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <label class="mb-0">
+                            Exception status
+                        </label>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                            <div class="custom-control custom-switch">
+                                <input id="exceptionSwitch" type="checkbox" class="custom-control-input">
+                                <label class="custom-control-label" for="exceptionSwitch">
+                                </label>
+                            </div>
+                            <span id="exceptionBadge" class="badge badge-secondary ml-3">
+                                Inactive
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Activities -->
+        <!-- <div class="card">
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="card-title mb-1">
+                            Update Activities
+                        </h4>
+                        <p class="text-muted mb-0">
+                            Update statuses of all activities.
+                        </p>
+                    </div>
+
+                    <!-- Toggle
+                    <div class="d-flex align-items-center">
+                        <div class="custom-control custom-switch">
+                            <input
+                                id="updateActSwitch"
+                                type="checkbox"
+                                class="custom-control-input"
+                            >
+                            <label class="custom-control-label" for="updateActSwitch">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Download all year activities -->
+        <!-- <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title mb-2">
+                    Download Activities
+                </h4>
+
+                <p class="text-muted mb-4">
+                    Download all activities of a defined year.
+                </p>
+
+                <!-- Year
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label for="yearActivitiesInput" class="mb-0">
+                            Year of activities
+                        </label>
+                    </div>
+
+                    <div class="col-md-4" style="position: relative; width: 140px;">
+                        <input type="text"
+                            id="yearActivitiesInput"
+                            class="form-control"
+                            placeholder="YYYY"
+                            pattern="[0-9]{4}"
+                            inputmode="numeric"
+                            maxlength="4">
+                        <svg class="icon"
+                            aria-hidden="true"
+                            style="position: absolute;
+                                    left: 28px;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    width: 16px;
+                                    height: 16px;
+                                    pointer-events: none;">
+                            <use xlink:href="#calendar"></use>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Email
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label class="mb-0">
+                            Send To
+                        </label>
+                    </div>
+                    <div class="col">
+                        <input id="sendActivitiesTo" type="text" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Toggle
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <label class="mb-0">
+                            Send now
+                        </label>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                            <div class="custom-control custom-switch">
+                                <input id="sendActivitiesSwitch" type="checkbox" class="custom-control-input">
+                                <label class="custom-control-label" for="sendActivitiesSwitch">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Download disclosure report activities (PDF) -->
+        <!-- <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title mb-2">
+                    Download Disclosure Activities
+                </h4>
+
+                <p class="text-muted mb-4">
+                    Create a disclosure report of activities for a Professor.
+                </p>
+
+                <!-- Email
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label for="sendReportTo" class="mb-0">
+                            Send To
+                        </label>
+                    </div>
+                    <div class="col">
+                        <input id="sendReportTo" type="text" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+        </div> -->
+    </div>
+
+	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		const startDateInput = document.getElementById('startDateInput');
+        const endDateInput = document.getElementById('endDateInput');
+        const yearInput = document.getElementById('yearInput');
+        const excBtn = document.getElementById('exceptionSwitch');
+        const updateActSwitch = document.getElementById('updateActSwitch');
+        const exceptionBadge = document.getElementById('exceptionBadge');
+        const yearActivitiesInput = document.getElementById('yearActivitiesInput');
+        const sendActivitiesTo = document.getElementById('sendActivitiesTo');
+        const sendActivitiesSwitch = document.getElementById('sendActivitiesSwitch');
+        const sendReportTo = document.getElementById('sendReportTo');
+
+		window.grist.ready({ requiredAccess: 'full' });
+
+        function updateExceptionBadge(enabled) {
+            exceptionBadge.textContent = enabled ? 'Active' : 'Inactive';
+
+            exceptionBadge.classList.remove(
+                'badge-success',
+                'badge-secondary',
+                'badge-light'
+            );
+
+            if (enabled) {
+                exceptionBadge.classList.add('badge-success');
+            } else {
+                exceptionBadge.classList.add('badge-light');
+            }
+        }
+
+		window.grist.onRecords(records => {
+            const rec = records[0];
+
+            // =====================================================
+	        // EXCEPTIONS
+	        // =====================================================
+
+            // Year
+            yearInput.value = rec.exception_year || '';
+
+            yearInput.addEventListener('blur', async () => {
+                if (yearInput.value !== rec.exception_year) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: { exception_year: yearInput.value }
+                    });
+                }
+            });
+
+            // Start date
+            startDateInput.value = rec.Start_date || '';
+
+            startDateInput.addEventListener('blur', async () => {
+                if (startDateInput.value !== rec.Start_date) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: { Start_date: startDateInput.value }
+                    });
+                }
+            });
+
+            // End date
+            endDateInput.value = rec.End_date || '';
+
+            endDateInput.addEventListener('blur', async () => {
+                if (endDateInput.value !== rec.End_date) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: { End_date: endDateInput.value }
+                    });
+                }
+            });
+
+            // Exception (Switch)
+            excBtn.checked = Boolean(rec.exception);
+
+            updateExceptionBadge(excBtn.checked);
+
+            excBtn.addEventListener('change', async () => {
+
+                updateExceptionBadge(excBtn.checked);
+
+                await window.grist.selectedTable.update({
+                    id: rec.id,
+                    fields: { exception: excBtn.checked }
+                });
+            });
+
+            // =====================================================
+	        // UPDATE ACTIVITIES
+	        // =====================================================
+
+            // Update activities
+            updateActSwitch.checked = Boolean(rec.UpdateActivitiesStatuses);
+
+            updateActSwitch.addEventListener('change', async () => {
+                await window.grist.selectedTable.update({
+                    id: rec.id,
+                    fields: { UpdateActivitiesStatuses: updateActSwitch.checked }
+                });
+            });
+
+            // =====================================================
+	        // DOWNLOAD ACTIVITIES (EXCEL)
+	        // =====================================================
+
+            // Download activities year
+            yearActivitiesInput.value = rec.DownloadYear || '';
+
+            yearActivitiesInput.addEventListener('blur', async () => {
+                if (yearActivitiesInput.value !== rec.DownloadYear) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: {
+                            DownloadYear: yearActivitiesInput.value
+                        }
+                    });
+                }
+            });
+
+            // Download activities email
+            sendActivitiesTo.value = rec.To_Email_Downloaded || '';
+
+            sendActivitiesTo.addEventListener('blur', async () => {
+                if (sendActivitiesTo.value !== rec.To_Email_Downloaded) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: {
+                            To_Email_Downloaded: sendActivitiesTo.value
+                        }
+                    });
+                }
+            });
+
+            // Download activities switch
+            sendActivitiesSwitch.checked = Boolean(rec.DownloadBtn);
+
+            sendActivitiesSwitch.addEventListener('change', async () => {
+                await window.grist.selectedTable.update({
+                    id: rec.id,
+                    fields: {
+                        DownloadBtn: sendActivitiesSwitch.checked
+                    }
+                });
+            });
+
+            // =====================================================
+	        // YEARLY REPORT ACTIVITIES (PDF)
+	        // =====================================================
+
+            // Report activities email
+            sendReportTo.value = rec.ReportSendTo || '';
+
+            sendReportTo.addEventListener('blur', async () => {
+                if (sendReportTo.value !== rec.ReportSendTo) {
+                    await window.grist.selectedTable.update({
+                        id: rec.id,
+                        fields: {
+                            ReportSendTo: sendReportTo.value
+                        }
+                    });
+                }
+            });
+        });
+	</script>
+
+	<script>
+        svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+        featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+    </script>
+</body>
+</html>
+
+

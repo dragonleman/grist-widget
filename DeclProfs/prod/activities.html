@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Activities Declaration</title>
+
+	<link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+
+    <link rel="stylesheet" href="css/declprofs.css">
+
+	<script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+
+	<style>
+		body {
+			overflow-x: hidden;
+		}
+
+		.layout {
+			display: flex;
+			gap: 24px;
+			align-items: flex-start;
+		}
+
+		.left-panel {
+			width: 48%;
+			min-width: 70%;
+		}
+
+		.right-panel {
+			width: 52%;
+			min-width: 30%;
+			position: sticky;
+			top: 10px;
+		}
+
+		.selected-row {
+			background-color: #e6f2ff !important;
+		}
+
+		.table-container {
+			max-height: 70vh;
+			overflow-y: auto;
+			border: 1px solid #ddd;
+		}
+
+		.form-container {
+			border: 1px solid #ddd;
+			padding: 16px;
+			border-radius: 6px;
+			background: #fff;
+		}
+
+		.actions-bar {
+			display: flex;
+			gap: 10px;
+			justify-content: flex-end;
+			margin-bottom: 16px;
+		}
+
+		.nav-bar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 16px;
+		}
+
+        .readonly-row td:not(:last-child) {
+            opacity: 0.5;
+            filter: grayscale(0.6);
+        }
+
+        #searchInput, #yearInput {
+            padding-left: 34px !important;
+            height: 40px;
+        }
+
+        button:disabled {
+			opacity: 0.4 !important;
+			filter: grayscale(30%) !important;
+			cursor: not-allowed !important;
+		}
+
+        input.error {
+            border: 1px solid #dc3545 !important;
+            background-color: #fff5f5;
+        }
+
+        .status-badge {
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+	</style>
+</head>
+
+<body>
+
+<header class="header header-light my-2">
+    <div class="header-light-content">
+        <a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
+        <p class="site-title"><a href="#">Professor outside activities</a></p>
+        <nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+    </div>
+</header>
+
+<div class="breadcrumb-container pb-0 mb-0">
+    <nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
+</div>
+
+<div class="main-container m-4">
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <p><strong>Professors' annual disclosure - <span id="currentYear"></span>.</strong></p>
+        <p>According to the «Directive concerning the management of conflicts of interest within the context of activities or public duties engaged in outside the working sphere» dated December 1st, 2005 (LEX 4.1.1), professors shall disclose activities at regular intervals, whenever a new activity is taken up or in the event of any change.</p>
+        <p>Activities that have to be included in the disclosure are described at articles 1.a, 7 and 8 of LEX 4.1.1. Data will be filed and treated confidentially, subject to the Freedom of Information Act (FoIA, RS 152.3).</p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+
+<div class="main-container m-4">
+
+	<div class="actions-bar">
+		<button id="validateBtn" class="btn btn-success btn-sm">
+            <svg class="icon" aria-hidden="true">
+                <use xlink:href="#check"></use>
+            </svg>
+			Save
+		</button>
+	</div>
+
+	<div class="layout">
+
+		<!-- LEFT -->
+		<div class="left-panel">
+
+            <div id="searchDiv" class="mb-2" style="display:none;">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg width="16" height="16">
+                            <use xlink:href="#user"></use>
+                        </svg>
+                    </span>
+
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
+                </div>
+            </div>
+
+            <div class="mb-3" style="width: 200px;">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg width="16" height="16">
+                            <use xlink:href="#calendar"></use>
+                        </svg>
+                    </span>
+
+                    <input id="yearInput" type="text" class="form-control" placeholder="YYYY" maxlength="4">
+                </div>
+
+                <small class="text-muted d-block">
+                    Leave blank to display all years.
+                </small>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <!-- LEFT ACTIONS -->
+                <div>
+                    <button id="addActivityBtn" class="btn btn-tertiary btn-sm">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#plus"></use>
+                        </svg>
+                        Add Activity
+                    </button>
+
+                    <!-- <button id="duplicateAllBtn" class="btn btn-warning btn-sm ml-2">
+                        Duplicate All
+                    </button> -->
+                </div>
+
+                <!-- RIGHT ACTIONS -->
+                <div>
+                    <button id="validateDraftsBtn" class="btn btn-success btn-sm">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#check"></use>
+                        </svg>
+                        Save & Submit
+                    </button>
+
+                    <button id="downloadAllBtn" class="btn btn-secondary btn-sm ml-2">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#download"></use>
+                        </svg>
+                        Download CSV
+                    </button>
+
+                    <button id="reportBtn" class="btn btn-secondary btn-sm ml-2" style="display: none">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#mail"></use>
+                        </svg>
+                        Send PDF Report
+                    </button>
+                </div>
+            </div>
+
+			<div class="table-container">
+				<table id="table" class="table table-boxed table-hover"></table>
+			</div>
+
+		</div>
+
+		<!-- RIGHT -->
+		<div class="right-panel">
+
+			<div id="form"  class="form-container"></div>
+
+			<div class="nav-bar">
+				<div>
+					<button id="prevBtn" class="btn btn-secondary btn-sm">
+						Previous
+					</button>
+
+					<span id="navCounter" class="mx-2"></span>
+
+					<button id="nextBtn" class="btn btn-secondary btn-sm">
+                        Next
+					</button>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const yearInput = document.getElementById('yearInput');
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+	const today = new Date().toISOString().slice(0, 10);
+
+	let allRecords = [];
+	let filteredRecords = [];
+	let selectedId = null;
+	let pendingChanges = {};
+    let isByAPR = false;
+
+	const table = document.getElementById('table');
+
+    const columns = [
+        { key: 'ActivityStat', label: 'Status', readonly: true, required: false },
+        { key: 'Name', label: 'Name', readonly: true, required: false },
+
+        { key: 'Sciper', label: 'Sciper', visible: false },
+        { key: 'Unit', label: 'Unit', visible: false },
+
+        { key: 'Activity', label: 'Activity', required: true },
+        { key: 'Principal', label: 'Principal', required: true },
+        { key: 'Comments', label: 'Comments', multiline: true, required: false },
+        { key: 'Comments_admins', label: 'Comments admins', multiline: true, required: false },
+
+        { key: 'Start_date', label: 'Start date', type: 'date', required: true },
+        { key: 'End_date', label: 'End date', type: 'date', required: false }
+    ];
+
+	grist.ready({ requiredAccess: 'full' });
+
+	// =====================================================
+	// FILTERS
+	// =====================================================
+
+	function getFilteredRecords() {
+
+		const search = searchInput.value.trim().toLowerCase();
+
+		const year = yearInput.value.trim();
+
+		let filtered = [...allRecords];
+
+		if (search) {
+
+			filtered = filtered.filter(r =>
+				(r.Name || '')
+					.toLowerCase()
+					.includes(search)
+			);
+		}
+
+		if (year.length === 4) {
+
+			const y = parseInt(year);
+
+			filtered = filtered.filter(rec => {
+
+				if (!rec.Start_date) return false;
+
+				const startYear = new Date(rec.Start_date).getFullYear();
+				const endYear = rec.End_date ? new Date(rec.End_date).getFullYear()	: Infinity;
+
+				return y >= startYear && y <= endYear;
+			});
+		}
+
+		return filtered;
+	}
+
+	// =====================================================
+	// RENDER TABLE
+	// =====================================================
+
+	function renderTable() {
+
+		table.innerHTML = '';
+
+		if (!filteredRecords.length) {
+			table.innerHTML = '<tr><td>No records found</td></tr>';
+			return;
+		}
+
+		const thead = table.createTHead();
+		const hr = thead.insertRow();
+
+        // Get available columns
+        const columnNames = Object.keys(filteredRecords[0]);
+
+        let visibleColumns = columns.filter(c => columnNames.includes(c.key) && c.visible !== false);
+
+        if (visibleColumns.some(col => col.key === 'Name')) {
+            document.getElementById('searchDiv').style.display = 'block';
+            //document.getElementById('reportBtn').style.display = 'inline-block';
+            isByAPR = true;
+        }
+
+        // Fill th
+		visibleColumns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col.label;
+            hr.appendChild(th);
+		});
+
+        const thActions = document.createElement('th');
+        thActions.textContent = 'Actions';
+        hr.appendChild(thActions);
+
+        // Fill tbody
+		const tbody = table.createTBody();
+
+		filteredRecords.forEach(rec => {
+			const tr = tbody.insertRow();
+
+			tr.dataset.id = rec.id;
+
+            const isReadOnly = rec.Access === '🛑';
+            if (isReadOnly) {
+                tr.classList.add('readonly-row');
+            }
+
+			if (rec.id === selectedId) {
+				tr.classList.add('selected-row');
+			}
+
+			tr.addEventListener('click', () => {
+				selectedId = rec.id;
+				pendingChanges = {};
+                pendingChanges['rec'] = rec;
+				renderAll();
+			});
+
+			visibleColumns.forEach(col => {
+                const td = tr.insertCell();
+                let value = rec[col.key] || '';
+                if (col.key === 'ActivityStat') {
+                    const valid = isDraftValid(rec);
+                    if (rec.Status === 'draft') {
+                        value = valid ? '⚠️🟢' : '⚠️🔴';
+                    } else {
+                        value = valid ? '' : '🔴';
+                    }
+                } else if  (col.key === 'Start_date' || col.key === 'End_date') {
+                    if (rec[col.key]) {
+                        value = new Date(rec[col.key]).toLocaleDateString('fr-CH').replaceAll(".", "/");
+                    } else {
+                        value = "";
+                    }                    
+                }
+                td.textContent = value;
+            });
+
+            // =====================================================
+            // ACTIONS COLUMN
+            // =====================================================
+
+            const tdActions = tr.insertCell();
+
+            // --------------------
+            // DUPLICATE
+            // --------------------
+
+            const dupBtn = document.createElement('button');
+
+            dupBtn.className = 'btn btn-sm btn-light';
+
+            dupBtn.title = 'Duplicate to current';
+
+            dupBtn.innerHTML = `
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#copy"></use>
+                </svg>
+            `;
+
+            dupBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+
+                const result = await Swal.fire({
+                    icon: 'question',
+                    title: 'Duplicate ?',
+                    text: `Duplicate "${rec.Activity}" ?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (!result.isConfirmed) return;
+
+                await grist.selectedTable.create({
+                    fields: {
+                        Activity: rec.Activity || '',
+                        Principal: rec.Principal || '',
+                        Start_date: today,
+                        End_date: today,
+                        Comments: rec.Comments || '',
+                        Comments_admins: rec.Comments_admins || ''
+                    }
+                });
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Duplicated',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+            });
+
+            tdActions.appendChild(dupBtn);
+
+            // --------------------
+            // DELETE
+            // --------------------
+
+            const delBtn = document.createElement('button');
+
+            delBtn.className = 'btn btn-sm btn-light ml-1';
+
+            delBtn.title = 'Delete';
+
+            delBtn.innerHTML = `
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#delete"></use>
+                </svg>
+            `;
+
+            delBtn.disabled = isReadOnly;
+
+            if (isReadOnly) {
+                delBtn.style.opacity = '0.4';
+                delBtn.style.cursor = 'not-allowed';
+            } else {
+                delBtn.addEventListener('click', async (e) => {
+
+                    e.stopPropagation();
+
+                    const result = await Swal.fire({
+                        icon: 'warning',
+                        title: 'Delete ?',
+                        text: `Delete "${rec.Activity}" ?`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'Cancel'
+                    });
+
+                    if (!result.isConfirmed) return;
+
+                    await grist.selectedTable.destroy([rec.id]);
+
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+                });
+            }
+
+            tdActions.appendChild(delBtn);
+
+            // --------------------
+            // DOWNLOAD CSV
+            // --------------------
+
+            const csvBtn = document.createElement('button');
+
+            csvBtn.className = 'btn btn-sm btn-light ml-1';
+
+            csvBtn.title = 'Download CSV';
+
+            csvBtn.innerHTML = `
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#download"></use>
+                </svg>
+            `;
+
+            csvBtn.disabled = isReadOnly;
+
+            if (isReadOnly) {
+                csvBtn.style.opacity = '0.4';
+                csvBtn.style.cursor = 'not-allowed';
+            } else {
+                csvBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+
+                    const result = await Swal.fire({
+                        icon: 'question',
+                        title: 'Download CSV ?',
+                        text: `Download "${rec.Activity}" in CSV ?`,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, download',
+                        cancelButtonText: 'Cancel',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#6c757d'
+                    });
+
+                    if (!result.isConfirmed) return;
+
+                    downloadCSV([rec], `Activity_${rec.id}.csv`);
+
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'CSV downloaded !',
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+                });
+            }
+
+            tdActions.appendChild(csvBtn);
+
+            // --------------------
+            // EMAIL
+            // --------------------
+
+            // if ('Name' in rec) {
+
+            //     const emailBtn = document.createElement('button');
+
+            //     emailBtn.className = 'btn btn-sm btn-light ml-1';
+
+            //     emailBtn.title = 'Send email';
+
+            //     emailBtn.innerHTML = `
+            //         <svg class="icon" aria-hidden="true">
+            //             <use xlink:href="#mail"></use>
+            //         </svg>
+            //     `;
+
+            // emailBtn.disabled = isReadOnly;
+
+            // if (isReadOnly) {
+            //     emailBtn.style.opacity = '0.4';
+            //     emailBtn.style.cursor = 'not-allowed';
+            // } else {
+            //     emailBtn.addEventListener('click', async (e) => {
+
+            //         e.stopPropagation();
+
+            //         const result = await Swal.fire({
+            //             icon: 'question',
+            //             title: 'Send email ?',
+            //             text: `Send email to "${rec.Name}" ?`,
+            //             showCancelButton: true,
+            //             confirmButtonText: 'Yes',
+            //             cancelButtonText: 'Cancel'
+            //         });
+
+            //         if (!result.isConfirmed) return;
+
+            //         await grist.selectedTable.update({
+            //             id: rec.id,
+            //             fields: {
+            //                 SendEmail: true
+            //             }
+            //         });
+
+            //         await Swal.fire({
+            //             icon: 'success',
+            //             title: 'Email sent',
+            //             timer: 1200,
+            //             showConfirmButton: false
+            //         });
+            //     });
+            // }
+
+            //     tdActions.appendChild(emailBtn);
+            // }
+
+		});
+	}
+
+    // DOWNLOAD CSV
+    function sanitizeCSV(value) {
+        const str = String(value ?? "");
+
+        // Protection Excel formula injection
+        if (/^[=+\-@]/.test(str)) {
+            return "'" + str;
+        }
+
+        return str;
+    }
+   
+    function downloadCSV(records, filename = "activities.csv") {
+
+        const exportColumns = columns.filter(col =>
+            col.key !== 'ActivityStat' &&
+            (isByAPR || col.visible !== false) &&
+            records.some(r => r[col.key] !== undefined)
+        );
+
+        const csvRows = [];
+
+        // HEADER
+        csvRows.push(
+            exportColumns
+                .map(col => `"${col.label}"`)
+                .join(",")
+        );
+
+        // ROWS
+        for (const rec of records) {
+
+            const row = exportColumns.map(col => {
+                let value = rec[col.key];
+
+                value = sanitizeCSV(value ?? '');
+
+                return `"${String(value).replace(/"/g, '""')}"`;
+            });
+
+            csvRows.push(row.join(","));
+        }
+
+        const csvContent = csvRows.join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+    }
+    
+    // DOWNLAD ALL CSV
+    document.getElementById('downloadAllBtn').addEventListener("click", async () => {
+        const filtered = getFilteredRecords();
+
+        if (!filtered.length) {
+            await Swal.fire({
+                icon: "error",
+                title: "No results",
+                text: "No records match your filters.",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: "Download CSV?",
+            text: `Download ${filtered.length} record(s) as CSV?`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, download",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#6c757d"
+        });
+
+        if (!result.isConfirmed) return;
+
+        const yearQuery = yearInput.value.trim();
+        downloadCSV(filtered, `activities_${yearQuery || "all"}.csv`);
+
+        Swal.fire({
+            icon: "success",
+            title: "Download started",
+            timer: 1200,
+            showConfirmButton: false
+        });
+    });
+
+    // // DUPLICATE ALL
+    // document.getElementById('duplicateAllBtn').addEventListener('click', async () => {
+    //     let filtered = getFilteredRecords();
+
+    //     if (!filtered || filtered.length === 0) {
+    //         await Swal.fire({
+    //             icon: "info",
+    //             title: "No data",
+    //             text: "There are no activities to duplicate."
+    //         });
+    //         return;
+    //     }
+
+    //     const result = await Swal.fire({
+    //         icon: "question",
+    //         title: "Duplicate all activities?",
+    //         text: `This will create ${filtered.length} new rows.`,
+    //         showCancelButton: true,
+    //         confirmButtonText: "Yes, duplicate all to current year",
+    //         cancelButtonText: "Cancel",
+    //         confirmButtonColor: "#f0ad4e",
+    //         cancelButtonColor: "#6c757d"
+    //     });
+
+    //     if (!result.isConfirmed) return;
+
+    //     Swal.fire({
+    //         icon: "info",
+    //         title: "Duplicating activities...",
+    //         text: "Please wait",
+    //         allowOutsideClick: false,
+    //         allowEscapeKey: false,
+    //         showConfirmButton: false,
+    //         didOpen: () => {
+    //             Swal.showLoading();
+    //         }
+    //     });
+
+    //     const chunkSize = 20;
+
+    //     for (let i = 0; i < filtered.length; i += chunkSize) {
+    //         const chunk = filtered.slice(i, i + chunkSize);
+
+    //         await Promise.all(chunk.map(rec =>
+    //             window.grist.selectedTable.create({
+    //                 fields: {
+    //                     Activity: rec.Activity || "",
+    //                     Principal: rec.Principal || "",
+    //                     Start_date: today,
+    //                     End_date: today,
+    //                     Comments: rec.Comments || "",
+    //                     Comments_admins: rec.Comments_admins || "",
+    //                     Status: "draft",
+    //                 }
+    //             })
+    //         ));
+    //     }
+
+    //     await Swal.fire({
+    //         icon: "success",
+    //         title: "Activities duplicated!",
+    //         text: `${filtered.length} activity(s) duplicated.`,
+    //         timer: 1500,
+    //         showConfirmButton: false
+    //     });
+
+    // });
+
+    // =====================================================
+	// ADD ACTIVITY
+	// =====================================================
+
+    document
+        .getElementById('addActivityBtn')
+        .addEventListener('click', async () => {
+            await grist.selectedTable.create({
+                fields: {
+                    Activity: '',
+                    Principal: '',
+                    Start_date: today,
+                    Status: 'draft'
+                }
+            });
+        });
+
+	// =====================================================
+	// FORM
+	// =====================================================
+
+    function validateAllLive() {
+        const valid = isDraftLiveValid(pendingChanges);
+        document.getElementById('validateBtn').disabled = !valid;
+    }
+
+    function getInput(field) {
+        return document.querySelector(`[data-field="${field}"]`);
+    }
+
+    function setError(field, isError) {
+        const input = getInput(field);
+        if (!input) return;
+
+        input.classList.toggle('error', isError);
+    }
+
+    function trackChange(field, value) {
+        // Activity / Principal validation
+        if (field === 'Activity' || field === 'Principal') {
+            setError(field, !value || !value.trim());
+        }
+
+        // Date validation
+        if ((field === 'Start_date') || (field === 'End_date')) {
+            const start = checkField(pendingChanges, 'Start_date');
+
+            if (!start) {
+                setError('Start_date', true);
+                return;
+            }
+
+            const end = value;
+
+            const invalidRange = end && new Date(start) > new Date(end);
+
+            setError('End_date', invalidRange);
+            setError('Start_date', invalidRange);
+        }
+    }
+
+    function updatePendingChange(field, value) {
+        pendingChanges[field] = value;
+
+        trackChange(field, value);
+
+        validateAllLive();
+    }
+
+	function formField(label, input) {
+
+		const wrapper = document.createElement('div');
+
+		wrapper.className = 'form-group';
+
+		const lab = document.createElement('label');
+
+		lab.textContent = label;
+
+		wrapper.appendChild(lab);
+		wrapper.appendChild(input);
+
+		return wrapper;
+	}
+
+    function renderForm() {
+        const form = document.getElementById('form');
+        form.innerHTML = '';
+
+        const rec = filteredRecords.find(r => r.id === selectedId);
+
+        if (!rec) {
+            form.innerHTML = '<p>No selected record</p>';
+            return;
+        }
+
+        let isReadOnly = rec.Access === '🛑';
+
+        for (const col of columns) {
+
+            if (!(col.key in rec)) continue;
+
+            if (col.visible === false) continue;
+
+            if (col.key === 'ActivityStat') {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'form-group';
+
+                let activityStatValue = '';
+
+                const valid = isDraftValid(rec);
+
+                if (rec.Status === 'draft') {
+                    if (activityStatValue) activityStatValue += ' ';
+                    activityStatValue += '⚠️' + ' <span class="badge badge-warning status-badge">Draft</span>   ';
+                }
+
+                if (valid) {
+                    activityStatValue += '🟢' + ' <span class="badge badge-success status-badge">Complete</span>';
+                } else {
+                    activityStatValue += '🔴' + ' <span class="badge badge-danger status-badge">Incomplete</span>';
+                }
+
+                const label = document.createElement('label');
+                label.innerHTML = activityStatValue;
+
+                wrapper.appendChild(label);
+                form.appendChild(wrapper);
+
+                continue;
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'form-group';
+
+            const label = document.createElement('label');
+            label.innerHTML = col.required
+                ? `${col.label} <span class="text-danger">*</span>`
+                : col.label;
+
+            let input = col.multiline
+                ? document.createElement('textarea')
+                : document.createElement('input');
+
+            input.className = 'form-control';
+            input.setAttribute('data-field', col.key);
+
+            if (col.multiline) {
+                input.rows = 4;
+                input.value = rec[col.key] || '';
+            } else {
+                input.type = col.type === 'date' ? 'date' : 'text';
+                input.value = rec[col.key] || '';
+            }
+
+            // -------------------------
+            // READONLY LOGIC
+            // -------------------------
+            const isFieldReadOnly = col.readonly || isReadOnly;
+
+            if (isFieldReadOnly) {
+                input.readOnly = true;
+            } else {
+                input.addEventListener('input', () => {
+                    updatePendingChange(col.key, input.value);
+                });
+            }
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
+            form.appendChild(wrapper);
+        }
+
+        // Initial validation
+        ['Activity', 'Principal', 'Start_date', 'End_date']
+            .filter(field => field in rec)
+            .forEach(field => trackChange(field, rec[field]));
+    }
+
+	// =====================================================
+	// NAVIGATION
+	// =====================================================
+
+	function updateNav() {
+		const index = filteredRecords.findIndex(r => r.id === selectedId);
+
+		document.getElementById('navCounter')
+			.textContent = `${index + 1} / ${filteredRecords.length}`;
+	}
+
+	document
+		.getElementById('nextBtn')
+		.addEventListener('click', () => {
+
+			const index = filteredRecords.findIndex(r => r.id === selectedId);
+
+			if (index < filteredRecords.length - 1) {
+				selectedId = filteredRecords[index + 1].id;
+				pendingChanges = {};
+                pendingChanges['rec'] = filteredRecords[index + 1];
+				renderAll();
+			}
+		});
+
+	document
+		.getElementById('prevBtn')
+		.addEventListener('click', () => {
+
+			const index = filteredRecords.findIndex(r => r.id === selectedId);
+
+			if (index > 0) {
+				selectedId = filteredRecords[index - 1].id;
+				pendingChanges = {};
+                pendingChanges['rec'] = filteredRecords[index - 1];
+				renderAll();
+			}
+		});
+
+	// =====================================================
+	// SAVE
+	// =====================================================
+
+    function checkField(pendchg, field) {
+        return pendchg[field] ?? pendchg.rec?.[field];
+    }
+
+    function isDraftLiveValid(pendchg) {
+        const activity = checkField(pendchg, 'Activity');
+        const principal = checkField(pendchg, 'Principal');
+        const start = checkField(pendchg, 'Start_date');
+        const end = checkField(pendchg, 'End_date');
+
+        if (!activity?.trim() || !principal?.trim() || !start) {
+            return false;
+        }
+
+        return !end || new Date(start) <= new Date(end);
+    }
+
+	document
+		.getElementById('validateBtn')
+		.addEventListener('click', async () => {
+			if (!selectedId) return;
+
+			if (Object.keys(pendingChanges).length < 2) {
+				await Swal.fire({
+					icon: 'info',
+					title: 'No changes'
+				});
+				return;
+			}
+
+            const year = yearInput.value.trim();
+
+            if (isByAPR && !year) {
+                Swal.fire({
+                    icon: "error",
+                    title: "No year",
+                    text: "Select a year in the filter",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+
+            if (!isDraftLiveValid(pendingChanges)) {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Save failed',
+                    text: 'The form is incomplete'
+                });
+                return;
+            }
+
+            delete pendingChanges['rec'];
+
+            const d = new Date();
+
+            pendingChanges['Is_by_admin'] = isByAPR;
+            pendingChanges['LogAction'] = 'update';
+            pendingChanges['SaveBtn'] = true;
+            pendingChanges['UpdatedAt'] =
+                d.getFullYear() + '-' +
+                String(d.getMonth()+1).padStart(2,'0') + '-' +
+                String(d.getDate()).padStart(2,'0') + ' ' +
+                String(d.getHours()).padStart(2,'0') + ':' +
+                String(d.getMinutes()).padStart(2,'0') + ':' +
+                String(d.getSeconds()).padStart(2,'0');
+
+            if (isByAPR) {
+                pendingChanges['YearReport'] = year;
+            }
+            
+			await grist.selectedTable.update({
+				id: selectedId,
+				fields: pendingChanges
+			});
+
+			pendingChanges = {};
+
+			await Swal.fire({
+				icon: 'success',
+				title: 'Saved',
+				timer: 1200,
+				showConfirmButton: false
+			});
+		});
+
+	// =====================================================
+	// FILTER EVENTS
+	// =====================================================
+
+	searchInput.addEventListener('input', renderAll);
+
+	yearInput.addEventListener('input', renderAll);
+ 
+	// =====================================================
+	// VALIDATE ALL DRAFTS
+	// =====================================================
+
+    function getFilteredDrafts() {
+        const nameQuery = searchInput.value.trim().toLowerCase();
+
+        let filtered = allRecords.filter(r => r.Status === "draft");
+
+        if (nameQuery) {
+            filtered = filtered.filter(rec =>
+                (rec.Name || "").toLowerCase().includes(nameQuery)
+            );
+        }
+
+        return filtered;
+    }
+
+    function isDraftValid(rec) {
+        return !!(
+            rec.Activity?.trim() &&
+            rec.Principal?.trim() &&
+            rec.Start_date &&
+            (!rec.End_date || rec.Start_date <= rec.End_date)
+        );
+    }
+
+    document.getElementById('validateDraftsBtn').addEventListener("click", async () => {
+        const drafts = getFilteredDrafts();
+
+        if (!drafts.length) {
+            Swal.fire({
+                icon: "error",
+                title: "No drafts",
+                text: "There are no drafts to validate.",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        // Check if all drafts are valids
+        const allValid = drafts.every(r => isDraftValid(r));
+
+        if (!allValid) {
+            Swal.fire({
+                icon: "error",
+                title: "Can't validate all drafts",
+                text: `There are drafts that are not valid.`,
+            });
+            return;
+        }
+
+        const year = yearInput.value.trim();
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: `Submit ${drafts.length} draft(s) of ${year} ?`,
+            text: "With my submission, I certify that this list of activities is complete and accurate and declare not to have devoted to them more than the equivalent of 1 day per week for a full time position.",
+            showCancelButton: true,
+            confirmButtonText: "Yes, submit",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#3085d6"
+        });
+
+        if (!result.isConfirmed) return;
+
+        const d = new Date();
+
+        const now =
+            d.getFullYear() + '-' +
+            String(d.getMonth()+1).padStart(2,'0') + '-' +
+            String(d.getDate()).padStart(2,'0') + ' ' +
+            String(d.getHours()).padStart(2,'0') + ':' +
+            String(d.getMinutes()).padStart(2,'0') + ':' +
+            String(d.getSeconds()).padStart(2,'0');
+
+        const actions = drafts.map((r, index) => [
+            "UpdateRecord",
+            "Activities",
+            r.id,
+            { 	
+                Status: "",
+                ...(index === 0 && { 
+                    UpdatedAt: now,
+                    Is_by_admin: isByAPR,
+                    LogAction: 'update',
+                    ValidationBtn: true
+                })
+            }
+        ]);
+
+        await grist.docApi.applyUserActions(actions);
+
+        Swal.fire({
+            icon: "success",
+            title: "Done",
+            text: `${drafts.length} draft(s) validated.`,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+
+	// =====================================================
+	// YEARLY REPORT
+	// =====================================================
+
+    document.getElementById('reportBtn').addEventListener("click", async () => {
+        const nameQuery = searchInput.value.trim();
+        const year = yearInput.value.trim();
+
+        if (!filteredRecords.length) {
+            Swal.fire({
+                icon: "error",
+                title: "No activities",
+                text: "There are no activities for reporting",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        if (!nameQuery) {
+            Swal.fire({
+                icon: "error",
+                title: "No user selected",
+                text: "Select a professor for reporting",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        if (!year) {
+            Swal.fire({
+                icon: "error",
+                title: "No year",
+                text: "Select a year for reporting",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: `Disclosure form for professors`,
+            text: `Send the report of ${filteredRecords[0].Name} for ${year}`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, validate",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#3085d6"
+        });
+
+        if (!result.isConfirmed) return;
+
+        await grist.selectedTable.update({
+            id: selectedId,
+            fields: {
+                YearReport: year,
+                ReportBtn: true
+            }
+        });
+
+        Swal.fire({
+            icon: "success",
+            title: "Done",
+            text: `Report sent`,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+
+	// =====================================================
+	// MAIN RENDER
+	// =====================================================
+
+	function renderAll() {
+
+		filteredRecords = getFilteredRecords();
+
+        if (!filteredRecords.length) {
+            selectedId = null;
+            pendingChanges = { rec: null };
+        }
+        else if (!selectedId || !filteredRecords.some(r => r.id === selectedId)) {
+            selectedId = filteredRecords[filteredRecords.length - 1].id;
+        }
+
+        const currentRec = filteredRecords.find(r => r.id === selectedId) || null;
+
+        pendingChanges = {
+            rec: currentRec
+        };
+
+		renderTable();
+		renderForm();
+		updateNav();
+	}
+
+	// =====================================================
+	// GRIST
+	// =====================================================
+
+	grist.onRecords(records => {
+        // Do not refresh if grist asking for refresh and user still validating
+        if (Object.keys(pendingChanges).length > 1 ) {
+            return;
+        }
+
+		allRecords = records;
+
+        document.getElementById('yearInput').value = new Date().getFullYear().toString();
+       
+        renderAll();
+	});
+
+</script>
+
+<script>
+	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+	featherSvgPath ='https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+</script>
+
+</body>
+</html>

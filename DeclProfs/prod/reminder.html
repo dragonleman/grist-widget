@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Activities Declaration</title>
+
+    <link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+	<link rel="stylesheet" href="css/declprofs.css">
+    <script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+
+    <style>
+
+        body {
+            background: #f7f8fa;
+        }
+
+        .page-container {
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .toolbar-card,
+        .stats-card,
+        .table-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+		.filter-pills {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.filter-pill {
+			border: 1px solid #ddd;
+			background: #fff;
+			padding: 6px 14px;
+			border-radius: 999px;
+			cursor: pointer;
+			font-size: 14px;
+			display: flex;
+			gap: 6px;
+			align-items: center;
+			transition: all .15s ease;
+		}
+
+		.filter-pill span {
+			font-weight: 600;
+		}
+
+		.filter-pill:hover {
+			background: #f5f5f5;
+		}
+
+		.filter-pill.active {
+			background: #111;
+			color: #fff;
+			border-color: #111;
+		}
+
+		.d-none {
+			display: none;
+		}
+
+        .filters-row {
+            gap: 12px;
+        }
+
+        .table thead th {
+            white-space: nowrap;
+        }
+
+        .table tbody tr:hover {
+            background-color: #fafafa;
+        }
+
+		td {
+			white-space: pre-line;
+		}
+
+        #searchInput, #yearInput {
+            padding-left: 34px !important;
+            height: 40px;
+        }
+
+		tr.inactive-row td {
+			text-decoration: line-through;
+			color: #888;
+			opacity: 0.7;
+		}
+    </style>
+</head>
+
+<body>
+
+<header class="header header-light my-2">
+    <div class="header-light-content">
+        <a class="logo" href="https://www.epfl.ch">
+            <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
+        </a>
+        <p class="site-title">
+            <a href="#">Professor outside activities</a>
+        </p>
+		<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+    </div>
+</header>
+
+<div class="page-container p-4">
+	
+    <!-- TOOLBAR -->
+    <div class="toolbar-card mb-4">
+
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div>
+				<div id="searchDiv" class="mb-2" style="display:none;">
+					<div class="input-group">
+						<span class="input-group-text">
+							<svg width="16" height="16">
+								<use xlink:href="#user"></use>
+							</svg>
+						</span>
+
+						<input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
+					</div>
+				</div>
+
+				<div class="mb-3" style="width: 200px;">
+					<div class="input-group">
+						<span class="input-group-text">
+							<svg width="16" height="16">
+								<use xlink:href="#calendar"></use>
+							</svg>
+						</span>
+
+						<input id="yearInput" type="text" class="form-control" placeholder="YYYY" maxlength="4">
+					</div>
+				</div>
+            </div>
+
+            <div id="tooldDiv" style="display: none;" class="align-items-center justify-content-end">
+				<div class="btn-group" role="group">
+					<button id="downloadAllBtn" class="btn btn-secondary btn-sm">
+						<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#download"></use>
+                        </svg>
+						Download CSV
+					</button>
+
+					<button id="sendReminderBtn" class="btn btn-info btn-sm">
+						<svg class="icon" aria-hidden="true">
+                            <use xlink:href="#mail"></use>
+                        </svg>
+						Send reminder
+					</button>
+				</div>
+			</div>
+        </div>
+    </div>
+
+	<!-- FILTERS / STATS -->
+	<div id="statsDiv" class="filter-pills d-none mb-4">
+
+		<button class="filter-pill active" data-filter="all">
+			All <span id="totalAll">0</span>
+		</button>
+
+		<button class="filter-pill" data-filter="submitted">
+			Submitted <span id="totalSubmitted">0</span>
+		</button>
+
+		<button class="filter-pill" data-filter="incomplete">
+			Incomplete <span id="totalWrong">0</span>
+		</button>
+
+		<button class="filter-pill" data-filter="missing">
+			Missing <span id="totalMissings">0</span>
+		</button>
+
+	</div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+
+        <div class="table-responsive">
+
+            <table id="table_alt" class="table table-boxed mb-0">
+
+                <thead>
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+	const yearInput = document.getElementById("yearInput");
+	const table = document.getElementById('table_alt');
+
+	let allRecords = [];
+	let selectedYear = new Date().getFullYear().toString();
+	let selectedFilter = "all";
+	let isAdmin = false;
+
+	const tableColumns = {
+		all: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'inactive', label: 'Inactive' },
+			{ key: 'exempt', label: 'Exempt' },
+			{ key: 'Username', label: 'Username' },
+			{ key: 'Email', label: 'Email' },
+			{ key: 'Unit', label: 'Unit' },
+			{ key: 'Status', label: 'Status' },
+			{ key: 'UpdatedAt', label: 'Updated at' }
+		],
+
+		submitted: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Unit', label: 'Unit' },
+			{ key: 'Status', label: 'Status' },
+			{ key: 'Comments', label: 'Comments' },
+			{ key: 'Comments_admin', label: 'Comments APR' }
+		],
+
+		incomplete: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Email', label: 'Email' },
+			{ key: 'UpdatedAt', label: 'Updated at' },
+			{ key: 'SentReminderAt', label: 'Reminder sent' }
+		],
+
+		missing: [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Email', label: 'Email' },
+			{ key: 'SentReminderAt', label: 'Reminder sent' }
+		]
+	};
+
+	window.grist.ready({ requiredAccess: 'full' });
+
+	function parseStatusByYear(str) {
+		try {
+			return JSON.parse(str || "{}");
+		} catch (e) {
+			console.error("Invalid StatusByYear JSON:", str);
+			return {};
+		}
+	}
+
+	// =====================================================
+	// RENDER
+	// =====================================================
+
+	function renderTable(records) {
+
+		let visibleColumns = tableColumns[selectedFilter] || tableColumns.all;
+
+		if (!isAdmin) {
+			visibleColumns = visibleColumns.filter(
+				col => !['inactive', 'exempt'].includes(col.key)
+			);
+		}
+
+		//
+		// THEAD
+		//
+		table.querySelector('thead').innerHTML = '';
+
+		// Selection
+		const tr = document.createElement('tr');
+
+		const th = document.createElement('th');
+		th.id = 'reminderCheckbox';
+		th.style.display = isAdmin ? 'table-cell' : 'none';
+
+		const checkbox = document.createElement('input');
+		checkbox.type = 'checkbox';
+		checkbox.id = 'selectAll';
+
+		checkbox.addEventListener('change', async (e) => {
+    		const checked = e.target.checked;
+
+			// Update immediate visual
+			document.querySelectorAll('.row-checkbox').forEach(cb => {
+				cb.checked = checked;
+			});
+
+			const filtered = getFiltered().filter(rec => !rec.inactive && !rec.exempt);
+
+			// Update Grist
+			const actions = filtered.map(rec => [
+				"UpdateRecord",
+				"Users",
+				rec.id,
+				{
+					SelectReminder: checked
+				}
+			]);
+
+			await grist.docApi.applyUserActions(actions);
+		});
+
+		th.appendChild(checkbox);
+		tr.appendChild(th);
+
+		// Other columns
+		visibleColumns.forEach(col => {
+			const th = document.createElement('th');
+			th.textContent = col.label;
+			tr.appendChild(th);
+		});
+
+		table.querySelector('thead').appendChild(tr);
+
+		//
+		// TBODY
+		//
+		const tbody = document.querySelector('#table_alt tbody');
+		tbody.innerHTML = '';
+
+		if (!records || records.length === 0) {
+
+			const row = tbody.insertRow();
+			const cell = row.insertCell();
+
+			cell.colSpan = 8;
+			cell.textContent = 'No data found.';
+			cell.style.textAlign = 'center';
+
+			return;
+		}
+
+		for (const rec of records) {
+
+			const statusMap = parseStatusByYear(rec.StatusByYear);
+
+			// Ignore empty records of selected year
+			if (selectedYear && !(selectedYear in statusMap)) {
+				continue;
+			}
+
+			// Status
+			let status = "";
+			let comments = "";
+			let comments_admin = "";
+
+			if (selectedYear) {
+				status = (statusMap[selectedYear].totalActivities === statusMap[selectedYear].totalValid) && (statusMap[selectedYear].totalActivities > 0) ? "✅" : "❌";
+				comments = statusMap[selectedYear].comments;
+				comments_admin = statusMap[selectedYear].commentsAdmin;
+			} 
+
+			const row = tbody.insertRow();
+
+			if (rec.inactive || rec.exempt) {
+				row.classList.add('inactive-row');
+			}
+
+			let checkboxInput = null;
+
+			// SelectReminder
+			if (isAdmin) {
+				const checkboxCell = row.insertCell();
+				checkboxInput = document.createElement('input');
+				checkboxInput.type = 'checkbox';
+				checkboxInput.classList.add('row-checkbox');
+				checkboxInput.checked = !!rec.SelectReminder;
+				checkboxInput.disabled = !!rec.inactive || !!rec.exempt;
+				checkboxInput.addEventListener('change', async () => {
+					if (checkboxInput.checked !== rec.SelectReminder) {
+						await window.grist.selectedTable.update({
+							id: rec.id,
+							fields: { SelectReminder: checkboxInput.checked }
+						});
+					}
+				});
+				checkboxCell.appendChild(checkboxInput);
+			}
+
+			for (const col of visibleColumns) {
+
+				const cell = row.insertCell();
+
+				switch (col.key) {
+
+					case 'Status':
+						cell.textContent = status;
+						break;
+
+					case 'Comments':
+						cell.textContent = comments;
+						break;
+
+					case 'Comments_admin':
+						cell.textContent = comments_admin;
+						break;
+
+					case 'UpdatedAt':
+						cell.textContent = rec.UpdatedAt
+							? new Date(rec.UpdatedAt).toLocaleString('fr-CH')
+							: '';
+						break;
+
+					case 'SentReminderAt':
+						cell.textContent = rec.SentReminderAt
+							? new Date(rec.SentReminderAt).toLocaleString('fr-CH')
+							: '';
+						break;
+
+					case 'inactive': {
+						const cb = document.createElement('input');
+						cb.type = 'checkbox';
+						cb.checked = !!rec.inactive;
+						cb.addEventListener('change', async () => {
+							if (isAdmin) {
+								checkboxInput.disabled = rec.inactive || rec.exempt;
+							}
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { [col.key]: cb.checked, SelectReminder: false }
+							});
+							row.classList.toggle('inactive-row', rec.inactive || rec.exempt);
+						});
+						cell.appendChild(cb);
+						break;
+					}
+
+					case 'exempt': {
+						const cb = document.createElement('input');
+						cb.type = 'checkbox';
+						cb.checked = !!rec.exempt;
+						cb.addEventListener('change', async () => {
+							if (isAdmin) {
+								checkboxInput.disabled = rec.inactive || rec.exempt;
+							}
+							await window.grist.selectedTable.update({
+								id: rec.id,
+								fields: { [col.key]: cb.checked, SelectReminder: false }
+							});
+							row.classList.toggle('inactive-row', rec.inactive || rec.exempt);
+						});
+						cell.appendChild(cb);
+						break;
+					}
+
+					default:
+						cell.textContent = rec[col.key] || '';
+				}
+
+				// let value = '';
+
+				// switch(col.key) {
+
+				// 	case 'Status':
+				// 		value = status;
+				// 		break;
+
+				// 	case 'Comments':
+				// 		value = comments;
+				// 		break;
+
+				// 	case 'Comments_admin':
+				// 		value = comments_admin;
+				// 		break;
+
+				// 	case 'UpdatedAt':
+				// 		value = rec.UpdatedAt
+				// 			? new Date(rec.UpdatedAt).toLocaleString('fr-CH')
+				// 			: '';
+				// 		break;
+
+				// 	case 'SentReminderAt':
+				// 		value = rec.SentReminderAt
+				// 			? new Date(rec.SentReminderAt).toLocaleString('fr-CH')
+				// 			: '';
+				// 		break;
+
+				// 	default:
+				// 		value = rec[col.key] || '';
+				// }
+
+				// row.insertCell().textContent = value;
+			}
+
+			// // Name
+			// row.insertCell().textContent = rec.Name || '';
+
+			// // Username
+			// row.insertCell().textContent = rec.Username || '';
+
+			// // Email
+			// row.insertCell().textContent = rec.Email || '';
+
+			// // Sciper
+			// row.insertCell().textContent = rec.UserId || '';
+
+			// // Unit
+			// row.insertCell().textContent = rec.Unit || '';
+
+			// // Status
+			// row.insertCell().textContent = status;
+
+			// // Sent Reminder At
+			// row.insertCell().textContent = rec.SentReminderAt ? new Date(rec.SentReminderAt).toLocaleString('fr-CH', { hour12: false }) : '';
+
+			// // Updated At
+			// row.insertCell().textContent = rec.UpdatedAt ? new Date(rec.UpdatedAt).toLocaleString('fr-CH', { hour12: false }) : '';
+		}
+	}
+
+
+	function getFiltered() {
+		const searchValue = document.getElementById('searchInput').value.toLowerCase();
+
+		return allRecords.filter(rec => {
+
+			const matchesSearch =
+				(rec.Name || '').toLowerCase().includes(searchValue);
+
+			const statusMap = parseStatusByYear(rec.StatusByYear);
+
+			if (selectedYear && !(selectedYear in statusMap)) {
+				return false;
+			}
+
+			const yearData = statusMap[selectedYear];
+
+			if (!yearData) return false;
+
+			const isSubmitted = yearData.totalActivities > 0;
+			const isWell = yearData.totalActivities > 0 &&
+						yearData.totalActivities === yearData.totalValid;
+			const isWrong = isSubmitted && !isWell;
+			const isMissing = yearData.totalActivities === 0;
+
+			let matchesFilter = true;
+
+			switch (selectedFilter) {
+
+				case "submitted":
+					matchesFilter = isSubmitted;
+					break;
+
+				case "incomplete":
+					matchesFilter = isWrong;
+					break;
+
+				case "missing":
+					matchesFilter = isMissing;
+					break;
+
+				case "all":
+				default:
+					matchesFilter = true;
+			}
+
+			return matchesSearch && matchesFilter;
+		});
+	}
+
+	function applyFilter(filter) {
+		selectedFilter = filter;
+		applyFilters();
+	}
+
+	function computeYearStats(records) {
+		const stats = {
+			totalAll: 0,
+			totalSubmitted: 0,
+			totalValid: 0,
+			totalMissing: 0
+		};
+
+		for (const rec of records) {
+			const statusMap = parseStatusByYear(rec.StatusByYear);
+
+			if (!selectedYear || !(selectedYear in statusMap)) continue;
+
+			const yearData = statusMap[selectedYear];
+			if (!yearData) continue;
+
+			stats.totalAll++;
+
+			if (yearData.totalActivities === 0) {
+				stats.totalMissing++;
+			} else {
+				stats.totalSubmitted++;
+				if (yearData.totalActivities === yearData.totalValid) {
+					stats.totalValid++;
+				}
+			}
+		}
+
+		return stats;
+	}
+
+	function applyFilters() {
+		renderTable(getFiltered());
+
+		const stats = computeYearStats(allRecords);
+
+		document.getElementById("totalAll").textContent = stats.totalAll;
+		document.getElementById("totalSubmitted").textContent = stats.totalSubmitted;
+		document.getElementById("totalWrong").textContent = stats.totalSubmitted - stats.totalValid;
+		document.getElementById("totalMissings").textContent = stats.totalMissing;
+	}
+
+	window.grist.onRecords((records) => {
+		allRecords = records || [];
+
+		// Find all available years in records
+		const years = new Set();
+
+		for (const rec of allRecords) {
+			const statusMap = parseStatusByYear(rec.StatusByYear);
+			Object.keys(statusMap || {}).forEach(year => {
+				years.add(year);
+			});
+		}
+
+		const currentYear = new Date().getFullYear().toString();
+		years.add(currentYear);
+
+		const sortedYears = [...years].sort();
+
+		if (!sortedYears.includes(selectedYear)) {
+			selectedYear = currentYear;
+		}
+
+		// display selectedYear
+		yearInput.value = selectedYear;
+
+		if (allRecords.length > 1) {
+			document.getElementById('searchDiv').style.display = 'block';
+			document.getElementById('tooldDiv').style.display = 'block';
+			document.getElementById('statsDiv').classList.remove('d-none');
+			isAdmin = true;
+		}
+
+		applyFilters();
+	});
+
+	// Filter all
+	document.querySelectorAll('.filter-pill').forEach(btn => {
+
+		btn.addEventListener('click', () => {
+
+			document.querySelectorAll('.filter-pill')
+				.forEach(b => b.classList.remove('active'));
+
+			btn.classList.add('active');
+
+			applyFilter(btn.dataset.filter);
+		});
+
+	});
+
+	// User filter
+	document
+		.getElementById('searchInput')
+		.addEventListener('input', applyFilters);
+
+	// Year filter
+	yearInput.addEventListener("input", (e) => {
+		const year = e.target.value.trim();
+
+		if (/^\d{4}$/.test(year)) {
+			selectedYear = year;
+			applyFilters();
+		}
+	});
+
+	//
+    // DOWNLOAD CSV
+	//
+
+    function sanitizeCSV(value) {
+        const str = String(value ?? "");
+
+        // Protection Excel formula injection
+        if (/^[=+\-@]/.test(str)) {
+            return "'" + str;
+        }
+
+        return str;
+    }
+
+    function downloadCSV(records, filename = "activities.csv") {
+      
+		const exportColumns = [
+			{ key: 'Name', label: 'Name' },
+			{ key: 'Email', label: 'Email' },
+		];
+
+        const csvRows = [];
+
+        // HEADER
+        csvRows.push(
+            exportColumns
+                .map(col => `"${col.label}"`)
+                .join(",")
+        );
+
+        // ROWS
+        for (const rec of records) {
+
+            const row = exportColumns.map(col => {
+                let value = rec[col.key];
+
+                value = sanitizeCSV(value ?? '');
+
+                return `"${String(value).replace(/"/g, '""')}"`;
+            });
+
+            csvRows.push(row.join(","));
+        }
+
+        const csvContent = csvRows.join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+    }
+
+    document.getElementById('downloadAllBtn').addEventListener("click", async () => {
+        const filtered = getFiltered();
+
+        if (!filtered.length) {
+            await Swal.fire({
+                icon: "info",
+                title: "No results",
+                text: "No records match your filters.",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: "Download CSV?",
+            text: `Download ${filtered.length} record(s) as CSV?`,
+            showCancelButton: true,
+            confirmButtonText: "Yes, download",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#6c757d"
+        });
+
+        if (!result.isConfirmed) return;
+
+		const activeFilter = document.querySelector('.filter-pill.active')?.dataset.filter || 'all';
+        const yearQuery = yearInput.value.trim();
+
+        downloadCSV(filtered, `${activeFilter}_${yearQuery || "all"}.csv`);
+
+        Swal.fire({
+            icon: "success",
+            title: "Download started",
+            timer: 1200,
+            showConfirmButton: false
+        });
+    });
+
+	//
+	// SEND REMINDER
+	//
+
+	document
+		.getElementById('sendReminderBtn')
+		.addEventListener('click', async () => {
+
+			// Premier record avec SelectReminder = true
+			const firstSelected = allRecords.find(
+				rec => rec.SelectReminder === true
+			);
+
+			if (!firstSelected) {
+				await Swal.fire({
+					icon: "info",
+					title: "No professors selected",
+					text: "Please select at least one professor.",
+					confirmButtonText: "OK"
+				});
+				return;
+			}
+
+			const selectedCount = allRecords.filter(rec => rec.SelectReminder).length;
+
+			const result = await Swal.fire({
+				icon: "question",
+				title: `Send reminder for ${selectedYear}`,
+				text: `Are you sure you want to send reminders to ${selectedCount} professor(s) for the year ${selectedYear} ?`,
+				showCancelButton: true,
+				confirmButtonText: "Yes, send reminders",
+				cancelButtonText: "Cancel",
+				confirmButtonColor: "#3085d6"
+			});
+
+			if (!result.isConfirmed) return;
+
+			try {
+				await window.grist.selectedTable.update({
+					id: firstSelected.id,
+					fields: {
+						SelectedYear: selectedYear,
+						ValidateBtn: true
+					}
+				});
+				await Swal.fire({
+					icon: "success",
+					title: "Send reminders",
+					text: "Reminder emails are being sent.",
+					timer: 1500,
+					showConfirmButton: false
+				});
+			} catch (err) {
+				console.error(err);
+				await Swal.fire({
+					icon: "error",
+					title: "Error",
+					text: "Error triggering workflow."
+				});
+			}
+		});
+</script>
+
+<script>
+	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+	featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+</script>
+
+</body>
+</html>
