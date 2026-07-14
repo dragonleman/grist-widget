@@ -89,7 +89,6 @@
 								<use xlink:href="#user"></use>
 							</svg>
 						</span>
-
 						<input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
 					</div>
 				</div>
@@ -101,9 +100,11 @@
 								<use xlink:href="#calendar"></use>
 							</svg>
 						</span>
-
 						<input id="yearInput" type="text" class="form-control" placeholder="YYYY" maxlength="4">
 					</div>
+                    <small class="text-muted d-block">
+                        Leave blank to display all years.
+                    </small>
 				</div>
             </div>
         </div>
@@ -149,6 +150,10 @@
 
         table.tHead.innerHTML = "";
         table.tBodies[0].innerHTML = "";
+
+        if (records && "Name" in records) {
+            document.getElementById('searchDiv').style.display = 'block';
+        }
 
         //-----------------
         // Header
@@ -253,7 +258,11 @@
     function applyFilters() {
         const searchValue = searchInput.value.toLowerCase();
 
+        alert(searchValue);
+
         const years = getYears();
+
+        alert(years);
 
 		filteredRecords = allRecords.filter(rec => {
 
@@ -269,6 +278,8 @@
 
 			return matchesSearch;
 		});
+
+        alert(len(filteredRecords));
 
 		renderTable(filteredRecords);
 	}
