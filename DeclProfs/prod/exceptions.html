@@ -293,6 +293,8 @@
 
         yearInput.value = new Date().getFullYear().toString();
 
+        console.log(allRecords[0]);
+
         if (allRecords.length > 0 && "inactive" in allRecords[0]) {
             isAdmin = true;
             searchDiv.style.display = 'block';
