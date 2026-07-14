@@ -256,11 +256,11 @@
     function applyFilters() {
         const searchValue = searchInput.value.toLowerCase();
 
-        alert(searchValue);
+        alert(`searchValue : ${searchValue}`);
 
         const years = getYears(allRecords);
 
-        alert(years);
+        alert(`years : ${years}`);
 
 		filteredRecords = allRecords.filter(rec => {
 
@@ -277,7 +277,7 @@
 			return matchesSearch;
 		});
 
-        alert(filteredRecords.length);
+        alert(`filteredRecords : ${filteredRecords.length}`);
 
 		renderTable(filteredRecords);
 	}
@@ -294,12 +294,13 @@
 	// GRIST
 	// =====================================================
 
-	window.grist.onRecords((records) => {
+    grist.onRecords((records) => {
 		allRecords = records || [];
+
+        alert(`allRecords : ${allRecords.length}`);
 
         if (allRecords && "Name" in allRecords) {
             document.getElementById('searchDiv').style.display = 'block';
-            alert(allRecords.length);
         }
 
         applyFilters();
