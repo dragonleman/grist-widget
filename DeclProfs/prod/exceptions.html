@@ -146,14 +146,10 @@
 
 	function renderTable(records) {
 
-        const years = getYears();
+        const years = getYears(records);
 
         table.tHead.innerHTML = "";
         table.tBodies[0].innerHTML = "";
-
-        if (records && "Name" in records) {
-            document.getElementById('searchDiv').style.display = 'block';
-        }
 
         //-----------------
         // Header
@@ -233,16 +229,18 @@
 		}
 	}
 
-    function getYears() {
+    function getYears(records) {
         const year = yearInput.value.trim();
 
         if (year) {
             return [year];
         }
 
+        alert("Pas de years");
+
         const years = new Set();
 
-        for (const rec of allRecords) {
+        for (const rec of records) {
             if (!rec.ExceptionByYear) continue;
 
             const obj = JSON.parse(rec.ExceptionByYear);
@@ -260,7 +258,7 @@
 
         alert(searchValue);
 
-        const years = getYears();
+        const years = getYears(allRecords);
 
         alert(years);
 
@@ -279,7 +277,7 @@
 			return matchesSearch;
 		});
 
-        alert(len(filteredRecords));
+        alert(filteredRecords.length);
 
 		renderTable(filteredRecords);
 	}
@@ -298,6 +296,12 @@
 
 	window.grist.onRecords((records) => {
 		allRecords = records || [];
+
+        if (allRecords && "Name" in allRecords) {
+            document.getElementById('searchDiv').style.display = 'block';
+            alert(allRecords.length);
+        }
+
         applyFilters();
 	});
 </script>
