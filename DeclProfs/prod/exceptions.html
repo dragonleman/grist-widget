@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Activities Declaration</title>
+
+    <link rel="stylesheet" href="https://web2018.epfl.ch/8.3.0/css/elements.min.css">
+	<link rel="stylesheet" href="css/declprofs.css">
+    <script src="https://web2018.epfl.ch/8.3.0/js/elements.min.js"></script>
+
+    <style>
+
+        body {
+            background: #f7f8fa;
+        }
+
+        .page-container {
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .toolbar-card,
+        .stats-card,
+        .table-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+		.d-none {
+			display: none;
+		}
+
+        .filters-row {
+            gap: 12px;
+        }
+
+        .table thead th {
+            white-space: nowrap;
+        }
+
+        .table tbody tr:hover {
+            background-color: #fafafa;
+        }
+
+		td {
+			white-space: pre-line;
+		}
+
+        #searchInput, #yearInput {
+            padding-left: 34px !important;
+            height: 40px;
+        }
+
+		tr.inactive-row td {
+			text-decoration: line-through;
+			color: #888;
+			opacity: 0.7;
+		}
+    </style>
+</head>
+
+<body>
+
+<header class="header header-light my-2">
+    <div class="header-light-content">
+        <a class="logo" href="https://www.epfl.ch">
+            <img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid">
+        </a>
+        <p class="site-title">
+            <a href="#">Professor outside activities</a>
+        </p>
+		<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+    </div>
+</header>
+
+<div class="page-container p-4">
+	
+    <!-- TOOLBAR -->
+    <div class="toolbar-card mb-4">
+
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div>
+				<div id="searchDiv" class="mb-2" style="display:none;">
+					<div class="input-group">
+						<span class="input-group-text">
+							<svg width="16" height="16">
+								<use xlink:href="#user"></use>
+							</svg>
+						</span>
+
+						<input type="text" id="searchInput" class="form-control" placeholder="Search someone...">
+					</div>
+				</div>
+
+				<div class="mb-3" style="width: 200px;">
+					<div class="input-group">
+						<span class="input-group-text">
+							<svg width="16" height="16">
+								<use xlink:href="#calendar"></use>
+							</svg>
+						</span>
+
+						<input id="yearInput" type="text" class="form-control" placeholder="YYYY" maxlength="4">
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+
+        <div class="table-responsive">
+
+            <table id="table_alt" class="table table-boxed mb-0">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+	const yearInput = document.getElementById("yearInput");
+    const searchInput = document.getElementById('searchInput');
+	const table = document.getElementById('table_alt');
+
+	let allRecords = [];
+
+
+	window.grist.ready({ requiredAccess: 'full' });
+
+	// =====================================================
+	// RENDER
+	// =====================================================
+
+	function renderTable(records) {
+
+        const years = getYears();
+
+        table.tHead.innerHTML = "";
+        table.tBodies[0].innerHTML = "";
+
+        //-----------------
+        // Header
+        //-----------------
+
+        const trHead = document.createElement("tr");
+
+        let th = document.createElement("th");
+        th.textContent = "Name";
+        trHead.appendChild(th);
+
+        for (const year of years) {
+            th = document.createElement("th");
+            th.textContent = year;
+            th.className = "text-center";
+            trHead.appendChild(th);
+        }
+
+        table.tHead.appendChild(trHead);
+
+        //-----------------
+        // Body
+        //-----------------
+
+        for (const rec of records) {
+
+            const tr = document.createElement("tr");
+
+            const tdName = document.createElement("td");
+            tdName.textContent = rec.Name;
+            tr.appendChild(tdName);
+
+            const exceptions = rec.ExceptionByYear
+                ? JSON.parse(rec.ExceptionByYear)
+                : {};
+
+            for (const year of years) {
+
+                const td = document.createElement("td");
+                td.className = "text-center";
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = !!exceptions[year];
+
+                checkbox.addEventListener("change", async () => {
+
+                    exceptions[year] = checkbox.checked;
+
+                    await grist.selectedTable.update({
+                        id: rec.id,
+                        fields: {
+                            ExceptionByYear: JSON.stringify(exceptions)
+                        }
+                    });
+
+                });
+
+                td.appendChild(checkbox);
+                tr.appendChild(td);
+            }
+
+            table.tBodies[0].appendChild(tr);
+        }
+    }
+
+   	// =====================================================
+	// UTILITY FUNCTIONS
+	// ===================================================== 
+
+	function parseExceptionByYear(str) {
+		try {
+			return JSON.parse(str || "{}");
+		} catch (e) {
+			console.error("Invalid ExceptionByYear JSON:", str);
+			return {};
+		}
+	}
+
+    function getYears() {
+        const year = yearInput.value.trim();
+
+        if (year) {
+            return [year];
+        }
+
+        const years = new Set();
+
+        for (const rec of allRecords) {
+            if (!rec.ExceptionByYear) continue;
+
+            const obj = JSON.parse(rec.ExceptionByYear);
+
+            for (const y of Object.keys(obj)) {
+                years.add(y);
+            }
+        }
+
+        return [...years].sort();
+    }
+
+    function applyFilters() {
+        const searchValue = searchInput.value.toLowerCase();
+
+        const years = getYears();
+
+		filteredRecords = allRecords.filter(rec => {
+
+			const matchesSearch = (rec.Name || '').toLowerCase().includes(searchValue);
+
+			const exceptionMap = parseExceptionByYear(rec.ExceptionByYear);
+
+			const hasAnyYear = years.some(year => year in exceptionMap);
+
+            if (!hasAnyYear) {
+                return false;
+            }
+
+			return matchesSearch;
+		});
+
+		renderTable(filteredRecords);
+	}
+
+	// =====================================================
+	// FILTERS
+	// =====================================================
+
+	searchInput.addEventListener('input', applyFilters);
+
+	yearInput.addEventListener("input", applyFilters);
+
+	// =====================================================
+	// GRIST
+	// =====================================================
+
+	window.grist.onRecords((records) => {
+		allRecords = records || [];
+        applyFilters();
+	});
+</script>
+
+<script>
+	svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+	featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+</script>
+
+</body>
+</html>
