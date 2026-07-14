@@ -244,8 +244,7 @@
 
             console.log(
                 rec.Name,
-                rec.ExceptionByYear2,
-                Object.keys(JSON.parse(rec.ExceptionByYear2))
+                rec.ExceptionByYear2
             );
 
             if (!rec.ExceptionByYear2) continue;
@@ -304,11 +303,7 @@
     grist.onRecords((records) => {
 		allRecords = records || [];
 
-        alert(Object.keys(allRecords[0]));
-
-        alert(`allRecords : ${allRecords.length}`);
-
-        if (allRecords && "Name" in allRecords) {
+        if (allRecords.length > 0 && "Name" in allRecords[0]) {
             document.getElementById('searchDiv').style.display = 'block';
         }
 
