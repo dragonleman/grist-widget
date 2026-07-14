@@ -136,6 +136,7 @@
 	const table = document.getElementById('table_alt');
 
 	let allRecords = [];
+    let isAdmin = false;
 
 
 	window.grist.ready({ requiredAccess: 'full' });
@@ -290,8 +291,11 @@
     grist.onRecords((records) => {
 		allRecords = records || [];
 
-        if (allRecords.length > 0 && "Name" in allRecords[0]) {
-            document.getElementById('searchDiv').style.display = 'block';
+        yearInput.value = new Date().getFullYear().toString();
+
+        if (allRecords.length > 0 && "inactive" in allRecords[0]) {
+            isAdmin = true;
+            searchDiv.style.display = 'block';
         }
 
         applyFilters();
