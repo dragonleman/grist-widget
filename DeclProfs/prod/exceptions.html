@@ -241,6 +241,13 @@
         const years = new Set();
 
         for (const rec of records) {
+
+            console.log(
+                rec.Name,
+                rec.ExceptionByYear,
+                Object.keys(JSON.parse(rec.ExceptionByYear))
+            );
+
             if (!rec.ExceptionByYear) continue;
 
             const obj = JSON.parse(rec.ExceptionByYear);
