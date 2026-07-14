@@ -236,16 +236,9 @@
             return [year];
         }
 
-        alert("Pas de years");
-
         const years = new Set();
 
         for (const rec of records) {
-
-            console.log(
-                rec.Name,
-                rec.ExceptionByYear2
-            );
 
             if (!rec.ExceptionByYear2) continue;
 
@@ -262,11 +255,7 @@
     function applyFilters() {
         const searchValue = searchInput.value.toLowerCase();
 
-        alert(`searchValue : ${searchValue}`);
-
         const years = getYears(allRecords);
-
-        alert(`years : ${years}`);
 
 		filteredRecords = allRecords.filter(rec => {
 
@@ -282,8 +271,6 @@
 
 			return matchesSearch;
 		});
-
-        alert(`filteredRecords : ${filteredRecords.length}`);
 
 		renderTable(filteredRecords);
 	}
