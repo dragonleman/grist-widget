@@ -182,8 +182,8 @@
             tdName.textContent = rec.Name;
             tr.appendChild(tdName);
 
-            const exceptions = rec.ExceptionByYear
-                ? JSON.parse(rec.ExceptionByYear)
+            const exceptions = rec.ExceptionByYear2
+                ? JSON.parse(rec.ExceptionByYear2)
                 : {};
 
             for (const year of years) {
@@ -244,13 +244,13 @@
 
             console.log(
                 rec.Name,
-                rec.ExceptionByYear,
-                Object.keys(JSON.parse(rec.ExceptionByYear))
+                rec.ExceptionByYear2,
+                Object.keys(JSON.parse(rec.ExceptionByYear2))
             );
 
-            if (!rec.ExceptionByYear) continue;
+            if (!rec.ExceptionByYear2) continue;
 
-            const obj = JSON.parse(rec.ExceptionByYear);
+            const obj = JSON.parse(rec.ExceptionByYear2);
 
             for (const y of Object.keys(obj)) {
                 years.add(y);
@@ -273,7 +273,7 @@
 
 			const matchesSearch = (rec.Name || '').toLowerCase().includes(searchValue);
 
-			const exceptionMap = parseExceptionByYear(rec.ExceptionByYear);
+			const exceptionMap = parseExceptionByYear(rec.ExceptionByYear2);
 
 			const hasAnyYear = years.some(year => year in exceptionMap);
 
