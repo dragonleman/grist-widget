@@ -304,6 +304,8 @@
     grist.onRecords((records) => {
 		allRecords = records || [];
 
+        console.log(Object.keys(allRecords[0]));
+
         alert(`allRecords : ${allRecords.length}`);
 
         if (allRecords && "Name" in allRecords) {
