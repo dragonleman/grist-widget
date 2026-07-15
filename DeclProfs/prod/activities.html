@@ -1141,6 +1141,14 @@
 
         const year = yearInput.value.trim();
 
+        if (!year) {
+            if (rec.End_date) {
+                year = new Date(rec.End_date * 1000).getFullYear().toString();
+            } else {
+                year = new Date().getFullYear().toString();
+            }
+        }
+
         const result = await Swal.fire({
             icon: "question",
             title: `Submit ${drafts.length} draft(s) of ${year} ?`,
