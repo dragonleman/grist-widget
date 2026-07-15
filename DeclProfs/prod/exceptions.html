@@ -207,7 +207,7 @@
                     });
                     td.appendChild(checkbox);
                 } else {
-                    td.textContent = exceptions[year] ? '🔴' : '🟢';
+                    td.textContent = exceptions[year] === true ? '🟢' : '🔴';
                 }
                 
                 tr.appendChild(td);
