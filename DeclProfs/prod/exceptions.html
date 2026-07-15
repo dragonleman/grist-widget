@@ -137,6 +137,7 @@
 
 	let allRecords = [];
     let isAdmin = false;
+    let ignoreNextRefresh = false;
 
 
 	window.grist.ready({ requiredAccess: 'full' });
@@ -198,6 +199,7 @@
                     checkbox.checked = exceptions[year] === true;
                     checkbox.addEventListener("change", async () => {
                         exceptions[year] = checkbox.checked;
+                        ignoreNextRefresh = true;
                         await grist.selectedTable.update({
                             id: rec.id,
                             fields: {
@@ -272,6 +274,10 @@
 
 			return matchesSearch;
 		});
+
+        if (ignoreNextRefresh) {
+            return;
+        }
 
 		renderTable(filteredRecords);
 	}
