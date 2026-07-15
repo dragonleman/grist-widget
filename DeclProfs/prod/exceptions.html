@@ -211,6 +211,7 @@
                     td.appendChild(checkbox);
                 } else {
                     td.textContent = exceptions[year] === true ? '🟢' : '🔴';
+                    ignoreNextRefresh = true;
                 }
                 
                 tr.appendChild(td);
