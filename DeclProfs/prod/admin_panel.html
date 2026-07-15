@@ -25,7 +25,7 @@
             min-width: 160px;
         }
 
-        #yearInput, #yearActivitiesInput {
+        #yearInput {
             padding-left: 40px !important;
             height: 40px;
         }
@@ -141,153 +141,16 @@
                 </div>
             </div>
         </div>
-
-        <!-- Update Activities -->
-        <!-- <div class="card">
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="card-title mb-1">
-                            Update Activities
-                        </h4>
-                        <p class="text-muted mb-0">
-                            Update statuses of all activities.
-                        </p>
-                    </div>
-
-                    <!-- Toggle
-                    <div class="d-flex align-items-center">
-                        <div class="custom-control custom-switch">
-                            <input
-                                id="updateActSwitch"
-                                type="checkbox"
-                                class="custom-control-input"
-                            >
-                            <label class="custom-control-label" for="updateActSwitch">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- Download all year activities -->
-        <!-- <div class="card">
-            <div class="card-body">
-
-                <h4 class="card-title mb-2">
-                    Download Activities
-                </h4>
-
-                <p class="text-muted mb-4">
-                    Download all activities of a defined year.
-                </p>
-
-                <!-- Year
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-4">
-                        <label for="yearActivitiesInput" class="mb-0">
-                            Year of activities
-                        </label>
-                    </div>
-
-                    <div class="col-md-4" style="position: relative; width: 140px;">
-                        <input type="text"
-                            id="yearActivitiesInput"
-                            class="form-control"
-                            placeholder="YYYY"
-                            pattern="[0-9]{4}"
-                            inputmode="numeric"
-                            maxlength="4">
-                        <svg class="icon"
-                            aria-hidden="true"
-                            style="position: absolute;
-                                    left: 28px;
-                                    top: 50%;
-                                    transform: translateY(-50%);
-                                    width: 16px;
-                                    height: 16px;
-                                    pointer-events: none;">
-                            <use xlink:href="#calendar"></use>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Email
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-4">
-                        <label class="mb-0">
-                            Send To
-                        </label>
-                    </div>
-                    <div class="col">
-                        <input id="sendActivitiesTo" type="text" class="form-control">
-                    </div>
-                </div>
-
-                <!-- Toggle
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <label class="mb-0">
-                            Send now
-                        </label>
-                    </div>
-
-                    <div class="col-md-8">
-                        <div class="d-flex align-items-center">
-                            <div class="custom-control custom-switch">
-                                <input id="sendActivitiesSwitch" type="checkbox" class="custom-control-input">
-                                <label class="custom-control-label" for="sendActivitiesSwitch">
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- Download disclosure report activities (PDF) -->
-        <!-- <div class="card">
-            <div class="card-body">
-
-                <h4 class="card-title mb-2">
-                    Download Disclosure Activities
-                </h4>
-
-                <p class="text-muted mb-4">
-                    Create a disclosure report of activities for a Professor.
-                </p>
-
-                <!-- Email
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-4">
-                        <label for="sendReportTo" class="mb-0">
-                            Send To
-                        </label>
-                    </div>
-                    <div class="col">
-                        <input id="sendReportTo" type="text" class="form-control">
-                    </div>
-                </div>
-            </div>
-
-        </div> -->
     </div>
 
 	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
+        const yearInput = document.getElementById('yearInput');
 		const startDateInput = document.getElementById('startDateInput');
         const endDateInput = document.getElementById('endDateInput');
-        const yearInput = document.getElementById('yearInput');
         const excBtn = document.getElementById('exceptionSwitch');
-        const updateActSwitch = document.getElementById('updateActSwitch');
         const exceptionBadge = document.getElementById('exceptionBadge');
-        const yearActivitiesInput = document.getElementById('yearActivitiesInput');
-        const sendActivitiesTo = document.getElementById('sendActivitiesTo');
-        const sendActivitiesSwitch = document.getElementById('sendActivitiesSwitch');
-        const sendReportTo = document.getElementById('sendReportTo');
 
 		window.grist.ready({ requiredAccess: 'full' });
 
@@ -351,7 +214,7 @@
             });
 
             // Exception (Switch)
-            excBtn.checked = Boolean(rec.exception);
+            excBtn.checked = rec.exception === true;
 
             updateExceptionBadge(excBtn.checked);
 
@@ -359,86 +222,39 @@
 
                 updateExceptionBadge(excBtn.checked);
 
+                if (excBtn.checked) {
+                    // Check if fields are filled before chacing the user's exceptions.
+                    const allValid = drafts.every(r => isDraftValid(r));
+
+                    if (!yearInput.value) {
+                        excBtn.checked = false;
+                        updateExceptionBadge(false);
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "No year set",
+                            text: `Set a valid year.`,
+                        });
+                        return;
+                    }
+
+                    if (!startDateInput.value || !endDateInput.value || startDateInput.value > endDateInput.value) {
+                        excBtn.checked = false;
+                        updateExceptionBadge(false);
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error in date",
+                            text: `Set a valid start and end date.`,
+                        });
+                        return;
+                    }
+                }
+
                 await window.grist.selectedTable.update({
                     id: rec.id,
                     fields: { exception: excBtn.checked }
                 });
-            });
-
-            // =====================================================
-	        // UPDATE ACTIVITIES
-	        // =====================================================
-
-            // Update activities
-            updateActSwitch.checked = Boolean(rec.UpdateActivitiesStatuses);
-
-            updateActSwitch.addEventListener('change', async () => {
-                await window.grist.selectedTable.update({
-                    id: rec.id,
-                    fields: { UpdateActivitiesStatuses: updateActSwitch.checked }
-                });
-            });
-
-            // =====================================================
-	        // DOWNLOAD ACTIVITIES (EXCEL)
-	        // =====================================================
-
-            // Download activities year
-            yearActivitiesInput.value = rec.DownloadYear || '';
-
-            yearActivitiesInput.addEventListener('blur', async () => {
-                if (yearActivitiesInput.value !== rec.DownloadYear) {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: {
-                            DownloadYear: yearActivitiesInput.value
-                        }
-                    });
-                }
-            });
-
-            // Download activities email
-            sendActivitiesTo.value = rec.To_Email_Downloaded || '';
-
-            sendActivitiesTo.addEventListener('blur', async () => {
-                if (sendActivitiesTo.value !== rec.To_Email_Downloaded) {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: {
-                            To_Email_Downloaded: sendActivitiesTo.value
-                        }
-                    });
-                }
-            });
-
-            // Download activities switch
-            sendActivitiesSwitch.checked = Boolean(rec.DownloadBtn);
-
-            sendActivitiesSwitch.addEventListener('change', async () => {
-                await window.grist.selectedTable.update({
-                    id: rec.id,
-                    fields: {
-                        DownloadBtn: sendActivitiesSwitch.checked
-                    }
-                });
-            });
-
-            // =====================================================
-	        // YEARLY REPORT ACTIVITIES (PDF)
-	        // =====================================================
-
-            // Report activities email
-            sendReportTo.value = rec.ReportSendTo || '';
-
-            sendReportTo.addEventListener('blur', async () => {
-                if (sendReportTo.value !== rec.ReportSendTo) {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: {
-                            ReportSendTo: sendReportTo.value
-                        }
-                    });
-                }
             });
         });
 	</script>
