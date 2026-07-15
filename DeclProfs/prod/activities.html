@@ -1029,12 +1029,11 @@
                 Swal.fire({
                     icon: "error",
                     title: "No year",
-                    text: "Select a year in the filter",
+                    text: "Set a year in the filter",
                     confirmButtonText: "OK"
                 });
                 return;
             }
-
 
             if (!isDraftLiveValid(pendingChanges)) {
                 await Swal.fire({
@@ -1142,11 +1141,13 @@
         const year = yearInput.value.trim();
 
         if (!year) {
-            if (rec.End_date) {
-                year = new Date(rec.End_date * 1000).getFullYear().toString();
-            } else {
-                year = new Date().getFullYear().toString();
-            }
+            Swal.fire({
+                icon: "error",
+                title: "No year",
+                text: "Set a year in the filter",
+                confirmButtonText: "OK"
+            });
+            return;
         }
 
         const result = await Swal.fire({
@@ -1229,7 +1230,7 @@
             Swal.fire({
                 icon: "error",
                 title: "No year",
-                text: "Select a year for reporting",
+                text: "Set a year in the filter for reporting",
                 confirmButtonText: "OK"
             });
             return;
