@@ -44,223 +44,295 @@
     </style>
 </head>
 <body>
-  	<header class="header header-light my-2">
-		<div class="header-light-content">
-			<a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
-			<p class="site-title"><a href="#">Professor outside activities</a></p>
-			<nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
-		</div>
-  	</header>
+<header class="header header-light my-2">
+    <div class="header-light-content">
+        <a class="logo" href="https://www.epfl.ch"><img src="img/epfl_small.png" alt="Logo EPFL" class="img-fluid"></a>
+        <p class="site-title"><a href="#">Professor outside activities</a></p>
+        <nav class="nav-lang nav-lang-short ml-auto pr-lg-5"></nav>
+    </div>
+</header>
 
-	<div class="breadcrumb-container pb-0 mb-0">
-		<nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
-	</div>
+<div class="breadcrumb-container pb-0 mb-0">
+    <nav aria-label="breadcrumb" class="breadcrumb-wrapper" id="breadcrumb-wrapper"></nav>
+</div>
 
-    <div class="main-container py-4" style="max-width: 1000px; margin: auto;">
+<div class="main-container py-4" style="max-width: 1000px; margin: auto;">
 
-        <div class="mb-5">
-            <h2 class="mb-1">Administration Dashboard</h2>
-        </div>
+    <div class="mb-5">
+        <h2 class="mb-1">Administration Dashboard</h2>
+    </div>
 
-        <!-- Exceptions -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h4 class="card-title mb-2">
-                    Exceptions
-                </h4>
+    <!-- Exceptions -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title mb-2">
+                Exceptions
+            </h4>
 
-                <p class="text-muted mb-4">
-                    Configure exception settings for the declaration campaign.
-                </p>
+            <p class="text-muted mb-4">
+                Configure exception settings for the declaration campaign.
+            </p>
 
-                <!-- Year -->
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-4">
-                        <label for="exceptionYearInput" class="mb-0">
-                            Year of exception
-                        </label>
-                    </div>
-
-                    <div class="col-md-4" style="position: relative; width: 140px;">
-                        <input type="text"
-                            id="yearInput"
-                            class="form-control"
-                            placeholder="YYYY"
-                            pattern="[0-9]{4}"
-                            inputmode="numeric"
-                            maxlength="4">
-                        <svg class="icon"
-                            aria-hidden="true"
-                            style="position: absolute;
-                                    left: 28px;
-                                    top: 50%;
-                                    transform: translateY(-50%);
-                                    width: 16px;
-                                    height: 16px;
-                                    pointer-events: none;">
-                            <use xlink:href="#calendar"></use>
-                        </svg>
-                    </div>
+            <!-- Year -->
+            <div class="row align-items-center mb-3">
+                <div class="col-md-4">
+                    <label for="exceptionYearInput" class="mb-0">
+                        Year of exception
+                    </label>
                 </div>
 
-                <!-- Dates -->
-                <div class="row align-items-center mb-3">
-                    <div class="col-md-4">
-                        <label class="mb-0">
-                            Exception period
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <input id="startDateInput" type="date" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <input id="endDateInput" type="date" class="form-control">
-                    </div>
+                <div class="col-md-4" style="position: relative; width: 140px;">
+                    <input type="text"
+                        id="yearInput"
+                        class="form-control"
+                        placeholder="YYYY"
+                        pattern="[0-9]{4}"
+                        inputmode="numeric"
+                        maxlength="4">
+                    <svg class="icon"
+                        aria-hidden="true"
+                        style="position: absolute;
+                                left: 28px;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                width: 16px;
+                                height: 16px;
+                                pointer-events: none;">
+                        <use xlink:href="#calendar"></use>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="row align-items-center mb-3">
+                <div class="col-md-4">
+                    <label class="mb-0">
+                        Exception period
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    <input id="startDateInput" type="date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <input id="endDateInput" type="date" class="form-control">
+                </div>
+            </div>
+
+            <!-- Toggle -->
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="mb-0">
+                        Exception status
+                    </label>
                 </div>
 
-                <!-- Toggle -->
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <label class="mb-0">
-                            Exception status
-                        </label>
-                    </div>
-
-                    <div class="col-md-8">
-                        <div class="d-flex align-items-center">
-                            <div class="custom-control custom-switch">
-                                <input id="exceptionSwitch" type="checkbox" class="custom-control-input">
-                                <label class="custom-control-label" for="exceptionSwitch">
-                                </label>
-                            </div>
-                            <span id="exceptionBadge" class="badge badge-secondary ml-3">
-                                Inactive
-                            </span>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center">
+                        <div class="custom-control custom-switch">
+                            <input id="exceptionSwitch" type="checkbox" class="custom-control-input">
+                            <label class="custom-control-label" for="exceptionSwitch">
+                            </label>
                         </div>
+                        <span id="exceptionBadge" class="badge badge-secondary ml-3">
+                            Inactive
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-	<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script>
-        const yearInput = document.getElementById('yearInput');
-		const startDateInput = document.getElementById('startDateInput');
-        const endDateInput = document.getElementById('endDateInput');
-        const excBtn = document.getElementById('exceptionSwitch');
-        const exceptionBadge = document.getElementById('exceptionBadge');
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const yearInput = document.getElementById('yearInput');
+    const startDateInput = document.getElementById('startDateInput');
+    const endDateInput = document.getElementById('endDateInput');
+    const excBtn = document.getElementById('exceptionSwitch');
+    const exceptionBadge = document.getElementById('exceptionBadge');
 
-		window.grist.ready({ requiredAccess: 'full' });
+    window.grist.ready({ requiredAccess: 'full' });
 
-        function updateExceptionBadge(enabled) {
-            exceptionBadge.textContent = enabled ? 'Active' : 'Inactive';
+    function updateExceptionBadge(enabled) {
+        exceptionBadge.textContent = enabled ? 'Active' : 'Inactive';
 
-            exceptionBadge.classList.remove(
-                'badge-success',
-                'badge-secondary',
-                'badge-light'
-            );
+        exceptionBadge.classList.remove(
+            'badge-success',
+            'badge-secondary',
+            'badge-light'
+        );
 
-            if (enabled) {
-                exceptionBadge.classList.add('badge-success');
-            } else {
-                exceptionBadge.classList.add('badge-light');
+        if (enabled) {
+            exceptionBadge.classList.add('badge-success');
+        } else {
+            exceptionBadge.classList.add('badge-light');
+        }
+    }
+
+    // =====================================================
+    // EXCEPTIONS
+    // =====================================================
+
+    yearInput.addEventListener('blur', async () => {
+        if (yearInput.value !== rec.exception_year) {
+            await window.grist.selectedTable.update({
+                id: rec.id,
+                fields: { exception_year: yearInput.value }
+            });
+        }
+    });
+
+    startDateInput.addEventListener('blur', async () => {
+        if (startDateInput.value !== rec.Start_date) {
+            await window.grist.selectedTable.update({
+                id: rec.id,
+                fields: { Start_date: startDateInput.value }
+            });
+        }
+    });
+
+    endDateInput.addEventListener('blur', async () => {
+        if (endDateInput.value !== rec.End_date) {
+            await window.grist.selectedTable.update({
+                id: rec.id,
+                fields: { End_date: endDateInput.value }
+            });
+        }
+    });
+
+    excBtn.addEventListener('change', async () => {
+
+        updateExceptionBadge(excBtn.checked);
+
+        if (excBtn.checked) {
+            // Check if fields are filled before chacing the user's exceptions.
+            if (!yearInput.value) {
+                excBtn.checked = false;
+                updateExceptionBadge(false);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "No year set",
+                    text: `Set a valid year.`,
+                });
+                return;
+            }
+
+            if (!startDateInput.value || !endDateInput.value || startDateInput.value > endDateInput.value) {
+                excBtn.checked = false;
+                updateExceptionBadge(false);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error in date",
+                    text: `Set a valid start and end date.`,
+                });
+                return;
             }
         }
 
-		window.grist.onRecords(records => {
-            const rec = records[0];
-
-            // =====================================================
-	        // EXCEPTIONS
-	        // =====================================================
-
-            // Year
-            yearInput.value = rec.exception_year || '';
-
-            yearInput.addEventListener('blur', async () => {
-                if (yearInput.value !== rec.exception_year) {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: { exception_year: yearInput.value }
-                    });
-                }
-            });
-
-            // Start date
-            startDateInput.value = rec.Start_date || '';
-
-            startDateInput.addEventListener('blur', async () => {
-                if (startDateInput.value !== rec.Start_date) {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: { Start_date: startDateInput.value }
-                    });
-                }
-            });
-
-            // End date
-            endDateInput.value = rec.End_date || '';
-
-            endDateInput.addEventListener('blur', async () => {
-                if (endDateInput.value !== rec.End_date) {
-                    await window.grist.selectedTable.update({
-                        id: rec.id,
-                        fields: { End_date: endDateInput.value }
-                    });
-                }
-            });
-
-            // Exception (Switch)
-            excBtn.checked = rec.exception === true;
-
-            updateExceptionBadge(excBtn.checked);
-
-            excBtn.addEventListener('change', async () => {
-
-                updateExceptionBadge(excBtn.checked);
-
-                if (excBtn.checked) {
-                    // Check if fields are filled before chacing the user's exceptions.
-                    if (!yearInput.value) {
-                        excBtn.checked = false;
-                        updateExceptionBadge(false);
-
-                        Swal.fire({
-                            icon: "error",
-                            title: "No year set",
-                            text: `Set a valid year.`,
-                        });
-                        return;
-                    }
-
-                    if (!startDateInput.value || !endDateInput.value || startDateInput.value > endDateInput.value) {
-                        excBtn.checked = false;
-                        updateExceptionBadge(false);
-
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error in date",
-                            text: `Set a valid start and end date.`,
-                        });
-                        return;
-                    }
-                }
-
-                await window.grist.selectedTable.update({
-                    id: rec.id,
-                    fields: { exception: excBtn.checked }
-                });
-            });
+        await window.grist.selectedTable.update({
+            id: rec.id,
+            fields: { exception: excBtn.checked }
         });
-	</script>
+    });
+    
+    // =====================================================
+    // GRIST
+    // =====================================================
+   
+    window.grist.onRecords(records => {
+        const rec = records[0];
 
-	<script>
-        svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
-        featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
-    </script>
+        // =====================================================
+        // EXCEPTIONS
+        // =====================================================
+
+        // Year
+        yearInput.value = rec.exception_year || '';
+
+        // yearInput.addEventListener('blur', async () => {
+        //     if (yearInput.value !== rec.exception_year) {
+        //         await window.grist.selectedTable.update({
+        //             id: rec.id,
+        //             fields: { exception_year: yearInput.value }
+        //         });
+        //     }
+        // });
+
+        // Start date
+        startDateInput.value = rec.Start_date || '';
+
+        // startDateInput.addEventListener('blur', async () => {
+        //     if (startDateInput.value !== rec.Start_date) {
+        //         await window.grist.selectedTable.update({
+        //             id: rec.id,
+        //             fields: { Start_date: startDateInput.value }
+        //         });
+        //     }
+        // });
+
+        // End date
+        endDateInput.value = rec.End_date || '';
+
+        // endDateInput.addEventListener('blur', async () => {
+        //     if (endDateInput.value !== rec.End_date) {
+        //         await window.grist.selectedTable.update({
+        //             id: rec.id,
+        //             fields: { End_date: endDateInput.value }
+        //         });
+        //     }
+        // });
+
+        // Exception (Switch)
+        excBtn.checked = rec.exception === true;
+
+        updateExceptionBadge(excBtn.checked);
+
+        // excBtn.addEventListener('change', async () => {
+
+        //     updateExceptionBadge(excBtn.checked);
+
+        //     if (excBtn.checked) {
+        //         // Check if fields are filled before chacing the user's exceptions.
+        //         if (!yearInput.value) {
+        //             excBtn.checked = false;
+        //             updateExceptionBadge(false);
+
+        //             Swal.fire({
+        //                 icon: "error",
+        //                 title: "No year set",
+        //                 text: `Set a valid year.`,
+        //             });
+        //             return;
+        //         }
+
+        //         if (!startDateInput.value || !endDateInput.value || startDateInput.value > endDateInput.value) {
+        //             excBtn.checked = false;
+        //             updateExceptionBadge(false);
+
+        //             Swal.fire({
+        //                 icon: "error",
+        //                 title: "Error in date",
+        //                 text: `Set a valid start and end date.`,
+        //             });
+        //             return;
+        //         }
+        //     }
+
+        //     await window.grist.selectedTable.update({
+        //         id: rec.id,
+        //         fields: { exception: excBtn.checked }
+        //     });
+        // });
+    });
+</script>
+
+<script>
+    svgPath = 'https://web2018.epfl.ch/8.3.0/icons/icons.svg';
+    featherSvgPath = 'https://web2018.epfl.ch/8.3.0/icons/feather-sprite.svg';
+</script>
 </body>
 </html>
 
