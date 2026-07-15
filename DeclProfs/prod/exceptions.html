@@ -192,24 +192,24 @@
                 const td = document.createElement("td");
                 td.className = "text-center";
 
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.checked = !!exceptions[year];
-
-                checkbox.addEventListener("change", async () => {
-
-                    exceptions[year] = checkbox.checked;
-
-                    await grist.selectedTable.update({
-                        id: rec.id,
-                        fields: {
-                            ExceptionByYear: JSON.stringify(exceptions)
-                        }
+                if (isAdmin) {
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = exceptions[year] === true;
+                    checkbox.addEventListener("change", async () => {
+                        exceptions[year] = checkbox.checked;
+                        await grist.selectedTable.update({
+                            id: rec.id,
+                            fields: {
+                                ExceptionByYear2: JSON.stringify(exceptions)
+                            }
+                        });
                     });
-
-                });
-
-                td.appendChild(checkbox);
+                    td.appendChild(checkbox);
+                } else {
+                    td.textContent = exceptions[year] ? '🔴' : '🟢';
+                }
+                
                 tr.appendChild(td);
             }
 
