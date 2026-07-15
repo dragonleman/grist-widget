@@ -224,8 +224,6 @@
 
                 if (excBtn.checked) {
                     // Check if fields are filled before chacing the user's exceptions.
-                    const allValid = drafts.every(r => isDraftValid(r));
-
                     if (!yearInput.value) {
                         excBtn.checked = false;
                         updateExceptionBadge(false);
