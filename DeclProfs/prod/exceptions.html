@@ -136,6 +136,7 @@
 	const table = document.getElementById('table_alt');
 
 	let allRecords = [];
+    let selectedYear = new Date().getFullYear().toString();
     let isAdmin = false;
     let ignoreNextRefresh = false;
 
@@ -288,7 +289,12 @@
 
 	searchInput.addEventListener('input', applyFilters);
 
-	yearInput.addEventListener("input", applyFilters);
+	//yearInput.addEventListener("input", applyFilters);
+
+    yearInput.addEventListener("input", (e) => {
+		selectedYear = e.target.value.trim();
+		applyFilters();
+	});
 
 	// =====================================================
 	// GRIST
@@ -297,7 +303,7 @@
     grist.onRecords((records) => {
 		allRecords = records || [];
 
-        yearInput.value = new Date().getFullYear().toString();
+        yearInput.value = selectedYear;
 
         if (allRecords.length > 1) {
             isAdmin = true;
