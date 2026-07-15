@@ -287,12 +287,18 @@
 	// FILTERS
 	// =====================================================
 
-	searchInput.addEventListener('input', applyFilters);
+	//searchInput.addEventListener('input', applyFilters);
+
+    searchInput.addEventListener("input", () => {
+        ignoreNextRefresh = false;
+		applyFilters();
+	});
 
 	//yearInput.addEventListener("input", applyFilters);
 
     yearInput.addEventListener("input", (e) => {
 		selectedYear = e.target.value.trim();
+        ignoreNextRefresh = false;
 		applyFilters();
 	});
 
