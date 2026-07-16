@@ -152,6 +152,8 @@
     const excBtn = document.getElementById('exceptionSwitch');
     const exceptionBadge = document.getElementById('exceptionBadge');
 
+    let rec;
+
     window.grist.ready({ requiredAccess: 'full' });
 
     // =====================================================
@@ -247,7 +249,7 @@
     // =====================================================
    
     window.grist.onRecords(records => {
-        const rec = records[0];
+        rec = records[0];
         
         yearInput.value = rec.exception_year || '';
         startDateInput.value = rec.Start_date || '';
